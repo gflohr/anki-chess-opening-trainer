@@ -18,17 +18,23 @@ class Answer:
 			  move: str,
 			  fullmove_number: int,
 			  turn: Color,
-			  comment: str|None = None) -> None:
+			  comments: [str] = []) -> None:
 		self.move = move
 		self.fullmove_number = fullmove_number
 		self.turn = turn
-		self.comment = comment
+		self.comments = comments
+
+	def addComment(self, comment: str) -> None:
+		self.comments.append(comment)
 
 	def render(self) -> str:
 		rendered = str(self.fullmove_number) + '.'
 		if not self.turn:
 			answer += '...'
 		rendered += ' ' + self.move
+
+		if len(self.comments):
+			rendered += ' ' + ' '.join(self.comments)
 
 		return rendered
 
@@ -45,6 +51,15 @@ class Answer:
 	def renderAnswers(cls, answers: list[Answer]) -> str:
 		lines = list(map(cls.render, answers))
 		return '<br>'.join(lines)
+
+
+class Question:
+	def __init__(self, moves: str) -> None:
+		self.moves = moves
+		self.comments = []
+
+	def addComment(self, comment: str) -> None:
+		self.comments.append(comment)
 
 
 class PatchSet():
@@ -79,6 +94,7 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 				board.san(move),
 				fullmove_number = board.fullmove_number,
 				turn = board.turn,
+				comments = [],
 			)
 
 			if not question in questions:
@@ -97,7 +113,9 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 
 	def visit_comment(self, comment: str) -> None:
 		if self.my_move:
-			questions[self.last_question][-1].comment = comment
+			questions[self.last_question][-1].addComment(comment)
+		else:
+			pass
 
 	def result(self) -> Literal[True]:
 		return True
@@ -121,6 +139,7 @@ def print_questions(questions: dict[str, Note]) -> None:
 		print(f'A: Playable moves:')
 
 		print(Answer.renderAnswers(answers))
+		print()
 
 
 def read_collection(dir: str) -> Collection:
@@ -203,7 +222,7 @@ if __name__ == '__main__':
 	questions = {}
 	initial = chess.Board()
 	read_study(sys.argv[2])
-	#print_questions(questions)
+	print_questions(questions)
 	col = read_collection(config['anki']['path'])
 
 	notetype = config['anki']['notetype']
