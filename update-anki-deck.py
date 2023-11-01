@@ -3,6 +3,7 @@
 import gettext
 import sys
 import chess.pgn
+import yaml
 
 class PositionVisitor(chess.pgn.BaseVisitor):
 	def visit_move(self, board, move) -> chess.Board:
@@ -11,9 +12,9 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 				question = initial.variation_san(board.move_stack)
 			else:
 				question = gettext.gettext('Moves from starting position?')
-			if not question in deck:
-				deck[question] = []
-			deck[question].append({
+			if not question in questions:
+				questions[question] = []
+			questions[question].append({
 				'move': board.san(move),
 				'fullmove_number': board.fullmove_number,
 				'turn': board.turn,
@@ -27,11 +28,39 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 
 	def visit_comment(self, comment: str) -> None:
 		if self.my_move:
-			deck[self.last_question][-1]['comment'] = comment
+			questions[self.last_question][-1]['comment'] = comment
 
 	def result(self):
 		return True
 
+
+def read_config():
+	with open('config.yaml', 'r') as file:
+		config = yaml.safe_load(file)
+		return config
+
+
+def read_study(filename):
+	study_pgn = open(filename)
+	while chess.pgn.read_game(study_pgn, Visitor=PositionVisitor):
+		pass
+
+
+def print_questions(questions):
+	for note in questions.items():
+		question = note[0]
+		print(f'Q: {question}')
+		print(f'A: Playable moves:')
+
+		for move in note[1]:
+			answer = str(move['fullmove_number']) + '.'
+			if not move['turn']:
+				answer += ' ...'
+			answer += ' ' + move['move']
+			if 'comment' in move:
+				answer += ' <em>' + move['comment'] + '</em>'
+			print(f'- {answer}')
+			print()
 
 if __name__ == '__main__':
 	if len(sys.argv) != 3:
@@ -51,24 +80,10 @@ if __name__ == '__main__':
 			print(f'Invalid colour "{sys.argv[1]}".')
 			sys.exit(1)
 
-	deck = {}
+	config = read_config()
+	questions = {}
 	initial = chess.Board()
-	study_pgn = open(sys.argv[2])
-	while chess.pgn.read_game(study_pgn, Visitor=PositionVisitor):
-		pass
+	read_study(sys.argv[2])
+	print_questions(questions)
 
-	for note in deck.items():
-		question = note[0]
-		print(f'Q: {question}')
-		print(f'A: Playable moves:')
 
-		for move in note[1]:
-			answer = str(move['fullmove_number']) + '.'
-			if not move['turn']:
-				answer += ' ...'
-			answer += ' ' + move['move']
-			if 'comment' in move:
-				answer += ' <em>' + move['comment'] + '</em>'
-			print(f'- {answer}')
-		
-		print()
