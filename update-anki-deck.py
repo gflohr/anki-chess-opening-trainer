@@ -66,6 +66,8 @@ class Question(Page):
 	def addAnswer(self, answer: Answer) -> None:
 		self.answers.append(answer)
 
+	def render(self) -> str:
+		return self.moves
 
 class PatchSet():
 	def __init__(self,
@@ -102,12 +104,12 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 			)
 
 			if not sequence in sequences:
-				sequences[sequence] = []
-			elif answer.find(sequences[sequence]):
+				sequences[sequence] = Question(sequence)
+			elif answer.find(sequences[sequence].answers):
 				# Already seen
 				return board
 
-			sequences[sequence].append(answer)
+			sequences[sequence].addAnswer(answer)
 			self.my_move = True
 			self.last_sequence = sequence
 		else:
@@ -117,7 +119,8 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 
 	def visit_comment(self, comment: str) -> None:
 		if self.my_move:
-			sequences[self.last_sequence][-1].addComment(comment)
+			question = sequences[self.last_sequence]
+			question.answers[-1].addComment(comment)
 		else:
 			pass
 
@@ -138,11 +141,12 @@ def read_study(filename: str) -> None:
 
 
 def print_sequences(sequences: dict[str, Note]) -> None:
-	for question, answers in sequences.items():
-		print(f'Q: {question}')
+	for question in sequences.values():
+		print(f'Q: {question.render()}')
 		print(f'A: Playable moves:')
 
-		print(Answer.renderAnswers(answers))
+		# FIXME! This should be an instance method of Question!
+		print(Answer.renderAnswers(question.answers))
 		print()
 
 
@@ -174,7 +178,7 @@ def read_notes(col: Collection) -> dict[str, Note]:
 	return notes
 
 def compute_patch_set(
-		wanted: dict[str, Answer],
+		wanted: dict[str, Question],
 		got: dict[str, Note],
 		model: Any) -> PatchSet:
 	used: list[str] = []
@@ -182,8 +186,8 @@ def compute_patch_set(
 	updates: list[Note] = []
 	deletes: list[int] = []
 	patchSet = PatchSet(inserts, deletes, updates)
-	for key, answers in wanted.items():
-		answer = Answer.renderAnswers(answers)
+	for key, question in wanted.items():
+		answer = Answer.renderAnswers(question.answers)
 		if key in got:
 			used.append(key)
 			note = got[key]
