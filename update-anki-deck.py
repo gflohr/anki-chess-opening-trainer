@@ -93,9 +93,9 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 	def visit_move(self, board, move) -> chess.Board:
 		if board.turn == colour:
 			if board.ply():
-				sequence = initial.variation_san(board.move_stack)
+				card = initial.variation_san(board.move_stack)
 			else:
-				sequence = gettext.gettext('Moves from starting position?')
+				card = gettext.gettext('Moves from starting position?')
 
 			answer = Answer(
 				board.san(move),
@@ -103,15 +103,15 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 				turn = board.turn,
 			)
 
-			if not sequence in sequences:
-				sequences[sequence] = Question(sequence)
-			elif answer.find(sequences[sequence].answers):
+			if not card in cards:
+				cards[card] = Question(card)
+			elif answer.find(cards[card].answers):
 				# Already seen
 				return board
 
-			sequences[sequence].addAnswer(answer)
+			cards[card].addAnswer(answer)
 			self.my_move = True
-			self.last_sequence = sequence
+			self.last_card = card
 		else:
 			self.my_move = False
 
@@ -119,7 +119,7 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 
 	def visit_comment(self, comment: str) -> None:
 		if self.my_move:
-			question = sequences[self.last_sequence]
+			question = cards[self.last_card]
 			question.answers[-1].addComment(comment)
 		else:
 			pass
@@ -140,8 +140,8 @@ def read_study(filename: str) -> None:
 		pass
 
 
-def print_sequences(sequences: dict[str, Note]) -> None:
-	for question in sequences.values():
+def print_cards(cards: dict[str, Note]) -> None:
+	for question in cards.values():
 		print(f'Q: {question.render()}')
 		print(f'A: Playable moves:')
 
@@ -227,10 +227,10 @@ if __name__ == '__main__':
 			sys.exit(1)
 
 	config = read_config()
-	sequences = {}
+	cards = {}
 	initial = chess.Board()
 	read_study(sys.argv[2])
-	print_sequences(sequences)
+	print_cards(cards)
 	col = read_collection(config['anki']['path'])
 
 	notetype = config['anki']['notetype']
@@ -244,6 +244,6 @@ if __name__ == '__main__':
 		raise Exception(f"Deck '{deck_name}' does not exist")
 
 	current_notes = read_notes(col)
-	patch_set = compute_patch_set(sequences, current_notes, model)
+	patch_set = compute_patch_set(cards, current_notes, model)
 	patch_set.patch(col, deck)
 
