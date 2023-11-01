@@ -13,19 +13,23 @@ from anki.collection import Collection
 from anki.notes import Note
 from anki.decks import Deck
 
-class Answer:
-	def __init__(self,
-			  move: str,
-			  fullmove_number: int,
-			  turn: Color,
-			  comments: [str] = []) -> None:
-		self.move = move
-		self.fullmove_number = fullmove_number
-		self.turn = turn
-		self.comments = comments
+class Page:
+	def __init__(self):
+		self.comments: [str] = []
 
 	def addComment(self, comment: str) -> None:
 		self.comments.append(comment)
+
+
+class Answer(Page):
+	def __init__(self,
+			  move: str,
+			  fullmove_number: int,
+			  turn: Color) -> None:
+		self.move = move
+		self.fullmove_number = fullmove_number
+		self.turn = turn
+		Page.__init__(self)
 
 	def render(self) -> str:
 		rendered = str(self.fullmove_number) + '.'
@@ -53,13 +57,10 @@ class Answer:
 		return '<br>'.join(lines)
 
 
-class Question:
+class Question(Page):
 	def __init__(self, moves: str) -> None:
 		self.moves = moves
-		self.comments = []
-
-	def addComment(self, comment: str) -> None:
-		self.comments.append(comment)
+		Page.__init__(self)
 
 
 class PatchSet():
@@ -94,7 +95,6 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 				board.san(move),
 				fullmove_number = board.fullmove_number,
 				turn = board.turn,
-				comments = [],
 			)
 
 			if not question in questions:
