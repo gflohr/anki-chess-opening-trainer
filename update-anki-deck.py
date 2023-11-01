@@ -51,11 +51,6 @@ class Answer(Page):
 		
 		return False
 
-	@classmethod
-	def renderAnswers(cls, answers: list[Answer]) -> str:
-		lines = list(map(cls.render, answers))
-		return '<br>'.join(lines)
-
 
 class Question(Page):
 	def __init__(self, moves: str) -> None:
@@ -68,6 +63,10 @@ class Question(Page):
 
 	def render(self) -> str:
 		return self.moves
+
+	def renderAnswers(self) -> str:
+		lines = list(map(Answer.render, self.answers))
+		return '<br>'.join(lines)
 
 class PatchSet():
 	def __init__(self,
@@ -145,8 +144,7 @@ def print_cards(cards: dict[str, Note]) -> None:
 		print(f'Q: {question.render()}')
 		print(f'A: Playable moves:')
 
-		# FIXME! This should be an instance method of Question!
-		print(Answer.renderAnswers(question.answers))
+		print(question.renderAnswers())
 		print()
 
 
@@ -187,7 +185,7 @@ def compute_patch_set(
 	deletes: list[int] = []
 	patchSet = PatchSet(inserts, deletes, updates)
 	for key, question in wanted.items():
-		answer = Answer.renderAnswers(question.answers)
+		answer = question.renderAnswers()
 		if key in got:
 			used.append(key)
 			note = got[key]
