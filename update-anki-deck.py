@@ -13,14 +13,6 @@ from anki.collection import Collection
 from anki.notes import Note
 from anki.decks import Deck
 
-def unique(l: [str]) -> [str]:
-	unique_list = []
-	for x in l:
-		if x not in unique_list:
-			unique_list.append(x)
-	
-	return unique_list
-
 class Answer:
 	def __init__(self,
 			  move: str,
@@ -40,9 +32,18 @@ class Answer:
 
 		return rendered
 
+	def find(self, others: list[Answer]) -> bool:
+		for answer in others:
+			if (answer.move == self.move
+	   		    and answer.fullmove_number == self.fullmove_number
+			    and answer.turn == self.turn):
+				return True
+		
+		return False
+
 	@classmethod
 	def renderAnswers(cls, answers: list[Answer]) -> str:
-		lines = unique(list(map(cls.render, answers)))
+		lines = list(map(cls.render, answers))
 		return '<br>'.join(lines)
 
 
@@ -73,13 +74,20 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 				question = initial.variation_san(board.move_stack)
 			else:
 				question = gettext.gettext('Moves from starting position?')
+
+			answer = Answer(
+				board.san(move),
+				fullmove_number = board.fullmove_number,
+				turn = board.turn,
+			)
+
 			if not question in questions:
 				questions[question] = []
-			questions[question].append(Answer(
-				board.san(move),
-				board.fullmove_number,
-				board.turn
-			))
+			elif answer.find(questions[question]):
+				# Already seen
+				return board
+
+			questions[question].append(answer)
 			self.my_move = True
 			self.last_question = question
 		else:
