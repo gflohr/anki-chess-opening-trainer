@@ -60,7 +60,11 @@ class Answer(Page):
 class Question(Page):
 	def __init__(self, moves: str) -> None:
 		self.moves = moves
+		self.answers: [Answer] = []
 		Page.__init__(self)
+	
+	def addAnswer(self, answer: Answer) -> None:
+		self.answers.append(answer)
 
 
 class PatchSet():
@@ -87,9 +91,9 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 	def visit_move(self, board, move) -> chess.Board:
 		if board.turn == colour:
 			if board.ply():
-				question = initial.variation_san(board.move_stack)
+				sequence = initial.variation_san(board.move_stack)
 			else:
-				question = gettext.gettext('Moves from starting position?')
+				sequence = gettext.gettext('Moves from starting position?')
 
 			answer = Answer(
 				board.san(move),
@@ -97,15 +101,15 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 				turn = board.turn,
 			)
 
-			if not question in questions:
-				questions[question] = []
-			elif answer.find(questions[question]):
+			if not sequence in sequences:
+				sequences[sequence] = []
+			elif answer.find(sequences[sequence]):
 				# Already seen
 				return board
 
-			questions[question].append(answer)
+			sequences[sequence].append(answer)
 			self.my_move = True
-			self.last_question = question
+			self.last_sequence = sequence
 		else:
 			self.my_move = False
 
@@ -113,7 +117,7 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 
 	def visit_comment(self, comment: str) -> None:
 		if self.my_move:
-			questions[self.last_question][-1].addComment(comment)
+			sequences[self.last_sequence][-1].addComment(comment)
 		else:
 			pass
 
@@ -133,8 +137,8 @@ def read_study(filename: str) -> None:
 		pass
 
 
-def print_questions(questions: dict[str, Note]) -> None:
-	for question, answers in questions.items():
+def print_sequences(sequences: dict[str, Note]) -> None:
+	for question, answers in sequences.items():
 		print(f'Q: {question}')
 		print(f'A: Playable moves:')
 
@@ -219,10 +223,10 @@ if __name__ == '__main__':
 			sys.exit(1)
 
 	config = read_config()
-	questions = {}
+	sequences = {}
 	initial = chess.Board()
 	read_study(sys.argv[2])
-	print_questions(questions)
+	print_sequences(sequences)
 	col = read_collection(config['anki']['path'])
 
 	notetype = config['anki']['notetype']
@@ -236,6 +240,6 @@ if __name__ == '__main__':
 		raise Exception(f"Deck '{deck_name}' does not exist")
 
 	current_notes = read_notes(col)
-	patch_set = compute_patch_set(questions, current_notes, model)
+	patch_set = compute_patch_set(sequences, current_notes, model)
 	patch_set.patch(col, deck)
 
