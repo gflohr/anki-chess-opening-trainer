@@ -7,9 +7,11 @@ import os
 import re
 import sys
 import yaml
+import shutil
+import hashlib
 from typing import Any, Literal
 import chess.pgn
-from chess import Color
+from chess import Color, Board
 from chess.svg import Arrow
 from anki.collection import Collection
 from anki.notes import Note
@@ -31,6 +33,10 @@ class Page:
 		self.comments: [str] = []
 		self.arrows: [Arrow] = []
 		self.fills: [int, str] = {}
+		self.board: Board | None = None
+
+	def set_board(self, board: Board) -> None:
+		self.board = board
 
 	def process_arrows(self, comment: str) -> str:
 		def purge_arrows(match):
@@ -75,24 +81,48 @@ class Page:
 	def need_board_image(self) -> bool:
 		return False
 
+	def image_path(self) -> str:
+		path = ''
+		if self.need_board_image() and self.board:
+			name = self.board.fen()
+			name += '-' + self.object_id()
+			if len(self.arrows) or len(self.fills):
+				name += '-annotated'
+			name = hashlib.sha1(name.encode('ascii')).hexdigest() + '.svg'
+			path = os.path.join('opening-trainer', name)
+		
+		return path;
+
+	def extra_html(self) -> str:
+		rendered = ''
+		for comment in self.comments:
+			rendered += ' <em>' + comment + '</em>'
+
+		image_path = self.image_path()
+		if (image_path):
+			rendered += f'<br><img src="{image_path}">'
+		
+		return rendered;
+
+
 class Answer(Page):
 	def __init__(self,
 			  move: str,
 			  fullmove_number: int,
-			  turn: Color) -> None:
+			  turn: Color,
+			  board: Board) -> None:
 		self.move = move
 		self.fullmove_number = fullmove_number
 		self.turn = turn
 		Page.__init__(self)
+		self.set_board(board)
 
 	def render(self) -> str:
 		rendered = str(self.fullmove_number) + '.'
 		if not self.turn:
 			answer += '...'
 		rendered += ' ' + self.move
-
-		for comment in self.comments:
-			rendered += ' ' + comment
+		rendered += self.extra_html()
 
 		return rendered
 
@@ -108,6 +138,9 @@ class Answer(Page):
 	def need_board_image(self) -> bool:
 		return len(self.arrows) or len(self.fills)
 
+	def object_id(self) -> str:
+		return 'a'
+
 
 class Question(Page):
 	def __init__(self, moves: str) -> None:
@@ -120,9 +153,7 @@ class Question(Page):
 
 	def render(self) -> str:
 		rendered = self.moves
-
-		for comment in self.comments:
-			rendered += ' ' + comment
+		rendered += self.extra_html()
 
 		return rendered
 
@@ -130,15 +161,22 @@ class Question(Page):
 		lines = list(map(Answer.render, self.answers))
 		return '<br>'.join(lines)
 
+	def object_id(self) -> str:
+		return 'q'
+
 class PatchSet():
 	def __init__(self,
 			  inserts: list[Note],
 			  deletes: list[Note],
 			  updates: list[Note],
+			  image_inserts: [str, Page],
+			  image_deletes: [str]
 			  ) -> None:
 		self.inserts = inserts
 		self.deletes = deletes
 		self.updates = updates
+		self.image_inserts = image_inserts
+		self.image_deletes = image_deletes
 
 	def patch(self, col: Collection, deck: Deck):
 		deck_id = deck['id']
@@ -161,7 +199,8 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 			answer = Answer(
 				board.san(move),
 				fullmove_number = board.fullmove_number,
-				turn = board.turn,
+				turn=board.turn,
+				board=board.copy(stack=False)
 			)
 
 			if not card in cards:
@@ -170,6 +209,8 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 					for comment in self.accumulated_comments:
 						cards[card].add_comment(comment)
 						self.accumulated_comments = []
+				if hasattr(self, 'last_board'):
+					cards[card].set_board(self.last_board.copy())
 			elif answer.find(cards[card].answers):
 				# Already seen
 				return board
@@ -180,6 +221,7 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 		else:
 			self.accumulated_comments = []
 			self.my_move = False
+			self.last_board = board.copy()
 
 		return board
 
@@ -250,7 +292,22 @@ def compute_patch_set(
 	inserts: list[Note] = []
 	updates: list[Note] = []
 	deletes: list[int] = []
-	patchSet = PatchSet(inserts, deletes, updates)
+	image_inserts: [str, Page] = {}
+	image_deletes: list[os.DirEntry] = []
+
+	media_path = os.path.join(config['anki']['path'], 'collection.media', 'opening-trainer')
+	for path in os.scandir(media_path):
+		# Just remember everything, even subdirectories.  That will later clean
+		# them up automatically.
+		image_deletes.append(path.path)
+
+	patchSet = PatchSet(
+		inserts=inserts,
+		deletes=deletes,
+		updates=updates,
+		image_inserts=image_inserts,
+		image_deletes=image_deletes)
+
 	for key, question in wanted.items():
 		answer = question.render_answers()
 		if key in got:
