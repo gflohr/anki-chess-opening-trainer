@@ -113,7 +113,14 @@ class Page:
 
 	def render_svg(self, path: str) -> None:
 		orientation = config['colour'] == 'white'
-		check = self.board.king(self.turn)
+		if self.board.ply():
+			lastmove = self.board.peek()
+		else:
+			lastmove = None
+		if (self.board.is_check()):
+			check = self.board.king(self.turn)
+		else:
+			check = None
 
 		if config['pgn']['csl_is_circle']:
 			arrows = self.arrows.copy()
@@ -122,6 +129,7 @@ class Page:
 				arrows.append(Arrow(tail=square, head=square, color=colour))
 			svg = chess.svg.board(
 				self.board,
+				lastmove=lastmove,
 				orientation=orientation,
 				arrows=arrows,
 				check=check
@@ -129,6 +137,7 @@ class Page:
 		else:
 			svg = chess.svg.board(
 				self.board,
+				lastmove=lastmove,
 				orientation=orientation,
 				arrows=arrows,
 				fill=self.fills,
@@ -242,42 +251,42 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 	def visit_move(self, board, move) -> chess.Board:
 		if board.turn == colour:
 			if board.ply():
-				card = initial.variation_san(board.move_stack)
+				text = initial.variation_san(board.move_stack)
 			else:
-				card = gettext.gettext('Moves from starting position?')
-
+				text = gettext.gettext('Moves from starting position?')
+			answer_board = board.copy()
+			san = answer_board.san(move)
+			answer_board.push(move)
 			answer = Answer(
-				board.san(move),
+				san,
 				fullmove_number = board.fullmove_number,
 				turn=board.turn,
-				board=board.copy(stack=False)
+				board=answer_board
 			)
 
-			if not card in cards:
+			if not text in cards:
 				turn = not board.turn
-				cards[card] = Question(card, turn=turn)
+				cards[text] = Question(text, turn=turn)
 				if hasattr(self, 'accumulated_comments'):
 					for comment in self.accumulated_comments:
-						cards[card].add_comment(comment)
+						cards[text].add_comment(comment)
 						self.accumulated_comments = []
-				if hasattr(self, 'last_board'):
-					cards[card].set_board(self.last_board.copy())
-			elif answer.find(cards[card].answers):
+				cards[text].set_board(board.copy())
+			elif answer.find(cards[text].answers):
 				# Already seen
 				return board
 
-			cards[card].add_answer(answer)
+			cards[text].add_answer(answer)
 			self.my_move = True
-			self.last_card = card
+			self.last_text = text
 		else:
 			self.accumulated_comments = []
 			self.my_move = False
-			self.last_board = board.copy()
 
 		return board
 
 	def visit_comment(self, comment: str) -> None:
-		question = cards[self.last_card]
+		question = cards[self.last_text]
 		if self.my_move:
 			question.answers[-1].add_comment(comment)
 		elif hasattr(self, 'accumulated_comments'):
