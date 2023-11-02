@@ -79,24 +79,21 @@ class Page:
 		if not re.match('^[ \t\n\v\\f]*$', comment):
 			self.comments.append(comment)
 
-	def need_board_image(self) -> bool:
-		return True
-
 	def image_path(self) -> str:
 		path = ''
-		if self.need_board_image():
-			if not self.board:
-				self.board = Board()
-			name = self.board.fen()
-			name += '-' + self.object_id()
 
-			for arrow in self.arrows:
-				name += '-' + arrow.pgn()
-			for square in sorted(self.fills.keys()):
-				name += '-' + square + '-' + self.fills[square]
-			
-			name = hashlib.sha1(name.encode('ascii')).hexdigest() + '.svg'
-			path = os.path.join('opening-trainer', name)
+		if not self.board:
+			self.board = Board()
+		name = self.board.fen()
+		name += '-' + self.object_id()
+
+		for arrow in self.arrows:
+			name += '-' + arrow.pgn()
+		for square in sorted(self.fills.keys()):
+			name += '-' + str(square) + '-' + self.fills[square]
+		
+		name = hashlib.sha1(name.encode('ascii')).hexdigest() + '.svg'
+		path = os.path.join('opening-trainer', name)
 		
 		return path;
 
@@ -106,8 +103,7 @@ class Page:
 			rendered += ' <em>' + comment + '</em>'
 
 		image_path = self.image_path()
-		if (image_path):
-			rendered += f'<br><img src="{image_path}">'
+		rendered += f'<br><img src="{image_path}">'
 		
 		return rendered;
 
@@ -176,9 +172,6 @@ class Answer(Page):
 				return True
 		
 		return False
-
-	def need_board_image(self) -> bool:
-		return len(self.arrows) or len(self.fills)
 
 	def object_id(self) -> str:
 		return 'a'
