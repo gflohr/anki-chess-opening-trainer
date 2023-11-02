@@ -9,6 +9,7 @@ import sys
 import yaml
 import shutil
 import hashlib
+import typing
 from typing import Any, Literal
 import chess.pgn
 import chess.svg
@@ -28,6 +29,26 @@ ARROWS_REGEX = re.compile(r"""
 	""", re.VERBOSE)
 
 WS_REGEX = re.compile('[ \t\n\v\\f]')
+
+class InternationalBoard(chess.Board):
+	def piece_symbols(piece: chess.PieceType):
+		PIECE_SYMBOLS = [
+			None,
+			# TRANSLATORS: This is the letter to use for a pawn.
+			gettext.gettext('p'),
+			# TRANSLATORS: This is the letter to use for a knight.
+			gettext.gettext('n'),
+			# TRANSLATORS: This is the letter to use for a bishop.
+			gettext.gettext('b'),
+			# TRANSLATORS: This is the letter to use for a rook.
+			gettext.gettext('r'),
+			# TRANSLATORS: This is the letter to use for a queen.
+			gettext.gettext('q'),
+			# TRANSLATORS: This is the letter to use for a king.
+			gettext.gettext('k'),
+		]
+		return typing.cast(str, PIECE_SYMBOLS[piece])
+
 
 class Page:
 	def __init__(self) -> None:
