@@ -11,6 +11,7 @@ import shutil
 import hashlib
 from typing import Any, Literal
 import chess.pgn
+import chess.svg
 from chess import Color, Board
 from chess.svg import Arrow
 from anki.collection import Collection
@@ -110,6 +111,32 @@ class Page:
 		
 		return rendered;
 
+	def render_svg(self, path: str) -> None:
+		orientation = config['colour'] == chess.WHITE
+		check = self.board.king(self.turn)
+
+		if config['pgn']['csl_is_circle']:
+			arrows = self.arrows.copy()
+
+			for square, colour in self.fills.items():
+				arrows.append(Arrow(tail=square, head=square, color=colour))
+			svg = chess.svg.board(
+				self.board,
+				orientation=orientation,
+				arrows=arrows,
+				check=check
+			)
+		else:
+			svg = chess.svg.board(
+				self.board,
+				orientation=orientation,
+				arrows=arrows,
+				fill=self.fills,
+				check=check
+			)
+
+		with open(path, 'w') as file:
+			file.write(svg)
 
 class Answer(Page):
 	def __init__(self,
@@ -149,8 +176,11 @@ class Answer(Page):
 
 
 class Question(Page):
-	def __init__(self, moves: str) -> None:
+	def __init__(self,
+			  moves: str,
+			  turn: Color) -> None:
 		self.moves = moves
+		self.turn = turn
 		self.answers: [Answer] = []
 		Page.__init__(self)
 	
@@ -193,11 +223,19 @@ class PatchSet():
 
 		col.remove_notes(self.deletes)
 
-		for image_path in self.image_deletes:
-			print(f"must delete {image_path}")
+		for path in self.image_deletes:
+			if os.path.isdir(path):
+				shutil.rmtree(path, ignore_errors=True)
+			else:
+				try:
+					os.unlink(path)
+				except:
+					pass
 		
+		base_path = os.path.join(config['anki']['path'], 'collection.media')
 		for image_path, page in self.image_inserts.items():
-			print(f"must create image '{image_path}' for page type {page.object_id()}")
+			path = os.path.join(base_path, image_path)
+			page.render_svg(path)
 
 
 class PositionVisitor(chess.pgn.BaseVisitor):
@@ -216,7 +254,8 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 			)
 
 			if not card in cards:
-				cards[card] = Question(card)
+				turn = not board.turn
+				cards[card] = Question(card, turn=turn)
 				if hasattr(self, 'accumulated_comments'):
 					for comment in self.accumulated_comments:
 						cards[card].add_comment(comment)
@@ -325,7 +364,6 @@ def compute_patch_set(
 		
 		# Questions always get a board image.
 		image_path = question.image_path()
-		print(f"Question image path: '{image_path}'")
 		if image_path in image_deletes:
 			image_deletes.remove(image_path)
 		else:
@@ -339,7 +377,8 @@ def compute_patch_set(
 				updates.append(note)
 		else:
 			note = Note(col, model)
-			note.fields[0] = key
+			card = cards[key]
+			note.fields[0] = card.render()
 			note.fields[1] = answer
 			inserts.append(note)
 		
@@ -376,11 +415,11 @@ if __name__ == '__main__':
 			sys.exit(1)
 
 	config = read_config()
-	cards = {}
-	images = {}
+	cards: [str, Page] = {}
+	images: [str, str] = {}
 	initial = chess.Board()
 	read_study(sys.argv[2])
-	print_cards(cards)
+	#print_cards(cards)
 	col = read_collection(config['anki']['path'])
 
 	notetype = config['anki']['notetype']
@@ -396,4 +435,3 @@ if __name__ == '__main__':
 	current_notes = read_notes(col)
 	patch_set = compute_patch_set(cards, current_notes, model)
 	patch_set.patch(col, deck)
-
