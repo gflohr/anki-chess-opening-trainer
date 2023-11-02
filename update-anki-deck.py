@@ -79,11 +79,13 @@ class Page:
 			self.comments.append(comment)
 
 	def need_board_image(self) -> bool:
-		return False
+		return True
 
 	def image_path(self) -> str:
 		path = ''
-		if self.need_board_image() and self.board:
+		if self.need_board_image():
+			if not self.board:
+				self.board = Board()
 			name = self.board.fen()
 			name += '-' + self.object_id()
 			if len(self.arrows) or len(self.fills):
@@ -186,6 +188,12 @@ class PatchSet():
 			col.update_note(note)
 
 		col.remove_notes(self.deletes)
+
+		for image_path in self.image_deletes:
+			print(f"must delete {image_path}")
+		
+		for image_path, page in self.image_inserts.items():
+			print(f"must create image '{image_path}' for page type {page.object_id()}")
 
 
 class PositionVisitor(chess.pgn.BaseVisitor):
@@ -293,7 +301,7 @@ def compute_patch_set(
 	updates: list[Note] = []
 	deletes: list[int] = []
 	image_inserts: [str, Page] = {}
-	image_deletes: list[os.DirEntry] = []
+	image_deletes: list[str] = []
 
 	media_path = os.path.join(config['anki']['path'], 'collection.media', 'opening-trainer')
 	for path in os.scandir(media_path):
@@ -310,18 +318,33 @@ def compute_patch_set(
 
 	for key, question in wanted.items():
 		answer = question.render_answers()
+		
+		# Questions always get a board image.
+		image_path = question.image_path()
+		print(f"Question image path: '{image_path}'")
+		if image_path in image_deletes:
+			image_deletes.remove(image_path)
+		else:
+			image_inserts[image_path] = question
+
 		if key in got:
 			used.append(key)
 			note = got[key]
 			if not note.fields[1] == answer:
 				note.fields[1] = answer
 				updates.append(note)
-
 		else:
 			note = Note(col, model)
 			note.fields[0] = key
 			note.fields[1] = answer
 			inserts.append(note)
+		
+		for answer in question.answers:
+			image_path = answer.image_path()
+			if image_path in image_deletes:
+				image_deletes.remove(image_path)
+			elif image_path:
+				image_inserts[image_path] = answer
 
 	for key, note in got.items():
 		if not key in used:
