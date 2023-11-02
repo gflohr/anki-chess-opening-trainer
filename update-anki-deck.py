@@ -112,7 +112,7 @@ class Page:
 		return rendered;
 
 	def render_svg(self, path: str) -> None:
-		orientation = config['colour'] == chess.WHITE
+		orientation = config['colour'] == 'white'
 		check = self.board.king(self.turn)
 
 		if config['pgn']['csl_is_circle']:
