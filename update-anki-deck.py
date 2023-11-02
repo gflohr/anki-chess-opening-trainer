@@ -88,8 +88,12 @@ class Page:
 				self.board = Board()
 			name = self.board.fen()
 			name += '-' + self.object_id()
-			if len(self.arrows) or len(self.fills):
-				name += '-annotated'
+
+			for arrow in self.arrows:
+				name += '-' + arrow.pgn()
+			for square in sorted(self.fills.keys()):
+				name += '-' + square + '-' + self.fills[square]
+			
 			name = hashlib.sha1(name.encode('ascii')).hexdigest() + '.svg'
 			path = os.path.join('opening-trainer', name)
 		
