@@ -425,17 +425,10 @@ if __name__ == '__main__':
 		sys.exit(1)
 
 	colour_arg = sys.argv[1].lower()[0]
-
-	match colour_arg:
-		case 'w':
-			colour = chess.WHITE
-		case 'b':
-			colour = chess.BLACK
-		case 's':
-			colour = chess.BLACK
-		case _:
-			print(f'Invalid colour "{sys.argv[1]}".')
-			sys.exit(1)
+	if colour_arg == 'w':
+		colour = chess.WHITE
+	else:
+		colour = chess.BLACK
 
 	config = read_config()
 	cards: [str, Page] = {}
