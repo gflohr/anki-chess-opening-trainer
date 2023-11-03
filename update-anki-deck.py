@@ -451,6 +451,11 @@ if __name__ == '__main__':
 		raise Exception(f"Note type '{notetype}' does not exist")
 
 	deck_name = config['anki']['deck']
+	if (colour == chess.WHITE):
+		deck_name = config['anki']['decks']['white']
+	else:
+		deck_name = config['anki']['decks']['black']
+	
 	deck = col.decks.by_name(deck_name)
 	if not deck:
 		raise Exception(f"Deck '{deck_name}' does not exist")
