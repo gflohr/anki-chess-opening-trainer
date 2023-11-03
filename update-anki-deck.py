@@ -10,6 +10,7 @@ import yaml
 import shutil
 import hashlib
 import typing
+import locale
 from typing import Any, Literal
 import chess.pgn
 import chess.svg
@@ -30,25 +31,24 @@ ARROWS_REGEX = re.compile(r"""
 
 WS_REGEX = re.compile('[ \t\n\v\\f]')
 
-class InternationalBoard(chess.Board):
-	def piece_symbols(piece: chess.PieceType):
-		PIECE_SYMBOLS = [
-			None,
-			# TRANSLATORS: This is the letter to use for a pawn.
-			gettext.gettext('p'),
-			# TRANSLATORS: This is the letter to use for a knight.
-			gettext.gettext('n'),
-			# TRANSLATORS: This is the letter to use for a bishop.
-			gettext.gettext('b'),
-			# TRANSLATORS: This is the letter to use for a rook.
-			gettext.gettext('r'),
-			# TRANSLATORS: This is the letter to use for a queen.
-			gettext.gettext('q'),
-			# TRANSLATORS: This is the letter to use for a king.
-			gettext.gettext('k'),
-		]
-		return typing.cast(str, PIECE_SYMBOLS[piece])
-
+# Monkey-patch the piece_symbol() method.
+def i18n_piece_symbol(piece: chess.PieceType):
+	PIECE_SYMBOLS = [
+		None,
+		# TRANSLATORS: This is the letter to use for a pawn.
+		gettext.gettext('p'),
+		# TRANSLATORS: This is the letter to use for a knight.
+		gettext.gettext('n'),
+		# TRANSLATORS: This is the letter to use for a bishop.
+		gettext.gettext('b'),
+		# TRANSLATORS: This is the letter to use for a rook.
+		gettext.gettext('r'),
+		# TRANSLATORS: This is the letter to use for a queen.
+		gettext.gettext('q'),
+		# TRANSLATORS: This is the letter to use for a king.
+		gettext.gettext('k'),
+	]
+	return typing.cast(str, PIECE_SYMBOLS[piece])
 
 class Page:
 	def __init__(self) -> None:
@@ -104,7 +104,7 @@ class Page:
 		path = ''
 
 		if not self.board:
-			self.board = Board()
+			self.board = InternationalBoard()
 		name = self.board.fen()
 		name += '-' + self.object_id()
 
@@ -179,7 +179,7 @@ class Answer(Page):
 	def render(self) -> str:
 		rendered = str(self.fullmove_number) + '.'
 		if not self.turn:
-			answer += '...'
+			rendered += '...'
 		rendered += ' ' + self.move
 		rendered += self.extra_html()
 
@@ -431,11 +431,19 @@ if __name__ == '__main__':
 		colour = chess.BLACK
 
 	config = read_config()
+
+	localedir = os.path.join(os.path.dirname(__file__), 'locale')
+	set_locale = locale.setlocale(locale.LC_ALL, config['locale'])
+	gettext.textdomain('opening-trainer')
+	gettext.bindtextdomain('opening-trainer', localedir)
+
+	chess.piece_symbol = i18n_piece_symbol
+
 	cards: [str, Page] = {}
 	images: [str, str] = {}
 	initial = chess.Board()
 	read_study(sys.argv[2])
-	#print_cards(cards)
+	print_cards(cards)
 	col = read_collection(config['anki']['path'])
 
 	notetype = config['anki']['notetype']
