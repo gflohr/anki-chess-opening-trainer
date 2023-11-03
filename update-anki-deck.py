@@ -129,7 +129,6 @@ class Page:
 		return rendered;
 
 	def render_svg(self, path: str) -> None:
-		orientation = config['colour'] == 'white'
 		if self.board.ply():
 			lastmove = self.board.peek()
 		else:
@@ -142,12 +141,12 @@ class Page:
 		if config['pgn']['csl_is_circle']:
 			arrows = self.arrows.copy()
 
-			for square, colour in self.fills.items():
-				arrows.append(Arrow(tail=square, head=square, color=colour))
+			for square, side in self.fills.items():
+				arrows.append(Arrow(tail=square, head=square, color=side))
 			svg = chess.svg.board(
 				self.board,
 				lastmove=lastmove,
-				orientation=orientation,
+				orientation=colour,
 				arrows=arrows,
 				check=check
 			)
