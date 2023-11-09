@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from __future__ import annotations
 
 import gettext
@@ -36,17 +34,17 @@ def i18n_piece_symbol(piece: chess.PieceType):
 	PIECE_SYMBOLS = [
 		None,
 		# TRANSLATORS: This is the letter to use for a pawn.
-		gettext.gettext('p'),
+		_('p'),
 		# TRANSLATORS: This is the letter to use for a knight.
-		gettext.gettext('n'),
+		_('n'),
 		# TRANSLATORS: This is the letter to use for a bishop.
-		gettext.gettext('b'),
+		_('b'),
 		# TRANSLATORS: This is the letter to use for a rook.
-		gettext.gettext('r'),
+		_('r'),
 		# TRANSLATORS: This is the letter to use for a queen.
-		gettext.gettext('q'),
+		_('q'),
 		# TRANSLATORS: This is the letter to use for a king.
-		gettext.gettext('k'),
+		_('k'),
 	]
 	return typing.cast(str, PIECE_SYMBOLS[piece])
 
@@ -114,7 +112,7 @@ class Page:
 			name += '-' + str(square) + '-' + self.fills[square]
 		
 		name = hashlib.sha1(name.encode('ascii')).hexdigest() + '.svg'
-		path = os.path.join('opening-trainer', name)
+		path = f'opening-trainer-' + name
 		
 		return path;
 
@@ -187,8 +185,8 @@ class Answer(Page):
 	def find(self, others: list[Answer]) -> bool:
 		for answer in others:
 			if (answer.move == self.move
-	   		    and answer.fullmove_number == self.fullmove_number
-			    and answer.turn == self.turn):
+	   			and answer.fullmove_number == self.fullmove_number
+				and answer.turn == self.turn):
 				return True
 		
 		return False
@@ -264,12 +262,23 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 	def visit_move(self, board, move) -> chess.Board:
 		if board.turn == colour:
 			if board.ply():
+				saved_piece_symbol = chess.piece_symbol
+				chess.piece_symbol = i18n_piece_symbol
 				text = initial.variation_san(board.move_stack)
+				chess.piece_symbol = saved_piece_symbol
 			else:
-				text = gettext.gettext('Moves from starting position?')
+				text = _('Moves from starting position?')
 			answer_board = board.copy()
+			saved_piece_symbol = chess.piece_symbol
+			chess.piece_symbol = i18n_piece_symbol
 			san = answer_board.san(move)
+			chess.piece_symbol = saved_piece_symbol
 			answer_board.push(move)
+			fen = answer_board.fen
+			if fen in seen:
+				# Already seen.
+				return board
+
 			answer = Answer(
 				san,
 				fullmove_number = board.fullmove_number,
@@ -286,7 +295,7 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 						self.accumulated_comments = []
 				cards[text].set_board(board.copy())
 			elif answer.find(cards[text].answers):
-				# Already seen
+				# Already seen.  Is this redundant?
 				return board
 
 			cards[text].add_answer(answer)
@@ -342,10 +351,6 @@ def read_notes(col: Collection) -> dict[str, Note]:
 	model = col.models.by_name(notetype)
 	if not model:
 		raise Exception(f"Note type '{notetype}' does not exist")
-	deck_name = config['anki']['deck']
-	deck = col.decks.by_name(deck_name)
-	if not deck:
-		raise Exception(f"Deck '{deck_name}' does not exist")
 	deck_id = deck['id']
 
 	notes = {}
@@ -368,11 +373,12 @@ def compute_patch_set(
 	image_inserts: [str, Page] = {}
 	image_deletes: list[str] = []
 
-	media_path = os.path.join(config['anki']['path'], 'collection.media', 'opening-trainer')
+	media_path = os.path.join(config['anki']['path'], 'collection.media')
 	for path in os.scandir(media_path):
-		# Just remember everything, even subdirectories.  That will later clean
-		# them up automatically.
-		image_deletes.append(path.path)
+		if not os.path.isdir(media_path):
+			filename = os.path.basename(path)
+			if re.match('^[0-9a-f]{45}\.svg', filename):
+				image_deletes.append(path.path)
 
 	patchSet = PatchSet(
 		inserts=inserts,
@@ -432,12 +438,10 @@ if __name__ == '__main__':
 	config = read_config()
 
 	localedir = os.path.join(os.path.dirname(__file__), 'locale')
-	set_locale = locale.setlocale(locale.LC_ALL, config['locale'])
-	gettext.textdomain('opening-trainer')
-	gettext.bindtextdomain('opening-trainer', localedir)
+	t = gettext.translation('opening-trainer', localedir=localedir, languages=[config['locale']])
+	t.install()
 
-	chess.piece_symbol = i18n_piece_symbol
-
+	seen: [str, str] = {}
 	cards: [str, Page] = {}
 	images: [str, str] = {}
 	initial = chess.Board()
@@ -450,7 +454,6 @@ if __name__ == '__main__':
 	if not model:
 		raise Exception(f"Note type '{notetype}' does not exist")
 
-	deck_name = config['anki']['deck']
 	if (colour == chess.WHITE):
 		deck_name = config['anki']['decks']['white']
 	else:

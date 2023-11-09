@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2023-11-02 21:17+0200\n"
+"POT-Creation-Date: 2023-11-09 12:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,32 +18,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. TRANSLATORS: This is the letter to use for a pawn.
-#: ../update-anki-deck.py:38
+#: ../update-anki-deck.py:37
 msgid "p"
 msgstr ""
 
 #. TRANSLATORS: This is the letter to use for a knight.
-#: ../update-anki-deck.py:40
+#: ../update-anki-deck.py:39
 msgid "n"
 msgstr ""
 
 #. TRANSLATORS: This is the letter to use for a bishop.
-#: ../update-anki-deck.py:42
+#: ../update-anki-deck.py:41
 msgid "b"
 msgstr ""
 
 #. TRANSLATORS: This is the letter to use for a rook.
-#: ../update-anki-deck.py:44
+#: ../update-anki-deck.py:43
 msgid "r"
 msgstr ""
 
 #. TRANSLATORS: This is the letter to use for a queen.
-#: ../update-anki-deck.py:46
+#: ../update-anki-deck.py:45
 msgid "q"
 msgstr ""
 
 #. TRANSLATORS: This is the letter to use for a king.
-#: ../update-anki-deck.py:48
+#: ../update-anki-deck.py:47
 msgid "k"
 msgstr ""
 

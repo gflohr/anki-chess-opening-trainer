@@ -1,17 +1,17 @@
-# German translations for opening-trainer
+# English translations for PACKAGE package.
 # Copyright (C) 2023 Guido Flohr <http://www.guido-flohr.net>
-# This file is distributed under the same license as the opening-trainer package.
+# This file is distributed under the same license as the PACKAGE package.
 # Guido Flohr <guido.flohr@cantanea.com>, 2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: opening-trainer 0.1.1\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
 "POT-Creation-Date: 2023-11-09 12:22+0100\n"
-"PO-Revision-Date: 2023-11-02 20:50+0200\n"
+"PO-Revision-Date: 2023-11-09 12:21+0100\n"
 "Last-Translator: Guido Flohr <guido.flohr@cantanea.com>\n"
-"Language-Team: German\n"
-"Language: de\n"
+"Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,27 +20,27 @@ msgstr ""
 #. TRANSLATORS: This is the letter to use for a pawn.
 #: ../update-anki-deck.py:37
 msgid "p"
-msgstr "b"
+msgstr "p"
 
 #. TRANSLATORS: This is the letter to use for a knight.
 #: ../update-anki-deck.py:39
 msgid "n"
-msgstr "s"
+msgstr "n"
 
 #. TRANSLATORS: This is the letter to use for a bishop.
 #: ../update-anki-deck.py:41
 msgid "b"
-msgstr "l"
+msgstr "b"
 
 #. TRANSLATORS: This is the letter to use for a rook.
 #: ../update-anki-deck.py:43
 msgid "r"
-msgstr "t"
+msgstr "r"
 
 #. TRANSLATORS: This is the letter to use for a queen.
 #: ../update-anki-deck.py:45
 msgid "q"
-msgstr "d"
+msgstr "q"
 
 #. TRANSLATORS: This is the letter to use for a king.
 #: ../update-anki-deck.py:47
@@ -49,4 +49,4 @@ msgstr "k"
 
 #: ../update-anki-deck.py:270
 msgid "Moves from starting position?"
-msgstr "Züge von der Grundstellung?"
+msgstr "Moves from starting position?"
