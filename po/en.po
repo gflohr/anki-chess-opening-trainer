@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2023-11-09 12:22+0100\n"
+"POT-Creation-Date: 2023-11-09 13:39+0100\n"
 "PO-Revision-Date: 2023-11-09 12:21+0100\n"
 "Last-Translator: Guido Flohr <guido.flohr@cantanea.com>\n"
 "Language-Team: English\n"
@@ -50,3 +50,7 @@ msgstr "k"
 #: ../update-anki-deck.py:270
 msgid "Moves from starting position?"
 msgstr "Moves from starting position?"
+
+#: ../__init__.py:15
+msgid "Opening Trainer"
+msgstr ""
