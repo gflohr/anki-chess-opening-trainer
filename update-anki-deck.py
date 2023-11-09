@@ -8,7 +8,6 @@ import yaml
 import shutil
 import hashlib
 import typing
-import locale
 from typing import Any, Literal
 import chess.pgn
 import chess.svg
@@ -132,7 +131,7 @@ class Page:
 		else:
 			lastmove = None
 		if (self.board.is_check()):
-			check = self.board.king(self.turn)
+			check = self.board.king(not self.turn)
 		else:
 			check = None
 
