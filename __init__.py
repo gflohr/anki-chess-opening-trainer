@@ -3,12 +3,11 @@ import os
 import anki
 from aqt import mw
 from aqt.utils import qconnect
-from aqt.qt import QAction, QDialog
-
+from aqt.qt import QAction
+from .importer import ImportDialog
 
 def showImportDialog() -> None:
-	dlg = QDialog(mw)
-	dlg.setWindowTitle(_('Opening Trainer'))
+	dlg = ImportDialog()
 	dlg.exec()
 
 def initI18N() -> None:
@@ -30,6 +29,7 @@ def addMenuItem():
 	qconnect(action.triggered, showImportDialog)
 	# and add it to the tools menu
 	mw.form.menuTools.addAction(action)
+
 
 initI18N()
 addMenuItem()
