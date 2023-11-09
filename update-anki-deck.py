@@ -6,94 +6,18 @@ import re
 import sys
 import yaml
 import shutil
-import typing
-from typing import Any, Literal
+from typing import Any
 import chess.pgn
 import chess.svg
-from chess import Color, Board, BaseVisitor
+from chess import Color
 from anki.collection import Collection
 from anki.notes import Note
 from anki.decks import Deck
 
 from page import Page
+from question import Question
+from visitor import PositionVisitor
 
-# Monkey-patch the piece_symbol() method.
-def i18n_piece_symbol(piece: chess.PieceType):
-	PIECE_SYMBOLS = [
-		None,
-		# TRANSLATORS: This is the letter to use for a pawn.
-		_('p'),
-		# TRANSLATORS: This is the letter to use for a knight.
-		_('n'),
-		# TRANSLATORS: This is the letter to use for a bishop.
-		_('b'),
-		# TRANSLATORS: This is the letter to use for a rook.
-		_('r'),
-		# TRANSLATORS: This is the letter to use for a queen.
-		_('q'),
-		# TRANSLATORS: This is the letter to use for a king.
-		_('k'),
-	]
-	return typing.cast(str, PIECE_SYMBOLS[piece])
-
-class Answer(Page):
-	def __init__(self,
-			  move: str,
-			  fullmove_number: int,
-			  turn: Color,
-			  board: Board) -> None:
-		self.move = move
-		self.fullmove_number = fullmove_number
-		self.turn = turn
-		Page.__init__(self, colour, config['pgn']['csl_is_circle'])
-		self.set_board(board)
-
-	def render(self) -> str:
-		rendered = str(self.fullmove_number) + '.'
-		if not self.turn:
-			rendered += '...'
-		rendered += ' ' + self.move
-		rendered += self.extra_html()
-
-		return rendered
-
-	def find(self, others: list[Answer]) -> bool:
-		for answer in others:
-			if (answer.move == self.move
-	   			and answer.fullmove_number == self.fullmove_number
-				and answer.turn == self.turn):
-				return True
-		
-		return False
-
-	def object_id(self) -> str:
-		return 'a'
-
-
-class Question(Page):
-	def __init__(self,
-			  moves: str,
-			  turn: Color) -> None:
-		self.moves = moves
-		self.turn = turn
-		self.answers: [Answer] = []
-		Page.__init__(self, colour, config['pgn']['csl_is_circle'])
-	
-	def add_answer(self, answer: Answer) -> None:
-		self.answers.append(answer)
-
-	def render(self) -> str:
-		rendered = self.moves
-		rendered += self.extra_html()
-
-		return rendered
-
-	def render_answers(self) -> str:
-		lines = list(map(Answer.render, self.answers))
-		return '<br>'.join(lines)
-
-	def object_id(self) -> str:
-		return 'q'
 
 class PatchSet():
 	def __init__(self,
@@ -133,66 +57,6 @@ class PatchSet():
 			page.render_svg(path)
 
 
-class PositionVisitor(chess.pgn.BaseVisitor):
-	def visit_move(self, board, move) -> chess.Board:
-		if board.turn == colour:
-			if board.ply():
-				saved_piece_symbol = chess.piece_symbol
-				chess.piece_symbol = i18n_piece_symbol
-				text = initial.variation_san(board.move_stack)
-				chess.piece_symbol = saved_piece_symbol
-			else:
-				text = _('Moves from starting position?')
-			answer_board = board.copy()
-			saved_piece_symbol = chess.piece_symbol
-			chess.piece_symbol = i18n_piece_symbol
-			san = answer_board.san(move)
-			chess.piece_symbol = saved_piece_symbol
-			answer_board.push(move)
-			fen = answer_board.fen
-			if fen in seen:
-				# Already seen.
-				return board
-
-			answer = Answer(
-				san,
-				fullmove_number = board.fullmove_number,
-				turn=board.turn,
-				board=answer_board
-			)
-
-			if not text in cards:
-				turn = not board.turn
-				cards[text] = Question(text, turn=turn)
-				if hasattr(self, 'accumulated_comments'):
-					for comment in self.accumulated_comments:
-						cards[text].add_comment(comment)
-						self.accumulated_comments = []
-				cards[text].set_board(board.copy())
-			elif answer.find(cards[text].answers):
-				# Already seen.  Is this redundant?
-				return board
-
-			cards[text].add_answer(answer)
-			self.my_move = True
-			self.last_text = text
-		else:
-			self.accumulated_comments = []
-			self.my_move = False
-
-		return board
-
-	def visit_comment(self, comment: str) -> None:
-		question = cards[self.last_text]
-		if self.my_move:
-			question.answers[-1].add_comment(comment)
-		elif hasattr(self, 'accumulated_comments'):
-			self.accumulated_comments.append(comment)
-
-	def result(self) -> Literal[True]:
-		return True
-
-
 def read_config() -> dict[str, Any]:
 	with open('config.yaml', 'r') as file:
 		config = yaml.safe_load(file)
@@ -201,20 +65,11 @@ def read_config() -> dict[str, Any]:
 
 def read_study(filename: str) -> None:
 	study_pgn = open(filename)
-	def make_visitor() -> BaseVisitor:
-		return PositionVisitor()
+	def get_visitor() -> chess.pgn.BaseVisitor:
+		return visitor
 
-	while chess.pgn.read_game(study_pgn, Visitor=PositionVisitor):
+	while chess.pgn.read_game(study_pgn, Visitor=get_visitor):
 		pass
-
-
-def print_cards(cards: dict[str, Note]) -> None:
-	for question in cards.values():
-		print(f'Q: {question.render()}')
-		print(f'A: Playable moves:')
-
-		print(question.render_answers())
-		print()
 
 
 def read_collection(dir: str) -> Collection:
@@ -243,7 +98,8 @@ def read_notes(col: Collection) -> dict[str, Note]:
 def compute_patch_set(
 		wanted: dict[str, Question],
 		got: dict[str, Note],
-		model: Any) -> PatchSet:
+		model: Any,
+	) -> PatchSet:
 	used: list[str] = []
 	inserts: list[Note] = []
 	updates: list[Note] = []
@@ -283,7 +139,7 @@ def compute_patch_set(
 				updates.append(note)
 		else:
 			note = Note(col, model)
-			card = cards[key]
+			card = wanted[key]
 			note.fields[0] = card.render()
 			note.fields[1] = answer
 			inserts.append(note)
@@ -319,12 +175,10 @@ if __name__ == '__main__':
 	t = gettext.translation('opening-trainer', localedir=localedir, languages=[config['locale']])
 	t.install()
 
-	seen: [str, str] = {}
-	cards: [str, Page] = {}
-	images: [str, str] = {}
-	initial = chess.Board()
+	visitor = PositionVisitor(colour=colour, csl_is_circle=config['pgn']['csl_is_circle'])
+	# FIXME! Read multiple files!
 	read_study(sys.argv[2])
-	print_cards(cards)
+	visitor.print_cards()
 	col = read_collection(config['anki']['path'])
 
 	notetype = config['anki']['notetype']
@@ -342,5 +196,5 @@ if __name__ == '__main__':
 		raise Exception(f"Deck '{deck_name}' does not exist")
 
 	current_notes = read_notes(col)
-	patch_set = compute_patch_set(cards, current_notes, model)
+	patch_set = compute_patch_set(visitor.cards, current_notes, model)
 	patch_set.patch(col, deck)
