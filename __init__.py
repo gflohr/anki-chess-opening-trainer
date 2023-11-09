@@ -4,7 +4,7 @@ import anki
 from aqt import mw
 from aqt.utils import qconnect
 from aqt.qt import QAction
-from .importer import ImportDialog
+from .importDialog import ImportDialog
 
 def showImportDialog() -> None:
 	dlg = ImportDialog()
