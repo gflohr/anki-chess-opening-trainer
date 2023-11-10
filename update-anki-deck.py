@@ -135,12 +135,9 @@ if __name__ == '__main__':
 	t = gettext.translation('opening-trainer', localedir=localedir, languages=[config['locale']])
 	t.install()
 
-	visitor = PositionVisitor(colour=colour, csl_is_circle=config['pgn']['csl_is_circle'])
-	# FIXME! Read multiple files!
-	read_study(sys.argv[2])
-	visitor.print_cards()
 	col = read_collection(config['anki']['path'])
 
+	# FIXME! The notetype must also be asked from the import dialog!
 	notetype = config['anki']['notetype']
 	model = col.models.by_name(notetype)
 	if not model:
@@ -156,5 +153,10 @@ if __name__ == '__main__':
 		raise Exception(f"Deck '{deck_name}' does not exist")
 
 	current_notes = read_notes(col)
+
+	visitor = PositionVisitor(colour=colour, csl_is_circle=config['pgn']['csl_is_circle'])
+	for filename in sys.argv[2:]:
+		read_study(filename)
+	visitor.print_cards()
 	patch_set = compute_patch_set(visitor.cards, current_notes, model)
 	patch_set.patch(col, deck)
