@@ -8,11 +8,11 @@ class Question(Page):
 			  moves: str,
 			  turn: Color,
 			  colour: Color,
-			  csl_is_circle: bool) -> None:
+		) -> None:
 		self.moves = moves
 		self.turn = turn
 		self.answers: [Answer] = []
-		Page.__init__(self, colour=colour, csl_is_circle=csl_is_circle)
+		Page.__init__(self, colour=colour)
 	
 	def add_answer(self, answer: Answer) -> None:
 		self.answers.append(answer)

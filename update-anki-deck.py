@@ -154,7 +154,7 @@ if __name__ == '__main__':
 
 	current_notes = read_notes(col)
 
-	visitor = PositionVisitor(colour=colour, csl_is_circle=config['pgn']['csl_is_circle'])
+	visitor = PositionVisitor(colour=colour)
 	for filename in sys.argv[2:]:
 		read_study(filename)
 	visitor.print_cards()

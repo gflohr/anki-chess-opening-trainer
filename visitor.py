@@ -27,9 +27,8 @@ def i18n_piece_symbol(piece: chess.PieceType):
 	return typing.cast(str, PIECE_SYMBOLS[piece])
 
 class PositionVisitor(chess.pgn.BaseVisitor):
-	def __init__(self, colour, csl_is_circle):
+	def __init__(self, colour):
 		self.colour: Chess.color = colour
-		self.csl_is_circle: bool = csl_is_circle
 		self.initial = chess.Board()
 		self.seen: [str, str] = {}
 		self.cards: [str, Page] = {}
@@ -60,7 +59,6 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 				turn=board.turn,
 				board=answer_board,
 				colour=self.colour,
-				csl_is_circle=self.csl_is_circle,
 			)
 
 			if not text in self.cards:
@@ -69,7 +67,6 @@ class PositionVisitor(chess.pgn.BaseVisitor):
 					text,
 					turn=turn,
 					colour=self.colour,
-					csl_is_circle=self.csl_is_circle,
 				)
 				if hasattr(self, 'accumulated_comments'):
 					for comment in self.accumulated_comments:

@@ -10,12 +10,11 @@ class Answer(Page):
 			  fullmove_number: int,
 			  turn: Color,
 			  board: Board,
-			  colour: Color,
-			  csl_is_circle: bool) -> None:
+			  colour: Color) -> None:
 		self.move = move
 		self.fullmove_number = fullmove_number
 		self.turn = turn
-		Page.__init__(self, colour=colour, csl_is_circle=csl_is_circle)
+		Page.__init__(self, colour=colour)
 		self.set_board(board)
 
 	def render(self) -> str:

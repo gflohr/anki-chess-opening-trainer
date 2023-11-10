@@ -16,9 +16,8 @@ ARROWS_REGEX = re.compile(r"""
 WS_REGEX = re.compile('[ \t\n\v\\f]')
 
 class Page:
-	def __init__(self, colour: chess.Color, csl_is_circle: bool) -> None:
+	def __init__(self, colour: chess.Color) -> None:
 		self.colour = colour
-		self.csl_is_circle = csl_is_circle
 		self.comments: [str] = []
 		self.arrows: [Arrow] = []
 		self.fills: [int, str] = {}
@@ -105,27 +104,17 @@ class Page:
 		else:
 			check = None
 
-		if self.csl_is_circle:
-			arrows = self.arrows.copy()
+		arrows = self.arrows.copy()
 
-			for square, side in self.fills.items():
-				arrows.append(Arrow(tail=square, head=square, color=side))
-			svg = chess.svg.board(
-				self.board,
-				lastmove=lastmove,
-				orientation=self.colour,
-				arrows=arrows,
-				check=check
-			)
-		else:
-			svg = chess.svg.board(
-				self.board,
-				lastmove=lastmove,
-				orientation=orientation,
-				arrows=arrows,
-				fill=self.fills,
-				check=check
-			)
+		for square, side in self.fills.items():
+			arrows.append(Arrow(tail=square, head=square, color=side))
+		svg = chess.svg.board(
+			self.board,
+			lastmove=lastmove,
+			orientation=self.colour,
+			arrows=arrows,
+			check=check
+		)
 
 		with open(path, 'w') as file:
 			file.write(svg)
