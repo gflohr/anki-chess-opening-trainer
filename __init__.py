@@ -23,6 +23,7 @@ def initI18N() -> None:
 		languages=[lang])
 	t.install()
 
+
 def addMenuItem():
 	action = QAction(_('Opening Trainer'), mw)
 	# set it to call testFunction when it's clicked
