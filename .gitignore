@@ -1,3 +1,4 @@
 po/*.gmo
 /.vscode
 config.yaml
+/__pycache__
