@@ -34,8 +34,7 @@ class ImportDialog(QDialog):
 		self.layout.addWidget(self.deckCombo, 1, 1)
 		decknames: [str] = []
 		for deck in mw.col.decks.all():
-			if (deck['id'] != 1):
-				decknames.append(deck['name'])
+			decknames.append(deck['name'])
 		for deckname in sorted(decknames):
 			self.deckCombo.addItem(deckname)
 
@@ -45,9 +44,25 @@ class ImportDialog(QDialog):
 		self.colourCombo.addItem(_('White'))
 		self.colourCombo.addItem(_('Black'))
 
+		self.layout.addWidget(QLabel(_('Note type')), 3, 0)
+		self.modelCombo = QComboBox()
+		self.layout.addWidget(self.modelCombo, 3, 1)
+		modelnames: [str] = []
+		for model in mw.col.models.all():
+			modelnames.append(model['name'])
+		index = -1
+		current_index = -1
+		for modelname in sorted(modelnames):
+			self.modelCombo.addItem(modelname)
+			index += 1
+			if modelname == 'Basic':
+				current_index = index
+		if current_index >= 0:
+			self.modelCombo.setCurrentIndex(current_index)
+
 		QBtn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
 		self.buttonBox = QDialogButtonBox(QBtn)
-		self.layout.addWidget(self.buttonBox, 3, 0, 1, 3, alignment=Qt.AlignmentFlag.AlignRight)
+		self.layout.addWidget(self.buttonBox, 4, 0, 1, 3, alignment=Qt.AlignmentFlag.AlignRight)
 		self.buttonBox.accepted.connect(self.accept)
 		self.buttonBox.rejected.connect(self.reject)
 
