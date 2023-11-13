@@ -1,5 +1,6 @@
+import os
 from aqt import mw
-from aqt.utils import showInfo, showCritical
+from aqt.utils import showCritical
 from aqt.qt import (
 	Qt,
 	QDialog,
@@ -12,10 +13,12 @@ from aqt.qt import (
 	QFileDialog,
 )
 from pathlib import Path
+import sys
 
 class _Config():
 	def __init__(self):
 		config = mw.addonManager.getConfig(__name__)
+		print(f'loaded: {config}', file=sys.stderr)
 		col = mw.col
 
 		if('colour' in config
@@ -58,6 +61,27 @@ class _Config():
 			   and decks['black'] in col.decks.all()):
 				self.decks['black'] = decks['black']
 
+	def save(self, dlg: QDialog) -> None:
+		colourIndex = dlg.colourCombo.currentText()
+		if colourIndex == 0:
+			colour = 'white'
+		else:
+			colour = 'black'
+		self.colour = colour
+		self.notetype = dlg.modelCombo.currentText()
+		self.files[colour] = []
+		for i in range(dlg.fileList.count()):
+			self.files[colour].append(dlg.fileList.item(i).text())
+		self.decks[colour] = dlg.deckCombo.currentText()
+		config = {
+			'colour': self.colour,
+			'notetype': self.notetype,
+			'files': self.files,
+			'decks': self.decks,
+		}
+
+		print(f'saving: {config}', file=sys.stderr)
+		mw.addonManager.writeConfig(__name__, config)
 
 class ImportDialog(QDialog):
 	def __init__(self) -> None:
@@ -117,6 +141,7 @@ class ImportDialog(QDialog):
 
 	def _fillDialog(self) -> None:
 		config = self.config
+		print(config, file=sys.stderr)
 		colour = config.colour
 		if 'white' == colour:
 			self.colourCombo.setCurrentIndex(0)
@@ -141,13 +166,10 @@ class ImportDialog(QDialog):
 			self.fileList.addItem(filename)
 
 	def _acceptHandler(self) -> None:
-		filenames: [str] = []
-		lw = self.fileList
-		for i in range(lw.count() - 1):
-			filenames.append(lw.item(i))
-
-		if not len(filenames):
+		if not self.fileList.count():
 			raise Exception(_('No input files specified!'))
+		
+		self.config.save(self)
 
 	def accept(self) -> None:
 		try:
@@ -157,14 +179,14 @@ class ImportDialog(QDialog):
 			showCritical(str(e))
 		
 	def _selectInputFile(self) -> None:
-		selector = QFileDialog()
-		selector.setFileMode(QFileDialog.FileMode.ExistingFiles)
-		selector.setNameFilter(_('Portable Game Notation files (*.pgn)'))
+		if self.fileList.count():
+			dir = os.path.dirname(self.fileList.item(self.fileList.count() - 1))
+		else:
+			dir = None
+		selection = QFileDialog.getOpenFileNames(
+			self, _('Open PGN files'), dir, _('Portable Game Notation files (*.pgn)'))
+		filenames = selection[0]
 
-		if not selector.exec():
-			return
-		
-		filenames: [str] = selector.selectedFiles()
-		if filenames:
+		if len(filenames):
 			self.fileList.clear()
 			self.fileList.addItems([str(Path(filename)) for filename in filenames])
