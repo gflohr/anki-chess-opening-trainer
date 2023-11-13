@@ -1,6 +1,8 @@
 import os
+import time
 from aqt import mw
-from aqt.utils import showCritical
+from aqt.utils import showCritical, showInfo
+from aqt.operations import QueryOp
 from aqt.qt import (
 	Qt,
 	QDialog,
@@ -183,15 +185,25 @@ class ImportDialog(QDialog):
 		for filename in config.files[colour]:
 			self.fileList.addItem(filename)
 
-	def _acceptHandler(self) -> None:
-		if not self.fileList.count():
-			raise Exception(_('No input files specified!'))
-		
-		self.config.save(self)
-
 	def accept(self) -> None:
+		def _onSuccess(count: int) -> None:
+			showInfo(_('Import/Sync successfully finished'))
+
+		def _doImport(arg) -> int:
+			print(arg)
+			time.sleep(3.0)
+			return 42
+
 		try:
-			self._acceptHandler()
+			if not self.fileList.count():
+				raise Exception(_('No input files specified!'))
+			self.config.save(self)
+			op = QueryOp(
+				parent=mw,
+				op=_doImport,
+				success=_onSuccess,
+			)
+			op.with_progress().run_in_background()
 			super().accept()
 		except Exception as e:
 			showCritical(str(e))
