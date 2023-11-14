@@ -1,0 +1,12 @@
+{
+	"colour": "white",
+	"decks": {
+		"white": null,
+		"black": null
+	},
+	"files": {
+		"white": [],
+		"black": [] 
+	},
+	"notetype": "Basic"
+}
