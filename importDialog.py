@@ -20,6 +20,7 @@ import sys
 class _Config():
 	def __init__(self):
 		config = mw.addonManager.getConfig(__name__)
+		print(f'loaded: {config}', file=sys.stderr)
 		col = mw.col
 
 		if('colour' in config
@@ -64,8 +65,8 @@ class _Config():
 			   and decks['black'] in list(map(lambda d: d['name'], col.decks.all()))):
 				self.decks['black'] = decks['black']
 
-	def save(self, dlg: QDialog) -> None:
-		colourIndex = dlg.colourCombo.currentText()
+	def save(self, dlg: QDialog) -> dict:
+		colourIndex = dlg.colourCombo.currentIndex()
 		if colourIndex == 1:
 			colour = 'black'
 		else:
@@ -84,6 +85,8 @@ class _Config():
 		}
 
 		mw.addonManager.writeConfig(__name__, config)
+
+		return config
 
 class ImportDialog(QDialog):
 	def __init__(self) -> None:
@@ -186,21 +189,26 @@ class ImportDialog(QDialog):
 			self.fileList.addItem(filename)
 
 	def accept(self) -> None:
-		def _onSuccess(count: int) -> None:
-			showInfo(_('Import/Sync successfully finished'))
+		def _onSuccess(counts: [int, int, int]) -> None:
+			msgs = (
+				ngettext('%d note inserted.', '%d notes inserted.', counts[0]) % (counts[0]),
+				ngettext('%d note updated.', '%d notes updated.', counts[1]) % (counts[1]),
+				ngettext('%d note deleted.', '%d notes deleted.', counts[2]) % (counts[2]),
+			)
+			showInfo(' '.join(msgs))
 
-		def _doImport(arg) -> int:
-			print(arg)
+		def _doImport(config) -> [int, int, int]:
+			print(config)
 			time.sleep(3.0)
-			return 42
+			return [23, 1, 89]
 
 		try:
 			if not self.fileList.count():
 				raise Exception(_('No input files specified!'))
-			self.config.save(self)
+			config = self.config.save(self)
 			op = QueryOp(
 				parent=mw,
-				op=_doImport,
+				op=lambda config: _doImport(config),
 				success=_onSuccess,
 			)
 			op.with_progress().run_in_background()
@@ -210,7 +218,7 @@ class ImportDialog(QDialog):
 		
 	def _selectInputFile(self) -> None:
 		if self.fileList.count():
-			dir = os.path.dirname(self.fileList.item(self.fileList.count() - 1))
+			dir = os.path.dirname(self.fileList.item(self.fileList.count() - 1).text())
 		else:
 			dir = None
 		selection = QFileDialog.getOpenFileNames(

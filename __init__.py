@@ -21,7 +21,7 @@ def initI18N() -> None:
 		'opening-trainer',
 		localedir=localedir,
 		languages=[lang])
-	t.install()
+	t.install(names=['ngettext'])
 
 
 def addMenuItem():
