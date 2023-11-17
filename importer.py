@@ -56,7 +56,7 @@ class Importer:
 		for cid in col.decks.cids(deck_id):
 			card = col.get_card(cid)
 			note = card.note()
-			name = re.sub('<br>.*', '', note.fields[0])
+			name = re.sub('[ \t\r\n]*<.*', '', note.fields[0])
 			notes[name] = note
 
 		return notes
