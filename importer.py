@@ -73,10 +73,10 @@ class Importer:
 		model = self.model
 		media_path = self.collection.media.dir()
 		for path in os.scandir(media_path):
-			if not os.path.isdir(media_path):
+			if not os.path.isdir(path.path):
 				filename = os.path.basename(path)
-				if re.match('^[0-9a-f]{45}\.svg', filename):
-					image_deletes.append(path.path)
+				if re.match('^opening-trainer-[0-9a-f]{40}\.svg', filename):
+					image_deletes.append(filename)
 
 		patchSet = PatchSet(
 			inserts=inserts,

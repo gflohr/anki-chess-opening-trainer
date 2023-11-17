@@ -189,18 +189,20 @@ class ImportDialog(QDialog):
 			self.fileList.addItem(filename)
 
 	def accept(self) -> None:
-		def _onSuccess(counts: [int, int, int]) -> None:
+		def _onSuccess(counts: [int, int, int, int, int]) -> None:
 			msgs = (
 				ngettext('%d note inserted.', '%d notes inserted.', counts[0]) % (counts[0]),
 				ngettext('%d note updated.', '%d notes updated.', counts[1]) % (counts[1]),
 				ngettext('%d note deleted.', '%d notes deleted.', counts[2]) % (counts[2]),
+				ngettext('%d image created.', '%d images created.', counts[3]) % (counts[3]),
+				ngettext('%d image deleted.', '%d images deleted.', counts[4]) % (counts[4]),
 			)
 			showInfo(' '.join(msgs))
 
-		def _doImport(config) -> [int, int, int]:
+		def _doImport(config) -> [int, int, int, int, int]:
 			print(config)
 			time.sleep(3.0)
-			return [23, 1, 89]
+			return [23, 1, 89, 69, 3]
 
 		try:
 			if not self.fileList.count():
@@ -208,7 +210,7 @@ class ImportDialog(QDialog):
 			config = self.config.save(self)
 			op = QueryOp(
 				parent=mw,
-				op=lambda config: _doImport(config),
+				op=lambda: _doImport(config),
 				success=_onSuccess,
 			)
 			op.with_progress().run_in_background()

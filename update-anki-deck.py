@@ -62,6 +62,6 @@ if __name__ == '__main__':
 	print(ngettext('%d note inserted.', '%d notes inserted.', inserted) % (inserted))
 	print(ngettext('%d note updated.', '%d notes updated.', updated) % (updated))
 	print(ngettext('%d note deleted.', '%d notes deleted.', deleted) % (deleted))
-	print(ngettext('%d images inserted or updated.', '%d images inserted or updated.', images_inserted) % (images_inserted))
+	print(ngettext('%d images created.', '%d images created.', images_inserted) % (images_inserted))
 	print(ngettext('%d images deleted.', '%d images deleted.', images_deleted) % (images_deleted))
 

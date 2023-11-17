@@ -32,7 +32,8 @@ class PatchSet():
 
 		col.remove_notes(self.deletes)
 
-		for path in self.image_deletes:
+		for filename in self.image_deletes:
+			path = os.path.join(self.media_path, filename)
 			if os.path.isdir(path):
 				shutil.rmtree(path, ignore_errors=True)
 			else:
