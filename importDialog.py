@@ -199,8 +199,7 @@ class ImportDialog(QDialog):
 			)
 			showInfo(' '.join(msgs))
 
-		def _doImport(config) -> [int, int, int, int, int]:
-			print(config)
+		def _doImport(config, _unused) -> [int, int, int, int, int]:
 			time.sleep(3.0)
 			return [23, 1, 89, 69, 3]
 
@@ -210,7 +209,7 @@ class ImportDialog(QDialog):
 			config = self.config.save(self)
 			op = QueryOp(
 				parent=mw,
-				op=lambda: _doImport(config),
+				op=lambda _unused: _doImport(config, _unused),
 				success=_onSuccess,
 			)
 			op.with_progress().run_in_background()
