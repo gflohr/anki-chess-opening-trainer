@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
 	localedir = os.path.join(os.path.dirname(__file__), 'locale')
 	t = gettext.translation('opening-trainer', localedir=localedir, languages=[config['locale']])
-	t.install()
+	t.install(names=['ngettext'])
 
 	col = read_collection(config['anki']['path'])
 
@@ -58,4 +58,10 @@ if __name__ == '__main__':
 		notetype=notetype,
 	)
 
-	importer.run()
+	[inserted, updated, deleted, images_inserted, images_deleted] = importer.run()
+	print(ngettext('%d note inserted.', '%d notes inserted.', inserted) % (inserted))
+	print(ngettext('%d note updated.', '%d notes updated.', updated) % (updated))
+	print(ngettext('%d note deleted.', '%d notes deleted.', deleted) % (deleted))
+	print(ngettext('%d images inserted or updated.', '%d images inserted or updated.', images_inserted) % (images_inserted))
+	print(ngettext('%d images deleted.', '%d images deleted.', images_deleted) % (images_deleted))
+

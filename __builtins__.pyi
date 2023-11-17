@@ -1,0 +1,2 @@
+_ = str
+ngettext = str

@@ -23,7 +23,7 @@ class PatchSet():
 		self.image_deletes = image_deletes
 		self.media_path = media_path
 
-	def patch(self, col: Collection, deck: Deck):
+	def patch(self, col: Collection, deck: Deck) -> [int, int, int, int, int]:
 		deck_id = deck['id']
 		for note in self.inserts:
 			col.add_note(note=note, deck_id=deck_id)
@@ -44,3 +44,11 @@ class PatchSet():
 		for image_path, page in self.image_inserts.items():
 			path = os.path.join(self.media_path, image_path)
 			page.render_svg(path)
+		
+		return [
+			len(self.inserts),
+			len(self.updates),
+			len(self.deletes),
+			len(self.image_inserts),
+			len(self.image_deletes),
+		]

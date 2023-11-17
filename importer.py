@@ -32,13 +32,13 @@ class Importer:
 		self.visitor = PositionVisitor(colour=colour)
 		self.filenames = filenames
 
-	def run(self) -> None:
+	def run(self) -> [int, int, int]:
 		for filename in self.filenames:
 			self._read_study(filename)
 		self.visitor.print_cards()
 		current_notes = self._read_notes()
 		patch_set = self._compute_patch_set(current_notes)
-		patch_set.patch(self.collection, self.deck)
+		return patch_set.patch(self.collection, self.deck)
 
 	def _read_study(self, filename: str) -> None:
 		study_pgn = open(filename)
@@ -56,7 +56,7 @@ class Importer:
 		for cid in col.decks.cids(deck_id):
 			card = col.get_card(cid)
 			note = card.note()
-			name = note.fields[0]
+			name = re.sub('<br>.*', '', note.fields[0])
 			notes[name] = note
 
 		return notes
