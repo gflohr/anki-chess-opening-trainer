@@ -8,7 +8,6 @@ from patchset import PatchSet
 
 from visitor import PositionVisitor
 from page import Page
-from question import Question
 
 class Importer:
 	def __init__(self,
