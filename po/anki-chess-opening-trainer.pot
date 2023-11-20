@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2023-11-20 11:08+0200\n"
+"POT-Creation-Date: 2023-11-20 16:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,35 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: ../update-anki-deck.py:62 ../importDialog.py:195
+#: ../update-anki-deck.py:66 ../importDialog.py:195
 #, python-format
 msgid "%d note inserted."
 msgid_plural "%d notes inserted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../update-anki-deck.py:63 ../importDialog.py:196
+#: ../update-anki-deck.py:67 ../importDialog.py:196
 #, python-format
 msgid "%d note updated."
 msgid_plural "%d notes updated."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../update-anki-deck.py:64 ../importDialog.py:197
+#: ../update-anki-deck.py:68 ../importDialog.py:197
 #, python-format
 msgid "%d note deleted."
 msgid_plural "%d notes deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../update-anki-deck.py:65 ../importDialog.py:198
+#: ../update-anki-deck.py:69 ../importDialog.py:198
 #, python-format
 msgid "%d image created."
 msgid_plural "%d images created."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../update-anki-deck.py:66 ../importDialog.py:199
+#: ../update-anki-deck.py:70 ../importDialog.py:199
 #, python-format
 msgid "%d image deleted."
 msgid_plural "%d images deleted."
@@ -97,8 +97,8 @@ msgstr ""
 msgid "Portable Game Notation files (*.pgn)"
 msgstr ""
 
-#: ../__init__.py:34
-msgid "Opening Trainer"
+#: ../__init__.py:33
+msgid "Chess Opening Trainer"
 msgstr ""
 
 #. TRANSLATORS: This is the letter to use for a pawn.

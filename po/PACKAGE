@@ -5,7 +5,7 @@
 LINGUAS = en en-GB de
 
 # Textdomain for our package.
-TEXTDOMAIN = opening-trainer
+TEXTDOMAIN = anki-chess-opening-trainer
 
 # Initial copyright holder added to pot and po files.
 COPYRIGHT_HOLDER = Guido Flohr <http://www.guido-flohr.net>
