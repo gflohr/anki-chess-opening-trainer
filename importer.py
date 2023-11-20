@@ -35,7 +35,8 @@ class Importer:
 	def run(self) -> [int, int, int]:
 		for filename in self.filenames:
 			self._read_study(filename)
-		self.visitor.print_cards()
+		if hasattr(self.print):
+			self.visitor.print_cards()
 		current_notes = self._read_notes()
 		patch_set = self._compute_patch_set(current_notes)
 		return patch_set.patch(self.collection, self.deck)

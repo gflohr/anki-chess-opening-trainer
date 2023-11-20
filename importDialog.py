@@ -103,7 +103,7 @@ class ImportDialog(QDialog):
 		self.layout.addWidget(QLabel(_('Input Files')), 0, 0)
 		self.fileList = QListWidget()
 		self.layout.addWidget(self.fileList, 0, 1)
-		self.selectFileButton = QPushButton(_('Select file'))
+		self.selectFileButton = QPushButton(_('Select files'))
 		self.selectFileButton.clicked.connect(self._selectInputFile)
 		self.layout.addWidget(self.selectFileButton, 0, 2)
 
