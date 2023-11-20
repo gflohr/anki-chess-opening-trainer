@@ -1,5 +1,6 @@
 import os
-import time
+
+from importer import Importer
 from aqt import mw
 from aqt.utils import showCritical, showInfo
 from aqt.operations import QueryOp
@@ -15,12 +16,12 @@ from aqt.qt import (
 	QFileDialog,
 )
 from pathlib import Path
-import sys
 
 class _Config():
 	def __init__(self):
-		config = mw.addonManager.getConfig(__name__)
-		print(f'loaded: {config}', file=sys.stderr)
+		config = mw.addonManager.getConfig('opening-trainer')
+		if not config:
+			config = {}
 		col = mw.col
 
 		if('colour' in config
@@ -84,7 +85,7 @@ class _Config():
 			'decks': self.decks,
 		}
 
-		mw.addonManager.writeConfig(__name__, config)
+		mw.addonManager.writeConfig('opening-trainer', config)
 
 		return config
 
@@ -200,7 +201,13 @@ class ImportDialog(QDialog):
 			showInfo(' '.join(msgs))
 
 		def _doImport(config, _unused) -> [int, int, int, int, int]:
-			time.sleep(3.0)
+			importer = Importer(
+				collection=mw.col,
+				filenames=config['files'],
+				notetype=config['notetype'],
+				colour=config['colour'],
+				deck_name=config['decks'][config['colour']],
+			)
 			return [23, 1, 89, 69, 3]
 
 		try:

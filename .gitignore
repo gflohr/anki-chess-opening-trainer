@@ -2,3 +2,4 @@ po/*.gmo
 /.vscode
 config.yaml
 /__pycache__
+/meta.json

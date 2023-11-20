@@ -1,10 +1,16 @@
 import gettext
 import os
+import sys
 import anki
 from aqt import mw
 from aqt.utils import qconnect
 from aqt.qt import QAction
-from .importDialog import ImportDialog
+
+moduledir = os.path.dirname(__file__)
+sys.path.append(moduledir)
+sys.path.append(os.path.join(moduledir, 'lib'))
+
+from importDialog import ImportDialog
 
 def showImportDialog() -> None:
 	dlg = ImportDialog()
@@ -22,7 +28,6 @@ def initI18N() -> None:
 		localedir=localedir,
 		languages=[lang])
 	t.install(names=['ngettext'])
-
 
 def addMenuItem():
 	action = QAction(_('Opening Trainer'), mw)
