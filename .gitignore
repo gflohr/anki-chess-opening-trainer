@@ -4,3 +4,4 @@ config.yaml
 /__pycache__
 /meta.json
 /lib
+*.ankiaddon
