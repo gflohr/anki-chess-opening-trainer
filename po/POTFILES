@@ -1,2 +1,9 @@
 ../update-anki-deck.py
+../importDialog.py
+../answer.py
+../importer.py
+../patchset.py
+../question.py
 ../__init__.py
+../page.py
+../visitor.py
