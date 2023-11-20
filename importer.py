@@ -79,10 +79,16 @@ class Importer:
 		wanted = self.visitor.cards
 		model = self.model
 		media_path = self.collection.media.dir()
+		if self.colour:
+			colour = 'w'
+		else:
+			colour = 'b'
 		for path in os.scandir(media_path):
 			if not os.path.isdir(path.path):
 				filename = os.path.basename(path)
-				if re.match('^chess-opening-trainer-[0-9a-f]{40}\.svg', filename):
+				prefix = '^chess-opening-trainer-' + colour
+				regex = prefix + '-[0-9a-f]{40}\.svg'
+				if re.match(regex, filename):
 					image_deletes.append(filename)
 
 		patchSet = PatchSet(
@@ -103,16 +109,17 @@ class Importer:
 			else:
 				image_inserts[image_path] = question
 
+			rendered_question = wanted[key].render()
 			if key in got:
 				used.append(key)
 				note = got[key]
-				if not note.fields[1] == answer:
+				if not note.fields[0] == rendered_question or not note.fields[1] == answer:
+					note.fields[0] = rendered_question
 					note.fields[1] = answer
 					updates.append(note)
 			else:
 				note = Note(self.collection, model)
-				card = wanted[key]
-				note.fields[0] = card.render()
+				note.fields[0] = rendered_question
 				note.fields[1] = answer
 				inserts.append(note)
 			
