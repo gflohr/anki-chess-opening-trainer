@@ -33,6 +33,7 @@ class PositionVisitor(BaseVisitor):
 		self.initial = chess.Board()
 		self.seen: [str, str] = {}
 		self.cards: [str, Page] = {}
+		self.last_text = None
 
 	def visit_move(self, board, move) -> chess.Board:
 		if board.turn == self.colour:
@@ -88,11 +89,12 @@ class PositionVisitor(BaseVisitor):
 		return board
 
 	def visit_comment(self, comment: str) -> None:
-		question = self.cards[self.last_text]
-		if self.my_move:
-			question.answers[-1].add_comment(comment)
-		elif hasattr(self, 'accumulated_comments'):
-			self.accumulated_comments.append(comment)
+		if self.last_text:
+			question = self.cards[self.last_text]
+			if self.my_move:
+				question.answers[-1].add_comment(comment)
+			elif hasattr(self, 'accumulated_comments'):
+				self.accumulated_comments.append(comment)
 
 	def result(self) -> Literal[True]:
 		return True

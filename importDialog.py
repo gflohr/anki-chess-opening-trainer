@@ -203,12 +203,12 @@ class ImportDialog(QDialog):
 		def _doImport(config, _unused) -> [int, int, int, int, int]:
 			importer = Importer(
 				collection=mw.col,
-				filenames=config['files'],
+				filenames=config['files'][config['colour']],
 				notetype=config['notetype'],
-				colour=config['colour'],
+				colour=('white' == config['colour']),
 				deck_name=config['decks'][config['colour']],
 			)
-			return [23, 1, 89, 69, 3]
+			return importer.run()
 
 		try:
 			if not self.fileList.count():
