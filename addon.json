@@ -1,0 +1,13 @@
+{
+	"display_name": "Chess Opening Trainer",
+	"module_name": "chess_opening_trainer",
+	"repo_name": "anki-chess-opening-trainer",
+	"author": "Guido Flohr",
+	"contact": "https://github.com/gflohr/anki-chess-opening-trainer/issues",
+	"homepage": "https://github.com/gflohr/anki-chess-opening-trainer",
+	"copyright_start": "2023",
+	"tags": "chess chess-opening",
+	"conflicts": [],
+	"targets": ["anki21"],
+	"min_anki_version": "2.1.15"
+}
