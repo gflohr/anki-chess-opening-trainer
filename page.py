@@ -80,7 +80,7 @@ class Page:
 			name += '-' + str(square) + '-' + self.fills[square]
 		
 		name = hashlib.sha1(name.encode('ascii')).hexdigest() + '.svg'
-		path = f'opening-trainer-' + name
+		path = f'chess-opening-trainer-' + name
 		
 		return path;
 

@@ -24,13 +24,13 @@ def initI18N() -> None:
 
 	localedir = os.path.join(os.path.dirname(__file__), 'locale')
 	t = gettext.translation(
-		'opening-trainer',
+		'anki-chess-opening-trainer',
 		localedir=localedir,
 		languages=[lang])
 	t.install(names=['ngettext'])
 
 def addMenuItem():
-	action = QAction(_('Opening Trainer'), mw)
+	action = QAction(_('Chess Opening Trainer'), mw)
 	# set it to call testFunction when it's clicked
 	qconnect(action.triggered, showImportDialog)
 	# and add it to the tools menu

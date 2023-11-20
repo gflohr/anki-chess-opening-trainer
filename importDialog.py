@@ -19,7 +19,7 @@ from pathlib import Path
 
 class _Config():
 	def __init__(self):
-		config = mw.addonManager.getConfig('opening-trainer')
+		config = mw.addonManager.getConfig('anki-chess-opening-trainer')
 		if not config:
 			config = {}
 		col = mw.col
@@ -85,7 +85,7 @@ class _Config():
 			'decks': self.decks,
 		}
 
-		mw.addonManager.writeConfig('opening-trainer', config)
+		mw.addonManager.writeConfig('anki-chess-opening-trainer', config)
 
 		return config
 

@@ -17,6 +17,7 @@ class Importer:
 		colour: chess.Color,
 		notetype: str,
 		deck_name: str,
+		doPrint: bool=False,
 	) -> None:
 		self.collection = collection
 		self.colour = colour
@@ -32,10 +33,12 @@ class Importer:
 		self.visitor = PositionVisitor(colour=colour)
 		self.filenames = filenames
 
+		self.doPrint = print
+
 	def run(self) -> [int, int, int]:
 		for filename in self.filenames:
 			self._read_study(filename)
-		if hasattr(self.print):
+		if self.doPrint:
 			self.visitor.print_cards()
 		current_notes = self._read_notes()
 		patch_set = self._compute_patch_set(current_notes)
@@ -76,7 +79,7 @@ class Importer:
 		for path in os.scandir(media_path):
 			if not os.path.isdir(path.path):
 				filename = os.path.basename(path)
-				if re.match('^opening-trainer-[0-9a-f]{40}\.svg', filename):
+				if re.match('^chess-opening-trainer-[0-9a-f]{40}\.svg', filename):
 					image_deletes.append(filename)
 
 		patchSet = PatchSet(

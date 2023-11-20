@@ -38,7 +38,10 @@ if __name__ == '__main__':
 	config = read_config()
 
 	localedir = os.path.join(os.path.dirname(__file__), 'locale')
-	t = gettext.translation('opening-trainer', localedir=localedir, languages=[config['locale']])
+	t = gettext.translation('anki-chess-opening-trainer',
+		localedir=localedir,
+		languages=[config['locale']],
+	)
 	t.install(names=['ngettext'])
 
 	col = read_collection(config['anki']['path'])
@@ -56,6 +59,7 @@ if __name__ == '__main__':
 		colour=colour,
 		deck_name=deck_name,
 		notetype=notetype,
+		doPrint=True
 	)
 
 	[inserted, updated, deleted, images_inserted, images_deleted] = importer.run()
