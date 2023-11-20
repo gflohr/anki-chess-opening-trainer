@@ -17,8 +17,9 @@ def showImportDialog() -> None:
 	dlg.exec()
 
 def initI18N() -> None:
-	supported = ['en', 'de']
+	supported = ['en', 'en-GB', 'de']
 	lang = anki.lang.current_lang
+	print(lang, file=sys.stderr)
 	if not lang in supported:
 		lang = supported[0]
 

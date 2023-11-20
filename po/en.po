@@ -1,13 +1,13 @@
-# English translations for PACKAGE package.
+# English translations for opening-trainer package.
 # Copyright (C) 2023 Guido Flohr <http://www.guido-flohr.net>
 # This file is distributed under the same license as the PACKAGE package.
 # Guido Flohr <guido.flohr@cantanea.com>, 2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: opening-trainer 0.1.0\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2023-11-20 10:59+0200\n"
+"POT-Creation-Date: 2023-11-20 11:08+0200\n"
 "PO-Revision-Date: 2023-11-09 12:21+0100\n"
 "Last-Translator: Guido Flohr <guido.flohr@cantanea.com>\n"
 "Language-Team: English\n"
@@ -96,7 +96,7 @@ msgstr ""
 msgid "Portable Game Notation files (*.pgn)"
 msgstr ""
 
-#: ../__init__.py:33
+#: ../__init__.py:34
 msgid "Opening Trainer"
 msgstr ""
 
