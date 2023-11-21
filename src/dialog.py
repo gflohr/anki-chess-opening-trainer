@@ -10,7 +10,7 @@
 import os
 from pathlib import Path
 
-from aqt import mw
+from aqt import mw, AnkiQt
 from aqt.operations import QueryOp
 # pylint: disable=no-name-in-module
 from aqt.qt import (QComboBox, QDialog, QDialogButtonBox, QFileDialog,
@@ -71,7 +71,7 @@ class _Config():
 			        map(lambda d: d['name'], col.decks.all()))):
 				self.decks['black'] = decks['black']
 
-	def save(self, dlg: QDialog) -> dict:
+	def save(self, dlg: ImportDialog) -> dict:
 		colour_index = dlg.colour_combo.currentIndex()
 		if colour_index == 1:
 			colour = 'black'
@@ -202,7 +202,9 @@ class ImportDialog(QDialog):
 			self.file_list.addItem(filename)
 
 	def accept(self) -> None:
-		def _on_success(counts: [int, int, int, int, int]) -> None:
+		assert(isinstance(mw, AnkiQt))
+
+		def _on_success(counts: tuple[int, int, int, int, int]) -> None:
 			msgs = (
 			    ngettext('%d note inserted.', '%d notes inserted.',
 			             counts[0]) % (counts[0]),
@@ -217,7 +219,7 @@ class ImportDialog(QDialog):
 			)
 			showInfo(' '.join(msgs))
 
-		def _do_import(config, _unused) -> [int, int, int, int, int]:
+		def _do_import(config, _unused) -> tuple[int, int, int, int, int]:
 			importer = Importer(
 			    collection=mw.col,
 			    filenames=config['files'][config['colour']],
@@ -231,6 +233,7 @@ class ImportDialog(QDialog):
 			if not self.file_list.count():
 				raise RuntimeError(_('No input files specified!'))
 			config = self.config.save(self)
+			assert(isinstance(mw, AnkiQt))
 			op = QueryOp(
 			    parent=mw,
 			    op=lambda _unused: _do_import(config, _unused),
