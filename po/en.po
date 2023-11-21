@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: opening-trainer 0.1.0\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2023-11-20 16:04+0200\n"
+"POT-Creation-Date: 2023-11-21 08:02+0200\n"
 "PO-Revision-Date: 2023-11-09 12:21+0100\n"
 "Last-Translator: Guido Flohr <guido.flohr@cantanea.com>\n"
 "Language-Team: English\n"
@@ -17,119 +17,119 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../update-anki-deck.py:66 ../importDialog.py:195
+#: ../src/update-anki-deck.py:66 ../src/importDialog.py:195
 #, python-format
 msgid "%d note inserted."
 msgid_plural "%d notes inserted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../update-anki-deck.py:67 ../importDialog.py:196
+#: ../src/update-anki-deck.py:67 ../src/importDialog.py:196
 #, python-format
 msgid "%d note updated."
 msgid_plural "%d notes updated."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../update-anki-deck.py:68 ../importDialog.py:197
+#: ../src/update-anki-deck.py:68 ../src/importDialog.py:197
 #, python-format
 msgid "%d note deleted."
 msgid_plural "%d notes deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../update-anki-deck.py:69 ../importDialog.py:198
+#: ../src/update-anki-deck.py:69 ../src/importDialog.py:198
 #, python-format
 msgid "%d image created."
 msgid_plural "%d images created."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../update-anki-deck.py:70 ../importDialog.py:199
+#: ../src/update-anki-deck.py:70 ../src/importDialog.py:199
 #, python-format
 msgid "%d image deleted."
 msgid_plural "%d images deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../importDialog.py:98
+#: ../src/importDialog.py:98
 msgid "Import Opening PGN"
 msgstr ""
 
-#: ../importDialog.py:103
+#: ../src/importDialog.py:103
 msgid "Input Files"
 msgstr ""
 
-#: ../importDialog.py:106
+#: ../src/importDialog.py:106
 msgid "Select files"
 msgstr ""
 
-#: ../importDialog.py:110
+#: ../src/importDialog.py:110
 msgid "Deck"
 msgstr ""
 
-#: ../importDialog.py:119
+#: ../src/importDialog.py:119
 msgid "Color"
 msgstr ""
 
-#: ../importDialog.py:122
+#: ../src/importDialog.py:122
 msgid "White"
 msgstr ""
 
-#: ../importDialog.py:123
+#: ../src/importDialog.py:123
 msgid "Black"
 msgstr ""
 
-#: ../importDialog.py:126
+#: ../src/importDialog.py:126
 msgid "Note type"
 msgstr ""
 
-#: ../importDialog.py:215
+#: ../src/importDialog.py:215
 msgid "No input files specified!"
 msgstr ""
 
-#: ../importDialog.py:233
+#: ../src/importDialog.py:233
 msgid "Open PGN files"
 msgstr ""
 
-#: ../importDialog.py:233
+#: ../src/importDialog.py:233
 msgid "Portable Game Notation files (*.pgn)"
 msgstr ""
 
-#: ../__init__.py:33
+#: ../src/__init__.py:33
 msgid "Chess Opening Trainer"
 msgstr ""
 
 #. TRANSLATORS: This is the letter to use for a pawn.
-#: ../visitor.py:16
+#: ../src/visitor.py:16
 msgid "p"
 msgstr "p"
 
 #. TRANSLATORS: This is the letter to use for a knight.
-#: ../visitor.py:18
+#: ../src/visitor.py:18
 msgid "n"
 msgstr "n"
 
 #. TRANSLATORS: This is the letter to use for a bishop.
-#: ../visitor.py:20
+#: ../src/visitor.py:20
 msgid "b"
 msgstr "b"
 
 #. TRANSLATORS: This is the letter to use for a rook.
-#: ../visitor.py:22
+#: ../src/visitor.py:22
 msgid "r"
 msgstr "r"
 
 #. TRANSLATORS: This is the letter to use for a queen.
-#: ../visitor.py:24
+#: ../src/visitor.py:24
 msgid "q"
 msgstr "q"
 
 #. TRANSLATORS: This is the letter to use for a king.
-#: ../visitor.py:26
+#: ../src/visitor.py:26
 msgid "k"
 msgstr "k"
 
-#: ../visitor.py:45
+#: ../src/visitor.py:45
 msgid "Moves from starting position?"
 msgstr "Moves from starting position?"
