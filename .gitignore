@@ -5,3 +5,4 @@ config.yaml
 /meta.json
 src/vendor
 src/manifest.json
+/build
