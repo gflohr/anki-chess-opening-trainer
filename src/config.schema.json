@@ -1,0 +1,66 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://www.guido-flohr.net/schema/anki-chess-opening-trainer.json",
+	"title": "Configuration",
+	"description": "Configuration for the Anki Chess Opening Trainer Add-On",
+	"type": "object",
+	"additionalProperties": false,
+	"required": ["colour", "decks", "files", "notetype"],
+	"properties": {
+		"colour": {
+			"description": "The side (black or white) that this game collection contains good moves for.",
+			"type": "string",
+			"enum": ["white", "black"],
+			"default": "white"
+		},
+		"decks": {
+			"description": "The currently selected deck for each colour.",
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["white", "black"],
+			"properties": {
+				"white": {
+					"description": "Currently selected deck for white",
+					"type": ["string", "null"],
+					"default": null
+				},
+				"black": {
+					"description": "Currently selected deck for black",
+					"type": ["string", "null"],
+					"default": null
+				}
+			}
+		},
+		"files": {
+			"description": "The currently selected set of game collection files for each colour.",
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["white", "black"],
+			"properties": {
+				"white": {
+					"description": "The currently selected set of game collection files for white.",
+					"type": "array",
+					"default": [],
+					"items": {
+						"description": "Path to the game collection file.",
+						"type": "string"
+					}
+				},
+				"black": {
+					"description": "The currently selected set of game collection files for black.",
+					"type": "array",
+					"default": [],
+					"items": {
+						"description": "Path to the game collection file.",
+						"type": "string"
+					}
+				}
+			}
+		},
+		"notetype": {
+			"description": "The notetype to use for card generation.",
+			"type": "string",
+			"default": "Basic"
+		}
+	}
+}
