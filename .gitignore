@@ -1,8 +1,9 @@
 po/*.gmo
 /.vscode
 config.yaml
-/__pycache__
+__pycache__
 /meta.json
 src/vendor
 src/manifest.json
 /build
+/ankidata
