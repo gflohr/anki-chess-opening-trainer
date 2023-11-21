@@ -1,7 +1,8 @@
 from chess import Color
 
-from page import Page
 from answer import Answer
+from page import Page
+
 
 class Question(Page):
 	def __init__(self,

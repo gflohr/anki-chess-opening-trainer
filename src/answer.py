@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from chess import Color, Board
+from chess import Board, Color
 
 from page import Page
+
 
 class Answer(Page):
 	def __init__(self,

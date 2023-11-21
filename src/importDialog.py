@@ -1,21 +1,14 @@
 import os
+from pathlib import Path
+
+from aqt import mw
+from aqt.operations import QueryOp
+from aqt.qt import (QComboBox, QDialog, QDialogButtonBox, QFileDialog,
+                    QGridLayout, QLabel, QListWidget, QPushButton, Qt)
+from aqt.utils import showCritical, showInfo
 
 from importer import Importer
-from aqt import mw
-from aqt.utils import showCritical, showInfo
-from aqt.operations import QueryOp
-from aqt.qt import (
-	Qt,
-	QDialog,
-	QDialogButtonBox,
-	QLabel,
-	QGridLayout,
-	QListWidget,
-	QPushButton,
-	QComboBox,
-	QFileDialog,
-)
-from pathlib import Path
+
 
 class _Config():
 	def __init__(self):

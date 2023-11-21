@@ -1,5 +1,6 @@
-import re
 import hashlib
+import re
+
 import chess
 from chess import Board
 from chess.svg import Arrow

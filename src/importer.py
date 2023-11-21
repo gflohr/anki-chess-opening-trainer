@@ -1,13 +1,15 @@
 import os
 import re
-import chess
 from typing import Any
+
+import chess
 from anki.collection import Collection
 from anki.notes import Note
-from patchset import PatchSet
 
-from visitor import PositionVisitor
 from page import Page
+from patchset import PatchSet
+from visitor import PositionVisitor
+
 
 class Importer:
 	def __init__(self,

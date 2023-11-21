@@ -1,11 +1,12 @@
-import shutil
 import os
+import shutil
 
 from anki.collection import Collection
-from anki.notes import Note
 from anki.decks import Deck
+from anki.notes import Note
 
 from page import Page
+
 
 class PatchSet():
 	def __init__(self,

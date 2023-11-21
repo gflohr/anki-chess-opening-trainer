@@ -1,12 +1,14 @@
-import chess
 import typing
-from chess import Color
-from chess.pgn import BaseVisitor
 from typing import Literal
 
-from page import Page
+import chess
+from chess import Color
+from chess.pgn import BaseVisitor
+
 from answer import Answer
+from page import Page
 from question import Question
+
 
 # Monkey-patch the piece_symbol() method.
 def i18n_piece_symbol(piece: chess.PieceType):
