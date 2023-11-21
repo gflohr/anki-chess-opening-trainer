@@ -14,8 +14,8 @@ from aqt import mw
 from aqt.operations import QueryOp
 # pylint: disable=no-name-in-module
 from aqt.qt import (QComboBox, QDialog, QDialogButtonBox, QFileDialog,
-                    QGridLayout, QLabel, QListWidget, QPushButton, Qt,
-					QListWidgetItem)
+                    QGridLayout, QLabel, QListWidget, QListWidgetItem,
+                    QPushButton, Qt)
 from aqt.utils import showCritical, showInfo
 
 from .importer import Importer
