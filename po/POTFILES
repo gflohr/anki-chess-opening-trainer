@@ -1,6 +1,6 @@
-../src/update-anki-deck.py
-../src/importDialog.py
+../anki-chess-opening-trainer.py
 ../src/answer.py
+../src/dialog.py
 ../src/importer.py
 ../src/patchset.py
 ../src/question.py

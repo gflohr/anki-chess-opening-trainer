@@ -30,7 +30,7 @@ class _Config():
 		if 'notetype' in config and isinstance(config['notetype'], str):
 			notetype = config['notetype']
 		else:
-			notetype = 'Basic'
+			notetype = _('Basic')
 		if notetype in list(map(lambda m: m['name'], col.models.all())):
 			self.notetype = notetype
 		else:
@@ -132,7 +132,7 @@ class ImportDialog(QDialog):
 		for modelname in sorted(modelnames):
 			self.model_combo.addItem(modelname)
 			index += 1
-			if modelname == 'Basic':
+			if modelname == _('Basic'):
 				current_index = index
 		if current_index >= 0:
 			self.model_combo.setCurrentIndex(current_index)
