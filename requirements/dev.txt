@@ -2,3 +2,4 @@
 anki==23.10
 ankiscripts @ git+https://github.com/abdnh/ankiscripts@ed96ad699fe9dd52e6baec92e4619664fe28fd15
 aqt==23.10
+yapf
