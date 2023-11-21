@@ -81,7 +81,7 @@ class _Config():
 		    'decks': self.decks,
 		}
 
-		mw.addonManager.writeConfig('anki-chess-opening-trainer', config)
+		mw.addonManager.writeConfig('chess_opening_trainer', config)
 
 		return config
 
