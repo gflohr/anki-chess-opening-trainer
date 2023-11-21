@@ -12,7 +12,7 @@ vendor:
 	python -m ankiscripts.vendor
 
 fix:
-	python -m black src tests --exclude="forms|vendor"
+	python -m yapf src tests --recursive --exclude="forms|vendor"
 	python -m isort src tests
 
 mypy:
