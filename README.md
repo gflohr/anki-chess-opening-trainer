@@ -39,8 +39,8 @@ collection are deleted.
 
 ## Usage
 
-When you open Anki, you will find a new menu entry "Opening Trainer".  It
-shows a dialog box with four inputs:
+When you open Anki, you will find a new menu entry `Tools` ->
+`Chess Opening Trainer`.  It shows a dialog box with four inputs:
 
 * a list of PGN files containing the collection
 * the deck where to import the collection
@@ -51,6 +51,9 @@ The Anki "note type" is the layout of the flash card.  This add-on requires
 a note type with just two fields (front and back side) and no additional
 elements.  This note type is one of the default types of Anki, usually called
 "Basic".
+
+But first you need at least one game collection, either for black or white.
+Read on!
 
 ## Creating a Game Collection
 
@@ -111,7 +114,7 @@ download directory.
 You should either create a distinct profile for the chess openings or at
 least make a backup of your Anki collection (`File -> Create Backup`).
 
-Open Anki, click `Extras -> Opening Trainer`. Click the "Select file" button,
+Open Anki, click `Tools -> Opening Trainer`. Click the "Select files" button,
 and navigate to the file(s) containing your games.  You can also select multiple
 files at once.
 
@@ -120,3 +123,8 @@ the note type is "Basic".  You should now have a deck with cards from every
 position with white to move.  If you later edit the study, you can import
 an updated version again, that gets merged into the existing deck.  Your
 progress will be preserved to the extent possible.
+
+## Copyright
+
+This is free software.  Copyright © 2023, Guido Flohr <guido.flohr@cantanea.com>,
+all rights reserved.
