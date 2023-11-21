@@ -37,7 +37,7 @@ class PositionVisitor(BaseVisitor):
 		self.seen: [str, str] = {}
 		self.cards: [str, Page] = {}
 		self.last_text = None
-		self.accumulated_comments = None
+		self.accumulated_comments = []
 		self.my_move = True
 
 	def visit_move(self, board, move) -> chess.Board:
