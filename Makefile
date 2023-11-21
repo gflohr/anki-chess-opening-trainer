@@ -16,7 +16,9 @@ fix:
 	python -m isort src tests *.py
 
 mypy:
-	-python -m mypy src tests *.py
+	# See https://github.com/python/mypy/issues/8727
+	-python -m mypy src tests *.py --exclude=src/vendor --exclude=src/forms \
+		--disable-error-code name-defined
 
 pylint:
 	-python -m pylint src tests *.py

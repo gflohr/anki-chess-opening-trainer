@@ -5,7 +5,8 @@ from aqt import mw
 from aqt.operations import QueryOp
 # pylint: disable=no-name-in-module
 from aqt.qt import (QComboBox, QDialog, QDialogButtonBox, QFileDialog,
-                    QGridLayout, QLabel, QListWidget, QPushButton, Qt)
+                    QGridLayout, QLabel, QListWidget, QPushButton, Qt,
+					QListWidgetItem)
 from aqt.utils import showCritical, showInfo
 
 from .importer import Importer
@@ -233,8 +234,9 @@ class ImportDialog(QDialog):
 
 	def _select_input_file(self) -> None:
 		if self.file_list.count():
-			directory = os.path.dirname(
-			    self.file_list.item(self.file_list.count() - 1).text())
+			item = self.file_list.item(self.file_list.count() - 1)
+			assert isinstance(item, QListWidgetItem)
+			directory = os.path.dirname(item.text())
 		else:
 			directory = None
 		selection = QFileDialog.getOpenFileNames(
