@@ -16,7 +16,7 @@ class _Config():
 	# pylint: disable=too-few-public-methods
 	def __init__(self):
 		# pylint: disable=too-many-branches
-		config = mw.addonManager.getConfig('anki-chess-opening-trainer')
+		config = mw.addonManager.getConfig('chess_opening_trainer')
 		if not config:
 			config = {}
 		col = mw.col
