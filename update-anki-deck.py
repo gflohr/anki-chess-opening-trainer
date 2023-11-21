@@ -1,3 +1,7 @@
+#! /usr/bin/env python3
+
+# pylint: disable=invalid-name
+
 from __future__ import annotations
 
 import gettext
@@ -10,19 +14,18 @@ import chess.svg
 import yaml
 from anki.collection import Collection
 
-from importer import Importer
+from src.importer import Importer
 
 
 def read_config() -> dict[str, Any]:
-	with open('config.yaml', 'r') as file:
-		config = yaml.safe_load(file)
-		return config
+	with open('config.yaml', 'r', encoding='utf-8') as file:
+		return yaml.safe_load(file)
 
 
-def read_collection(dir: str) -> Collection:
-	collection_path = os.path.join(dir, 'collection.anki2')
+def read_collection(directory: str) -> Collection:
+	collection_path = os.path.join(directory, 'collection.anki2')
 	if not os.path.exists(collection_path):
-		raise Exception(f"Collection '{collection_path}' does not exist")
+		raise KeyError(f"Collection '{collection_path}' does not exist")
 
 	return Collection(collection_path)
 
@@ -53,7 +56,7 @@ if __name__ == '__main__':
 
 	notetype: str = config['anki']['notetype']
 
-	if (colour == chess.WHITE):
+	if colour == chess.WHITE:
 		deck_name = config['anki']['decks']['white']
 	else:
 		deck_name = config['anki']['decks']['black']
@@ -63,7 +66,7 @@ if __name__ == '__main__':
 	                    colour=colour,
 	                    deck_name=deck_name,
 	                    notetype=notetype,
-	                    doPrint=True)
+	                    do_print=True)
 
 	[inserted, updated, deleted, images_inserted,
 	 images_deleted] = importer.run()
