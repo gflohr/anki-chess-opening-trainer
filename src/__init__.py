@@ -18,6 +18,7 @@ def showImportDialog() -> None:
 	dlg = ImportDialog()
 	dlg.exec()
 
+
 def initI18N() -> None:
 	supported = ['en', 'en-GB', 'de']
 	lang = anki.lang.current_lang
@@ -25,11 +26,11 @@ def initI18N() -> None:
 		lang = supported[0]
 
 	localedir = os.path.join(os.path.dirname(__file__), 'locale')
-	t = gettext.translation(
-		'anki-chess-opening-trainer',
-		localedir=localedir,
-		languages=[lang])
+	t = gettext.translation('anki-chess-opening-trainer',
+	                        localedir=localedir,
+	                        languages=[lang])
 	t.install(names=['ngettext'])
+
 
 def addMenuItem():
 	action = QAction(_('Chess Opening Trainer'), mw)

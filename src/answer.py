@@ -6,12 +6,8 @@ from page import Page
 
 
 class Answer(Page):
-	def __init__(self,
-			  move: str,
-			  fullmove_number: int,
-			  turn: Color,
-			  board: Board,
-			  colour: Color) -> None:
+	def __init__(self, move: str, fullmove_number: int, turn: Color,
+	             board: Board, colour: Color) -> None:
 		self.move = move
 		self.fullmove_number = fullmove_number
 		self.turn = turn
@@ -30,10 +26,10 @@ class Answer(Page):
 	def find(self, others: list[Answer]) -> bool:
 		for answer in others:
 			if (answer.move == self.move
-	   			and answer.fullmove_number == self.fullmove_number
-				and answer.turn == self.turn):
+			    and answer.fullmove_number == self.fullmove_number
+			    and answer.turn == self.turn):
 				return True
-		
+
 		return False
 
 	def object_id(self) -> str:

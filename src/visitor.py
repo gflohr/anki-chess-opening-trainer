@@ -13,21 +13,22 @@ from question import Question
 # Monkey-patch the piece_symbol() method.
 def i18n_piece_symbol(piece: chess.PieceType):
 	PIECE_SYMBOLS = [
-		None,
-		# TRANSLATORS: This is the letter to use for a pawn.
-		_('p'),
-		# TRANSLATORS: This is the letter to use for a knight.
-		_('n'),
-		# TRANSLATORS: This is the letter to use for a bishop.
-		_('b'),
-		# TRANSLATORS: This is the letter to use for a rook.
-		_('r'),
-		# TRANSLATORS: This is the letter to use for a queen.
-		_('q'),
-		# TRANSLATORS: This is the letter to use for a king.
-		_('k'),
+	    None,
+	    # TRANSLATORS: This is the letter to use for a pawn.
+	    _('p'),
+	    # TRANSLATORS: This is the letter to use for a knight.
+	    _('n'),
+	    # TRANSLATORS: This is the letter to use for a bishop.
+	    _('b'),
+	    # TRANSLATORS: This is the letter to use for a rook.
+	    _('r'),
+	    # TRANSLATORS: This is the letter to use for a queen.
+	    _('q'),
+	    # TRANSLATORS: This is the letter to use for a king.
+	    _('k'),
 	]
 	return typing.cast(str, PIECE_SYMBOLS[piece])
+
 
 class PositionVisitor(BaseVisitor):
 	def __init__(self, colour):
@@ -57,19 +58,19 @@ class PositionVisitor(BaseVisitor):
 				return board
 
 			answer = Answer(
-				san,
-				fullmove_number=board.fullmove_number,
-				turn=board.turn,
-				board=answer_board,
-				colour=self.colour,
+			    san,
+			    fullmove_number=board.fullmove_number,
+			    turn=board.turn,
+			    board=answer_board,
+			    colour=self.colour,
 			)
 
 			if not text in self.cards:
 				turn = not board.turn
 				self.cards[text] = Question(
-					text,
-					turn=turn,
-					colour=self.colour,
+				    text,
+				    turn=turn,
+				    colour=self.colour,
 				)
 				if hasattr(self, 'accumulated_comments'):
 					for comment in self.accumulated_comments:

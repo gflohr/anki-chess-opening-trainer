@@ -17,13 +17,12 @@ class _Config():
 			config = {}
 		col = mw.col
 
-		if('colour' in config
-		   and isinstance(config['colour'], str)
-		   and 'black' == config['colour']):
+		if ('colour' in config and isinstance(config['colour'], str)
+		    and 'black' == config['colour']):
 			self.colour = 'black'
 		else:
 			self.colour = 'white'
-		
+
 		if 'notetype' in config and isinstance(config['notetype'], str):
 			notetype = config['notetype']
 		else:
@@ -32,7 +31,7 @@ class _Config():
 			self.notetype = notetype
 		else:
 			self.notetype = None
-		
+
 		self.files = {'white': [], 'black': []}
 		if 'files' in config and isinstance(config['files'], dict):
 			files = config['files']
@@ -50,13 +49,13 @@ class _Config():
 		self.decks = {'white': None, 'black': None}
 		if 'decks' in config and isinstance(config['decks'], dict):
 			decks = config['decks']
-			if('white' in decks
-			   and isinstance(decks['white'], str)
-			   and decks['white'] in list(map(lambda d: d['name'], col.decks.all()))):
+			if ('white' in decks and isinstance(decks['white'], str)
+			    and decks['white'] in list(
+			        map(lambda d: d['name'], col.decks.all()))):
 				self.decks['white'] = decks['white']
-			if('black' in decks
-			   and isinstance(decks['black'], str)
-			   and decks['black'] in list(map(lambda d: d['name'], col.decks.all()))):
+			if ('black' in decks and isinstance(decks['black'], str)
+			    and decks['black'] in list(
+			        map(lambda d: d['name'], col.decks.all()))):
 				self.decks['black'] = decks['black']
 
 	def save(self, dlg: QDialog) -> dict:
@@ -72,15 +71,16 @@ class _Config():
 			self.files[colour].append(dlg.fileList.item(i).text())
 		self.decks[colour] = dlg.deckCombo.currentText()
 		config = {
-			'colour': self.colour,
-			'notetype': self.notetype,
-			'files': self.files,
-			'decks': self.decks,
+		    'colour': self.colour,
+		    'notetype': self.notetype,
+		    'files': self.files,
+		    'decks': self.decks,
 		}
 
 		mw.addonManager.writeConfig('anki-chess-opening-trainer', config)
 
 		return config
+
 
 class ImportDialog(QDialog):
 	def __init__(self) -> None:
@@ -134,7 +134,12 @@ class ImportDialog(QDialog):
 
 		QBtn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
 		self.buttonBox = QDialogButtonBox(QBtn)
-		self.layout.addWidget(self.buttonBox, 4, 0, 1, 3, alignment=Qt.AlignmentFlag.AlignRight)
+		self.layout.addWidget(self.buttonBox,
+		                      4,
+		                      0,
+		                      1,
+		                      3,
+		                      alignment=Qt.AlignmentFlag.AlignRight)
 		self.buttonBox.accepted.connect(self.accept)
 		self.buttonBox.rejected.connect(self.reject)
 		self._fillDialog()
@@ -185,21 +190,26 @@ class ImportDialog(QDialog):
 	def accept(self) -> None:
 		def _onSuccess(counts: [int, int, int, int, int]) -> None:
 			msgs = (
-				ngettext('%d note inserted.', '%d notes inserted.', counts[0]) % (counts[0]),
-				ngettext('%d note updated.', '%d notes updated.', counts[1]) % (counts[1]),
-				ngettext('%d note deleted.', '%d notes deleted.', counts[2]) % (counts[2]),
-				ngettext('%d image created.', '%d images created.', counts[3]) % (counts[3]),
-				ngettext('%d image deleted.', '%d images deleted.', counts[4]) % (counts[4]),
+			    ngettext('%d note inserted.', '%d notes inserted.',
+			             counts[0]) % (counts[0]),
+			    ngettext('%d note updated.', '%d notes updated.', counts[1]) %
+			    (counts[1]),
+			    ngettext('%d note deleted.', '%d notes deleted.', counts[2]) %
+			    (counts[2]),
+			    ngettext('%d image created.', '%d images created.',
+			             counts[3]) % (counts[3]),
+			    ngettext('%d image deleted.', '%d images deleted.',
+			             counts[4]) % (counts[4]),
 			)
 			showInfo(' '.join(msgs))
 
 		def _doImport(config, _unused) -> [int, int, int, int, int]:
 			importer = Importer(
-				collection=mw.col,
-				filenames=config['files'][config['colour']],
-				notetype=config['notetype'],
-				colour=('white' == config['colour']),
-				deck_name=config['decks'][config['colour']],
+			    collection=mw.col,
+			    filenames=config['files'][config['colour']],
+			    notetype=config['notetype'],
+			    colour=('white' == config['colour']),
+			    deck_name=config['decks'][config['colour']],
 			)
 			return importer.run()
 
@@ -208,24 +218,27 @@ class ImportDialog(QDialog):
 				raise Exception(_('No input files specified!'))
 			config = self.config.save(self)
 			op = QueryOp(
-				parent=mw,
-				op=lambda _unused: _doImport(config, _unused),
-				success=_onSuccess,
+			    parent=mw,
+			    op=lambda _unused: _doImport(config, _unused),
+			    success=_onSuccess,
 			)
 			op.with_progress().run_in_background()
 			super().accept()
 		except Exception as e:
 			showCritical(str(e))
-		
+
 	def _selectInputFile(self) -> None:
 		if self.fileList.count():
-			dir = os.path.dirname(self.fileList.item(self.fileList.count() - 1).text())
+			dir = os.path.dirname(
+			    self.fileList.item(self.fileList.count() - 1).text())
 		else:
 			dir = None
 		selection = QFileDialog.getOpenFileNames(
-			self, _('Open PGN files'), dir, _('Portable Game Notation files (*.pgn)'))
+		    self, _('Open PGN files'), dir,
+		    _('Portable Game Notation files (*.pgn)'))
 		filenames = selection[0]
 
 		if len(filenames):
 			self.fileList.clear()
-			self.fileList.addItems([str(Path(filename)) for filename in filenames])
+			self.fileList.addItems(
+			    [str(Path(filename)) for filename in filenames])

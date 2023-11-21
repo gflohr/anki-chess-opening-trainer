@@ -1,5 +1,0 @@
-[style]
-based_on_style=google
-
-# See https://lea.verou.me/blog/2012/01/why-tabs-are-clearly-superior/.
-use_tabs=True

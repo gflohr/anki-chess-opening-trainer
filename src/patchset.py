@@ -9,14 +9,15 @@ from page import Page
 
 
 class PatchSet():
-	def __init__(self,
-			inserts: list[Note],
-			deletes: list[Note],
-			updates: list[Note],
-			image_inserts: [str, Page],
-			image_deletes: [str],
-			media_path: str,
-		) -> None:
+	def __init__(
+	    self,
+	    inserts: list[Note],
+	    deletes: list[Note],
+	    updates: list[Note],
+	    image_inserts: [str, Page],
+	    image_deletes: [str],
+	    media_path: str,
+	) -> None:
 		self.inserts = inserts
 		self.deletes = deletes
 		self.updates = updates
@@ -42,15 +43,15 @@ class PatchSet():
 					os.unlink(path)
 				except:
 					pass
-		
+
 		for image_path, page in self.image_inserts.items():
 			path = os.path.join(self.media_path, image_path)
 			page.render_svg(path)
-		
+
 		return [
-			len(self.inserts),
-			len(self.updates),
-			len(self.deletes),
-			len(self.image_inserts),
-			len(self.image_deletes),
+		    len(self.inserts),
+		    len(self.updates),
+		    len(self.deletes),
+		    len(self.image_inserts),
+		    len(self.image_deletes),
 		]

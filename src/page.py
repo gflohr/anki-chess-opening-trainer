@@ -5,7 +5,8 @@ import chess
 from chess import Board
 from chess.svg import Arrow
 
-ARROWS_REGEX = re.compile(r"""
+ARROWS_REGEX = re.compile(
+    r"""
 	(?P<prefix>[ \t\n\v\f\r]*?)
 	\[%(?P<type>c[as]l)\s(?P<arrows>
 		[RGYB]?[a-h][1-8](?:[a-h][1-8])?
@@ -15,6 +16,7 @@ ARROWS_REGEX = re.compile(r"""
 	""", re.VERBOSE)
 
 WS_REGEX = re.compile('[ \t\n\v\\f]')
+
 
 class Page:
 	def __init__(self, colour: chess.Color) -> None:
@@ -36,7 +38,8 @@ class Page:
 			if 'cal' == type:
 				for spec in specs.split(','):
 					try:
-						self.arrows.append(Arrow.from_pgn(re.sub(WS_REGEX, '', spec)))
+						self.arrows.append(
+						    Arrow.from_pgn(re.sub(WS_REGEX, '', spec)))
 					except:
 						pass
 			else:
@@ -44,10 +47,10 @@ class Page:
 					# %csl takes just a square.  Ignore the rest of the string
 					# if two squares had been given.
 					colors = {
-						'R': 'red',
-						'G': 'green',
-						'Y': 'yellow',
-						'B': 'blue'
+					    'R': 'red',
+					    'G': 'green',
+					    'Y': 'yellow',
+					    'B': 'blue'
 					}
 					color = 'green'
 					if spec[0] in colors:
@@ -79,15 +82,15 @@ class Page:
 			name += '-' + arrow.pgn()
 		for square in sorted(self.fills.keys()):
 			name += '-' + str(square) + '-' + self.fills[square]
-		
+
 		name = hashlib.sha1(name.encode('ascii')).hexdigest() + '.svg'
 		if self.colour:
 			colour = 'w'
 		else:
 			colour = 'b'
 		path = f'chess-opening-trainer-{colour}-{name}'
-		
-		return path;
+
+		return path
 
 	def extra_html(self) -> str:
 		rendered = ''
@@ -96,8 +99,8 @@ class Page:
 
 		image_path = self.image_path()
 		rendered += f'<br><img src="{image_path}">'
-		
-		return rendered;
+
+		return rendered
 
 	def render_svg(self, path: str) -> None:
 		if self.board.ply():
@@ -113,13 +116,11 @@ class Page:
 
 		for square, side in self.fills.items():
 			arrows.append(Arrow(tail=square, head=square, color=side))
-		svg = chess.svg.board(
-			self.board,
-			lastmove=lastmove,
-			orientation=self.colour,
-			arrows=arrows,
-			check=check
-		)
+		svg = chess.svg.board(self.board,
+		                      lastmove=lastmove,
+		                      orientation=self.colour,
+		                      arrows=arrows,
+		                      check=check)
 
 		with open(path, 'w') as file:
 			file.write(svg)

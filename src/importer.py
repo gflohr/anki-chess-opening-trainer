@@ -12,13 +12,14 @@ from visitor import PositionVisitor
 
 
 class Importer:
-	def __init__(self,
-		filenames: [str],
-		collection: Collection,
-		colour: chess.Color,
-		notetype: str,
-		deck_name: str,
-		doPrint: bool=False,
+	def __init__(
+	    self,
+	    filenames: [str],
+	    collection: Collection,
+	    colour: chess.Color,
+	    notetype: str,
+	    deck_name: str,
+	    doPrint: bool = False,
 	) -> None:
 		self.collection = collection
 		self.colour = colour
@@ -51,6 +52,7 @@ class Importer:
 		# we just pass through characters to Anki and therefore don't care
 		# about character semantics.
 		study_pgn = open(filename, encoding='cp1252')
+
 		def get_visitor() -> chess.pgn.BaseVisitor:
 			return self.visitor
 
@@ -93,17 +95,16 @@ class Importer:
 				if re.match(regex, filename):
 					image_deletes.append(filename)
 
-		patchSet = PatchSet(
-			inserts=inserts,
-			deletes=deletes,
-			updates=updates,
-			image_inserts=image_inserts,
-			image_deletes=image_deletes,
-			media_path=media_path)
+		patchSet = PatchSet(inserts=inserts,
+		                    deletes=deletes,
+		                    updates=updates,
+		                    image_inserts=image_inserts,
+		                    image_deletes=image_deletes,
+		                    media_path=media_path)
 
 		for key, question in wanted.items():
 			answer = question.render_answers()
-			
+
 			# Questions always get a board image.
 			image_path = question.image_path()
 			if image_path in image_deletes:
@@ -115,7 +116,8 @@ class Importer:
 			if key in got:
 				used.append(key)
 				note = got[key]
-				if not note.fields[0] == rendered_question or not note.fields[1] == answer:
+				if not note.fields[0] == rendered_question or not note.fields[
+				    1] == answer:
 					note.fields[0] = rendered_question
 					note.fields[1] = answer
 					updates.append(note)
@@ -124,7 +126,7 @@ class Importer:
 				note.fields[0] = rendered_question
 				note.fields[1] = answer
 				inserts.append(note)
-			
+
 			for answer in question.answers:
 				image_path = answer.image_path()
 				if image_path in image_deletes:

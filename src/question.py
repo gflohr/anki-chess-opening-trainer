@@ -5,16 +5,17 @@ from page import Page
 
 
 class Question(Page):
-	def __init__(self,
-			  moves: str,
-			  turn: Color,
-			  colour: Color,
-		) -> None:
+	def __init__(
+	    self,
+	    moves: str,
+	    turn: Color,
+	    colour: Color,
+	) -> None:
 		self.moves = moves
 		self.turn = turn
 		self.answers: [Answer] = []
 		Page.__init__(self, colour=colour)
-	
+
 	def add_answer(self, answer: Answer) -> None:
 		self.answers.append(answer)
 
