@@ -86,7 +86,7 @@ class Page:
 
 		if not self.board:
 			self.board = Board()
-		name = self.board.fen()
+		name = self.board.fen() + '-' + self.object_id()
 
 		for arrow in self.arrows:
 			name += '-' + arrow.pgn()
@@ -134,3 +134,6 @@ class Page:
 
 		with open(path, 'w', encoding='cp1252') as file:
 			file.write(svg)
+
+	def object_id(self):
+		raise NotImplementedError('method object_id() not implemented')
