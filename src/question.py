@@ -1,7 +1,7 @@
 from chess import Color
 
-from answer import Answer
-from page import Page
+from .answer import Answer
+from .page import Page
 
 
 class Question(Page):
@@ -12,9 +12,8 @@ class Question(Page):
 	    colour: Color,
 	) -> None:
 		self.moves = moves
-		self.turn = turn
 		self.answers: [Answer] = []
-		Page.__init__(self, colour=colour)
+		Page.__init__(self, colour=colour, turn=turn)
 
 	def add_answer(self, answer: Answer) -> None:
 		self.answers.append(answer)

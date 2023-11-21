@@ -1,17 +1,17 @@
 import os
 import re
-from typing import Any
 
 import chess
 from anki.collection import Collection
 from anki.notes import Note
 
-from page import Page
-from patchset import PatchSet
-from visitor import PositionVisitor
+from .page import Page
+from .patchset import PatchSet, patch
+from .visitor import PositionVisitor
 
 
 class Importer:
+	# pylint: disable=too-many-arguments, too-few-public-methods
 	def __init__(
 	    self,
 	    filenames: [str],
@@ -19,45 +19,45 @@ class Importer:
 	    colour: chess.Color,
 	    notetype: str,
 	    deck_name: str,
-	    doPrint: bool = False,
+	    do_print: bool = False,
 	) -> None:
 		self.collection = collection
 		self.colour = colour
 
 		self.model = self.collection.models.by_name(notetype)
 		if not self.model:
-			raise Exception(f"Note type '{notetype}' does not exist")
+			raise KeyError(f"Note type '{notetype}' does not exist")
 
 		self.deck = collection.decks.by_name(deck_name)
 		if not self.deck:
-			raise Exception(f"Deck '{deck_name}' does not exist")
+			raise KeyError(f"Deck '{deck_name}' does not exist")
 
 		self.visitor = PositionVisitor(colour=colour)
 		self.filenames = filenames
 
-		self.doPrint = print
+		self.do_print = do_print
 
 	def run(self) -> [int, int, int]:
 		for filename in self.filenames:
 			self._read_study(filename)
-		if self.doPrint:
+		if self.do_print:
 			self.visitor.print_cards()
 		current_notes = self._read_notes()
-		patch_set = self._compute_patch_set(current_notes)
-		return patch_set.patch(self.collection, self.deck)
+		ps = self._compute_patch_set(current_notes)
+		return patch(ps, self.collection, self.deck)
 
 	def _read_study(self, filename: str) -> None:
 		# The encoding "cp1252" is pretty much equivalent to binary.  It also
 		# covers the range from 128 to 159 avoiding encoding errors.  And
 		# we just pass through characters to Anki and therefore don't care
 		# about character semantics.
-		study_pgn = open(filename, encoding='cp1252')
+		with open(filename, encoding='cp1252') as study_pgn:
 
-		def get_visitor() -> chess.pgn.BaseVisitor:
-			return self.visitor
+			def get_visitor() -> chess.pgn.BaseVisitor:
+				return self.visitor
 
-		while chess.pgn.read_game(study_pgn, Visitor=get_visitor):
-			pass
+			while chess.pgn.read_game(study_pgn, Visitor=get_visitor):
+				pass
 
 	def _read_notes(self) -> dict[str, Note]:
 		col = self.collection
@@ -73,16 +73,18 @@ class Importer:
 		return notes
 
 	def _compute_patch_set(self, got: dict[str, Note]) -> PatchSet:
+		# FIXME! Use the PatchSet that gets returned here.
+		# pylint: disable=too-many-locals, too-many-branches
 		used: list[str] = []
 		inserts: list[Note] = []
 		updates: list[Note] = []
 		deletes: list[int] = []
 		image_inserts: [str, Page] = {}
 		image_deletes: list[str] = []
+		media_path = self.collection.media.dir()
 
 		wanted = self.visitor.cards
 		model = self.model
-		media_path = self.collection.media.dir()
 		if self.colour:
 			colour = 'w'
 		else:
@@ -91,16 +93,9 @@ class Importer:
 			if not os.path.isdir(path.path):
 				filename = os.path.basename(path)
 				prefix = '^chess-opening-trainer-' + colour
-				regex = prefix + '-[0-9a-f]{40}\.svg'
+				regex = prefix + r'-[0-9a-f]{40}\.svg'
 				if re.match(regex, filename):
 					image_deletes.append(filename)
-
-		patchSet = PatchSet(inserts=inserts,
-		                    deletes=deletes,
-		                    updates=updates,
-		                    image_inserts=image_inserts,
-		                    image_deletes=image_deletes,
-		                    media_path=media_path)
 
 		for key, question in wanted.items():
 			answer = question.render_answers()
@@ -138,4 +133,9 @@ class Importer:
 			if not key in used:
 				deletes.append(note.id)
 
-		return patchSet
+		return PatchSet(inserts=inserts,
+		                deletes=deletes,
+		                updates=updates,
+		                image_inserts=image_inserts,
+		                image_deletes=image_deletes,
+		                media_path=media_path)

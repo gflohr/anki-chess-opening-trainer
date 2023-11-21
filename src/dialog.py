@@ -3,15 +3,18 @@ from pathlib import Path
 
 from aqt import mw
 from aqt.operations import QueryOp
+# pylint: disable=no-name-in-module
 from aqt.qt import (QComboBox, QDialog, QDialogButtonBox, QFileDialog,
                     QGridLayout, QLabel, QListWidget, QPushButton, Qt)
 from aqt.utils import showCritical, showInfo
 
-from importer import Importer
+from .importer import Importer
 
 
 class _Config():
+	# pylint: disable=too-few-public-methods
 	def __init__(self):
+		# pylint: disable=too-many-branches
 		config = mw.addonManager.getConfig('anki-chess-opening-trainer')
 		if not config:
 			config = {}
@@ -59,8 +62,8 @@ class _Config():
 				self.decks['black'] = decks['black']
 
 	def save(self, dlg: QDialog) -> dict:
-		colourIndex = dlg.colourCombo.currentIndex()
-		if colourIndex == 1:
+		colour_index = dlg.colourCombo.currentIndex()
+		if colour_index == 1:
 			colour = 'black'
 		else:
 			colour = 'white'
@@ -83,6 +86,7 @@ class _Config():
 
 
 class ImportDialog(QDialog):
+	# pylint: disable=too-few-public-methods, too-many-instance-attributes
 	def __init__(self) -> None:
 		super().__init__()
 
@@ -94,101 +98,101 @@ class ImportDialog(QDialog):
 		self.setLayout(self.layout)
 
 		self.layout.addWidget(QLabel(_('Input Files')), 0, 0)
-		self.fileList = QListWidget()
-		self.layout.addWidget(self.fileList, 0, 1)
-		self.selectFileButton = QPushButton(_('Select files'))
-		self.selectFileButton.clicked.connect(self._selectInputFile)
-		self.layout.addWidget(self.selectFileButton, 0, 2)
+		self.file_list = QListWidget()
+		self.layout.addWidget(self.file_list, 0, 1)
+		self.select_file_button = QPushButton(_('Select files'))
+		self.select_file_button.clicked.connect(self._select_input_file)
+		self.layout.addWidget(self.select_file_button, 0, 2)
 
 		self.layout.addWidget(QLabel(_('Deck')), 1, 0)
-		self.deckCombo = QComboBox()
-		self.layout.addWidget(self.deckCombo, 1, 1)
+		self.deck_combo = QComboBox()
+		self.layout.addWidget(self.deck_combo, 1, 1)
 		decknames: [str] = []
 		for deck in mw.col.decks.all():
 			decknames.append(deck['name'])
 		for deckname in sorted(decknames):
-			self.deckCombo.addItem(deckname)
+			self.deck_combo.addItem(deckname)
 
 		self.layout.addWidget(QLabel(_('Color')), 2, 0)
-		self.colourCombo = QComboBox()
-		self.layout.addWidget(self.colourCombo, 2, 1)
-		self.colourCombo.addItem(_('White'))
-		self.colourCombo.addItem(_('Black'))
-		self.colourCombo.currentIndexChanged.connect(self._colourChanged)
+		self.colour_combo = QComboBox()
+		self.layout.addWidget(self.colour_combo, 2, 1)
+		self.colour_combo.addItem(_('White'))
+		self.colour_combo.addItem(_('Black'))
+		self.colour_combo.currentIndexChanged.connect(self._colour_changed)
 
 		self.layout.addWidget(QLabel(_('Note type')), 3, 0)
-		self.modelCombo = QComboBox()
-		self.layout.addWidget(self.modelCombo, 3, 1)
+		self.model_combo = QComboBox()
+		self.layout.addWidget(self.model_combo, 3, 1)
 		modelnames: [str] = []
 		for model in mw.col.models.all():
 			modelnames.append(model['name'])
 		index = -1
 		current_index = -1
 		for modelname in sorted(modelnames):
-			self.modelCombo.addItem(modelname)
+			self.model_combo.addItem(modelname)
 			index += 1
 			if modelname == 'Basic':
 				current_index = index
 		if current_index >= 0:
-			self.modelCombo.setCurrentIndex(current_index)
+			self.model_combo.setCurrentIndex(current_index)
 
-		QBtn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
-		self.buttonBox = QDialogButtonBox(QBtn)
-		self.layout.addWidget(self.buttonBox,
+		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+		self.button_box = QDialogButtonBox(btn)
+		self.layout.addWidget(self.button_box,
 		                      4,
 		                      0,
 		                      1,
 		                      3,
 		                      alignment=Qt.AlignmentFlag.AlignRight)
-		self.buttonBox.accepted.connect(self.accept)
-		self.buttonBox.rejected.connect(self.reject)
-		self._fillDialog()
+		self.button_box.accepted.connect(self.accept)
+		self.button_box.rejected.connect(self.reject)
+		self._fill_dialog()
 
-	def _colourChanged(self) -> None:
-		if self.colourCombo.currentIndex() == 1:
+	def _colour_changed(self) -> None:
+		if self.colour_combo.currentIndex() == 1:
 			colour = 'black'
 		else:
 			colour = 'white'
 		config = self.config
 
 		wanted = config.decks[colour]
-		for i in range(self.deckCombo.count()):
-			if wanted == self.deckCombo.itemText(i):
-				self.deckCombo.setCurrentIndex(i)
+		for i in range(self.deck_combo.count()):
+			if wanted == self.deck_combo.itemText(i):
+				self.deck_combo.setCurrentIndex(i)
 				break
 
-		self.fileList.clear()
+		self.file_list.clear()
 		for filename in config.files[colour]:
-			self.fileList.addItem(filename)
+			self.file_list.addItem(filename)
 
-	def _fillDialog(self) -> None:
+	def _fill_dialog(self) -> None:
 		config = self.config
 		colour = config.colour
 		if 'black' == colour:
-			self.colourCombo.setCurrentIndex(1)
+			self.colour_combo.setCurrentIndex(1)
 		else:
-			self.colourCombo.setCurrentIndex(0)
+			self.colour_combo.setCurrentIndex(0)
 
-		if config.decks[colour] != None:
+		if config.decks[colour] is not None:
 			wanted = config.decks[colour]
-			for i in range(self.deckCombo.count()):
-				if wanted == self.deckCombo.itemText(i):
-					self.deckCombo.setCurrentIndex(i)
+			for i in range(self.deck_combo.count()):
+				if wanted == self.deck_combo.itemText(i):
+					self.deck_combo.setCurrentIndex(i)
 					break
 
-		if config.notetype != None:
+		if config.notetype is not None:
 			wanted = config.notetype
-			for i in range(self.modelCombo.count()):
-				if wanted == self.modelCombo.itemText(i):
-					self.modelCombo.setCurrentIndex(i)
+			for i in range(self.model_combo.count()):
+				if wanted == self.model_combo.itemText(i):
+					self.model_combo.setCurrentIndex(i)
 					break
 
-		self.fileList.clear()
+		self.file_list.clear()
 		for filename in config.files[colour]:
-			self.fileList.addItem(filename)
+			self.file_list.addItem(filename)
 
 	def accept(self) -> None:
-		def _onSuccess(counts: [int, int, int, int, int]) -> None:
+		def _on_success(counts: [int, int, int, int, int]) -> None:
 			msgs = (
 			    ngettext('%d note inserted.', '%d notes inserted.',
 			             counts[0]) % (counts[0]),
@@ -203,7 +207,7 @@ class ImportDialog(QDialog):
 			)
 			showInfo(' '.join(msgs))
 
-		def _doImport(config, _unused) -> [int, int, int, int, int]:
+		def _do_import(config, _unused) -> [int, int, int, int, int]:
 			importer = Importer(
 			    collection=mw.col,
 			    filenames=config['files'][config['colour']],
@@ -214,31 +218,31 @@ class ImportDialog(QDialog):
 			return importer.run()
 
 		try:
-			if not self.fileList.count():
-				raise Exception(_('No input files specified!'))
+			if not self.file_list.count():
+				raise RuntimeError(_('No input files specified!'))
 			config = self.config.save(self)
 			op = QueryOp(
 			    parent=mw,
-			    op=lambda _unused: _doImport(config, _unused),
-			    success=_onSuccess,
+			    op=lambda _unused: _do_import(config, _unused),
+			    success=_on_success,
 			)
 			op.with_progress().run_in_background()
 			super().accept()
-		except Exception as e:
+		except OSError as e:
 			showCritical(str(e))
 
-	def _selectInputFile(self) -> None:
-		if self.fileList.count():
-			dir = os.path.dirname(
-			    self.fileList.item(self.fileList.count() - 1).text())
+	def _select_input_file(self) -> None:
+		if self.file_list.count():
+			directory = os.path.dirname(
+			    self.file_list.item(self.file_list.count() - 1).text())
 		else:
-			dir = None
+			directory = None
 		selection = QFileDialog.getOpenFileNames(
-		    self, _('Open PGN files'), dir,
+		    self, _('Open PGN files'), directory,
 		    _('Portable Game Notation files (*.pgn)'))
 		filenames = selection[0]
 
 		if len(filenames):
-			self.fileList.clear()
-			self.fileList.addItems(
+			self.file_list.clear()
+			self.file_list.addItems(
 			    [str(Path(filename)) for filename in filenames])

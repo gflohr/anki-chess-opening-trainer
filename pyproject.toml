@@ -5,7 +5,7 @@ based_on_style = "pep8"
 use_tabs = "True"
 
 i18n_comment = "# TRANSLATORS:"
-i18n_function_call = [ "_", "ngettext" ]
+i18n_function_call = ["_", "ngettext"]
 
 [tool.yapfignore]
 ignore_patterns = [
@@ -18,3 +18,17 @@ skip = [
 	"src/forms/**/*",
 	"src/vendor/**/*"
 ]
+
+[tool.pylint.main]
+# This module is not meant to be reused.  For the time being, I do not
+# bother to write docstrings.
+disable = ["C0114", "C0115", "C0116"]
+
+[tool.pylint.format]
+indent-string = "\\t"
+
+[tool.pylint.string]
+check-quote-consistency = true
+
+[tool.pylint.variables]
+additional-builtins = ["_", "ngettext"]

@@ -12,14 +12,14 @@ vendor:
 	python -m ankiscripts.vendor
 
 fix:
-	python -m yapf src tests --recursive --in-place
-	python -m isort src tests
+	python -m yapf src tests *.py --recursive --in-place
+	python -m isort src tests *.py
 
 mypy:
-	-python -m mypy src tests
+	-python -m mypy src tests *.py
 
 pylint:
-	-python -m pylint src tests
+	-python -m pylint src tests *.py
 
 lint: mypy pylint
 

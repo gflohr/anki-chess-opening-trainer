@@ -5,14 +5,14 @@ import chess
 from chess import Color
 from chess.pgn import BaseVisitor
 
-from answer import Answer
-from page import Page
-from question import Question
+from .answer import Answer
+from .page import Page
+from .question import Question
 
 
 # Monkey-patch the piece_symbol() method.
 def i18n_piece_symbol(piece: chess.PieceType):
-	PIECE_SYMBOLS = [
+	piece_symbols = [
 	    None,
 	    # TRANSLATORS: This is the letter to use for a pawn.
 	    _('p'),
@@ -27,7 +27,7 @@ def i18n_piece_symbol(piece: chess.PieceType):
 	    # TRANSLATORS: This is the letter to use for a king.
 	    _('k'),
 	]
-	return typing.cast(str, PIECE_SYMBOLS[piece])
+	return typing.cast(str, piece_symbols[piece])
 
 
 class PositionVisitor(BaseVisitor):
@@ -36,6 +36,9 @@ class PositionVisitor(BaseVisitor):
 		self.initial = chess.Board()
 		self.seen: [str, str] = {}
 		self.cards: [str, Page] = {}
+		self.last_text = None
+		self.accumulated_comments = None
+		self.my_move = True
 
 	def visit_move(self, board, move) -> chess.Board:
 		if board.turn == self.colour:
@@ -65,7 +68,7 @@ class PositionVisitor(BaseVisitor):
 			    colour=self.colour,
 			)
 
-			if not text in self.cards:
+			if text not in self.cards:
 				turn = not board.turn
 				self.cards[text] = Question(
 				    text,
@@ -91,11 +94,11 @@ class PositionVisitor(BaseVisitor):
 		return board
 
 	def visit_comment(self, comment: str) -> None:
-		if hasattr(self, 'last_text'):
+		if self.last_text:
 			question = self.cards[self.last_text]
 			if self.my_move:
 				question.answers[-1].add_comment(comment)
-			elif hasattr(self, 'accumulated_comments'):
+			elif self.accumulated_comments:
 				self.accumulated_comments.append(comment)
 
 	def result(self) -> Literal[True]:
@@ -104,7 +107,7 @@ class PositionVisitor(BaseVisitor):
 	def print_cards(self) -> None:
 		for question in self.cards.values():
 			print(f'Q: {question.render()}')
-			print(f'A: Playable moves:')
+			print('A: Playable moves:')
 
 			print(question.render_answers())
 			print()

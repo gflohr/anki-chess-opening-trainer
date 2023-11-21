@@ -19,8 +19,9 @@ WS_REGEX = re.compile('[ \t\n\v\\f]')
 
 
 class Page:
-	def __init__(self, colour: chess.Color) -> None:
+	def __init__(self, colour: chess.Color, turn: chess.Color) -> None:
 		self.colour = colour
+		self.turn = turn
 		self.comments: [str] = []
 		self.arrows: [Arrow] = []
 		self.fills: [int, str] = {}
@@ -31,16 +32,17 @@ class Page:
 
 	def process_arrows(self, comment: str) -> str:
 		def purge_arrows(match):
-			type = match.group('type')
+			arrow_type = match.group('type')
 			specs = match.group('arrows')
 			specs = re.sub(WS_REGEX, '', specs)
 
-			if 'cal' == type:
+			if 'cal' == arrow_type:
 				for spec in specs.split(','):
 					try:
 						self.arrows.append(
 						    Arrow.from_pgn(re.sub(WS_REGEX, '', spec)))
-					except:
+					except ValueError:
+						# Ignore!
 						pass
 			else:
 				for spec in specs.split(','):
@@ -76,7 +78,6 @@ class Page:
 		if not self.board:
 			self.board = Board()
 		name = self.board.fen()
-		name += '-' + self.object_id()
 
 		for arrow in self.arrows:
 			name += '-' + arrow.pgn()
@@ -107,7 +108,7 @@ class Page:
 			lastmove = self.board.peek()
 		else:
 			lastmove = None
-		if (self.board.is_check()):
+		if self.board.is_check():
 			check = self.board.king(not self.turn)
 		else:
 			check = None
@@ -122,5 +123,5 @@ class Page:
 		                      arrows=arrows,
 		                      check=check)
 
-		with open(path, 'w') as file:
+		with open(path, 'w', encoding='cp1252') as file:
 			file.write(svg)

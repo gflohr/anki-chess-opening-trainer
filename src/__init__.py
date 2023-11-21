@@ -4,6 +4,7 @@ import sys
 
 import anki
 from aqt import mw
+# pylint: disable=no-name-in-module
 from aqt.qt import QAction
 from aqt.utils import qconnect
 
@@ -11,18 +12,19 @@ moduledir = os.path.dirname(__file__)
 sys.path.append(moduledir)
 sys.path.append(os.path.join(moduledir, 'lib'))
 
-from importDialog import ImportDialog
+# pylint: disable=wrong-import-order, wrong-import-position
+from .dialog import ImportDialog
 
 
-def showImportDialog() -> None:
+def show_import_dialog() -> None:
 	dlg = ImportDialog()
 	dlg.exec()
 
 
-def initI18N() -> None:
+def init_i18n() -> None:
 	supported = ['en', 'en-GB', 'de']
 	lang = anki.lang.current_lang
-	if not lang in supported:
+	if lang not in supported:
 		lang = supported[0]
 
 	localedir = os.path.join(os.path.dirname(__file__), 'locale')
@@ -32,13 +34,13 @@ def initI18N() -> None:
 	t.install(names=['ngettext'])
 
 
-def addMenuItem():
+def add_menu_item():
 	action = QAction(_('Chess Opening Trainer'), mw)
 	# set it to call testFunction when it's clicked
-	qconnect(action.triggered, showImportDialog)
+	qconnect(action.triggered, show_import_dialog)
 	# and add it to the tools menu
 	mw.form.menuTools.addAction(action)
 
 
-initI18N()
-addMenuItem()
+init_i18n()
+add_menu_item()
