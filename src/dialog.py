@@ -63,17 +63,17 @@ class _Config():
 				self.decks['black'] = decks['black']
 
 	def save(self, dlg: QDialog) -> dict:
-		colour_index = dlg.colourCombo.currentIndex()
+		colour_index = dlg.colour_combo.currentIndex()
 		if colour_index == 1:
 			colour = 'black'
 		else:
 			colour = 'white'
 		self.colour = colour
-		self.notetype = dlg.modelCombo.currentText()
+		self.notetype = dlg.model_combo.currentText()
 		self.files[colour] = []
-		for i in range(dlg.fileList.count()):
-			self.files[colour].append(dlg.fileList.item(i).text())
-		self.decks[colour] = dlg.deckCombo.currentText()
+		for i in range(dlg.file_list.count()):
+			self.files[colour].append(dlg.file_list.item(i).text())
+		self.decks[colour] = dlg.deck_combo.currentText()
 		config = {
 		    'colour': self.colour,
 		    'notetype': self.notetype,

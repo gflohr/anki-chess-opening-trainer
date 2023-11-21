@@ -10,7 +10,7 @@ from aqt.utils import qconnect
 
 moduledir = os.path.dirname(__file__)
 sys.path.append(moduledir)
-sys.path.append(os.path.join(moduledir, 'lib'))
+sys.path.append(os.path.join(moduledir, 'vendor'))
 
 # pylint: disable=wrong-import-order, wrong-import-position
 from .dialog import ImportDialog
