@@ -25,7 +25,7 @@ class _Config():
 	# pylint: disable=too-few-public-methods
 	def __init__(self):
 		# pylint: disable=too-many-branches
-		config = mw.addonManager.getConfig('chess_opening_trainer')
+		config = mw.addonManager.getConfig(__name__)
 		if not config:
 			config = {}
 		col = mw.col
@@ -90,7 +90,7 @@ class _Config():
 		    'decks': self.decks,
 		}
 
-		mw.addonManager.writeConfig('chess_opening_trainer', config)
+		mw.addonManager.writeConfig(__name__, config)
 
 		return config
 
