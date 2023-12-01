@@ -2,11 +2,15 @@
 
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.1.1] - 2023-12-01
 
 ### Added
 
 * Top-level `Makefile`.
+
+### Fixed
+
+* correct location of meta.json with configuration
 
 ### Changed
 
