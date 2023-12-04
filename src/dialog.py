@@ -107,12 +107,12 @@ class ImportDialog(QDialog):
 		self.layout = QGridLayout()
 		self.setLayout(self.layout)
 
-		self.layout.addWidget(QLabel(_('Input Files')), 0, 0)
-		self.file_list = QListWidget()
-		self.layout.addWidget(self.file_list, 0, 1)
-		self.select_file_button = QPushButton(_('Select files'))
-		self.select_file_button.clicked.connect(self._select_input_file)
-		self.layout.addWidget(self.select_file_button, 0, 2)
+		self.layout.addWidget(QLabel(_('Color')), 0, 0)
+		self.colour_combo = QComboBox()
+		self.layout.addWidget(self.colour_combo, 0, 1)
+		self.colour_combo.addItem(_('White'))
+		self.colour_combo.addItem(_('Black'))
+		self.colour_combo.currentIndexChanged.connect(self._colour_changed)
 
 		self.layout.addWidget(QLabel(_('Deck')), 1, 0)
 		self.deck_combo = QComboBox()
@@ -123,12 +123,12 @@ class ImportDialog(QDialog):
 		for deckname in sorted(decknames):
 			self.deck_combo.addItem(deckname)
 
-		self.layout.addWidget(QLabel(_('Color')), 2, 0)
-		self.colour_combo = QComboBox()
-		self.layout.addWidget(self.colour_combo, 2, 1)
-		self.colour_combo.addItem(_('White'))
-		self.colour_combo.addItem(_('Black'))
-		self.colour_combo.currentIndexChanged.connect(self._colour_changed)
+		self.layout.addWidget(QLabel(_('Input Files')), 2, 0)
+		self.file_list = QListWidget()
+		self.layout.addWidget(self.file_list, 2, 1)
+		self.select_file_button = QPushButton(_('Select files'))
+		self.select_file_button.clicked.connect(self._select_input_file)
+		self.layout.addWidget(self.select_file_button, 2, 2)
 
 		self.layout.addWidget(QLabel(_('Note type')), 3, 0)
 		self.model_combo = QComboBox()
