@@ -124,6 +124,8 @@ position with white to move.  If you later edit the study, you can import
 an updated version again, that gets merged into the existing deck.  Your
 progress will be preserved to the extent possible.
 
+*Important!* The PGN file must be in UTF-8 encoding!
+
 ## Copyright
 
 This is free software.  Copyright © 2023, Guido Flohr <guido.flohr@cantanea.com>,

@@ -56,11 +56,7 @@ class Importer:
 		return patch(ps, self.collection, self.deck)
 
 	def _read_study(self, filename: str) -> None:
-		# The encoding "cp1252" is pretty much equivalent to binary.  It also
-		# covers the range from 128 to 159 avoiding encoding errors.  And
-		# we just pass through characters to Anki and therefore don't care
-		# about character semantics.
-		with open(filename, encoding='cp1252') as study_pgn:
+		with open(filename, encoding='utf-8') as study_pgn:
 
 			def get_visitor() -> chess.pgn.BaseVisitor:
 				return self.visitor
