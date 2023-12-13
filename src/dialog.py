@@ -71,29 +71,6 @@ class _Config():
 			        map(lambda d: d['name'], col.decks.all()))):
 				self.decks['black'] = decks['black']
 
-	def save(self, dlg: ImportDialog) -> dict:
-		colour_index = dlg.colour_combo.currentIndex()
-		if colour_index == 1:
-			colour = 'black'
-		else:
-			colour = 'white'
-		self.colour = colour
-		self.notetype = dlg.model_combo.currentText()
-		self.files[colour] = []
-		for i in range(dlg.file_list.count()):
-			self.files[colour].append(dlg.file_list.item(i).text())
-		self.decks[colour] = dlg.deck_combo.currentText()
-		config = {
-		    'colour': self.colour,
-		    'notetype': self.notetype,
-		    'files': self.files,
-		    'decks': self.decks,
-		}
-
-		mw.addonManager.writeConfig(__name__, config)
-
-		return config
-
 
 class ImportDialog(QDialog):
 	# pylint: disable=too-few-public-methods, too-many-instance-attributes
@@ -260,3 +237,29 @@ class ImportDialog(QDialog):
 			self.file_list.clear()
 			self.file_list.addItems(
 			    [str(Path(filename)) for filename in filenames])
+
+
+def _save_config(self, dlg: ImportDialog) -> dict:
+	colour_index = dlg.colour_combo.currentIndex()
+	if colour_index == 1:
+		colour = 'black'
+	else:
+		colour = 'white'
+	self.colour = colour
+	self.notetype = dlg.model_combo.currentText()
+	self.files[colour] = []
+	for i in range(dlg.file_list.count()):
+		self.files[colour].append(dlg.file_list.item(i).text())
+	self.decks[colour] = dlg.deck_combo.currentText()
+	config = {
+		'colour': self.colour,
+		'notetype': self.notetype,
+		'files': self.files,
+		'decks': self.decks,
+	}
+
+	mw.addonManager.writeConfig(__name__, config)
+
+	return config
+
+_Config.save = _save_config
