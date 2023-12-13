@@ -5,8 +5,11 @@ all: zip ankiweb
 zip: vendor
 	python -m ankiscripts.build --type package --qt all --exclude user_files/**/*
 
-ankiweb: vendor
+ankiweb: vendor build/ankiweb-description.md
 	python -m ankiscripts.build --type ankiweb --qt all --exclude user_files/**/*
+
+build/ankiweb-description.md: description.md CHANGELOG.md
+	cat description.md CHANGELOG.md >$@
 
 vendor:
 	python -m ankiscripts.vendor

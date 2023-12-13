@@ -2,6 +2,17 @@
 
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2023-12-12
+
+### Fixed
+
+* update deck overview after import
+
+### Changed
+
+* modified project structure
+* PGN files must now be in UTF-8
+
 ## [0.1.1] - 2023-12-01
 
 ### Added
@@ -11,11 +22,6 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 * correct location of meta.json with configuration
-
-### Changed
-
-* modified project structure
-* PGN files must now be in UTF-8
 
 ## [0.1.0] - 2023-11-21
 
