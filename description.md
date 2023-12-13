@@ -10,12 +10,12 @@ deleted in the deck.
 All notes contain a graphical board representation of the position in question
 on both sides of the notes.
 
-See the [github page](htttps://github.com/gflohr/anki-chess-opening-trainer)
+See the [github page](https://github.com/gflohr/anki-chess-opening-trainer)
 for more information!
 
 There is a also a blog post that describes the add-on and its concept in
 great detail:
 
-* English version: http://www.guido-flohr.net/practice-chess-openings-with-anki/
-* German version: http://www.guido-flohr.net/schach-eroeffnungen-mit-anki-trainieren/
+* [English version](http://www.guido-flohr.net/practice-chess-openings-with-anki/)
+* [German version](http://www.guido-flohr.net/schach-eroeffnungen-mit-anki-trainieren/)
 
