@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 
 from aqt import mw, AnkiQt
-from aqt.operations import QueryOp
+from aqt.operations import CollectionOp, QueryOp
 # pylint: disable=no-name-in-module
 from aqt.qt import (QComboBox, QDialog, QDialogButtonBox, QFileDialog,
                     QGridLayout, QLabel, QListWidget, QListWidgetItem,
@@ -194,6 +194,7 @@ class ImportDialog(QDialog):
 			    ngettext('%d image deleted.', '%d images deleted.',
 			             counts[4]) % (counts[4]),
 			)
+			mw.reset()
 			showInfo(' '.join(msgs))
 
 		def _do_import(config, _unused) -> tuple[int, int, int, int, int]:
