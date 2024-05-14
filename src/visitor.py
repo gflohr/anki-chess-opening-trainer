@@ -8,7 +8,7 @@
 # http://www.wtfpl.net/ for more details.
 
 import typing
-from typing import Dict, Literal
+from typing import Any, Dict, Literal
 
 import chess
 from chess import Color
@@ -36,7 +36,8 @@ def i18n_piece_symbol(piece: chess.PieceType):
 	    # TRANSLATORS: This is the letter to use for a king.
 	    _('k'),
 	]
-	return typing.cast(str, piece_symbols[piece])
+	symbol: Any = piece_symbols[piece]
+	return typing.cast(str, symbol)
 
 
 class PositionVisitor(BaseVisitor):
