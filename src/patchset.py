@@ -10,26 +10,27 @@
 import dataclasses
 import os
 import shutil
+from typing import Dict, List, Sequence, Tuple
 
 from anki.collection import Collection
 from anki.decks import Deck
-from anki.notes import Note
+from anki.notes import Note, NoteId
 
 from .page import Page
 
 
 @dataclasses.dataclass
 class PatchSet:
-	inserts: list[Note]
-	deletes: list[Note]
-	updates: list[Note]
-	image_inserts: [str, Page]
-	image_deletes: [str]
+	inserts: List[Note]
+	deletes: Sequence[NoteId]
+	updates: List[Note]
+	image_inserts: Dict[str, Page]
+	image_deletes: List[str]
 	media_path: str
 
 
 def patch(ps: PatchSet, col: Collection,
-          deck: Deck) -> [int, int, int, int, int]:
+          deck: Deck) -> Tuple[int, int, int, int, int]:
 	deck_id = deck['id']
 	for note in ps.inserts:
 		col.add_note(note=note, deck_id=deck_id)
@@ -52,10 +53,10 @@ def patch(ps: PatchSet, col: Collection,
 		path = os.path.join(ps.media_path, image_path)
 		page.render_svg(path)
 
-	return [
+	return (
 	    len(ps.inserts),
 	    len(ps.updates),
 	    len(ps.deletes),
 	    len(ps.image_inserts),
 	    len(ps.image_deletes),
-	]
+	)
