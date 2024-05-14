@@ -9,6 +9,7 @@
 
 import hashlib
 import re
+from typing import Dict, List, Optional
 
 import chess
 from chess import Board
@@ -31,10 +32,10 @@ class Page:
 	def __init__(self, colour: chess.Color, turn: chess.Color) -> None:
 		self.colour = colour
 		self.turn = turn
-		self.comments: [str] = []
-		self.arrows: [Arrow] = []
-		self.fills: [int, str] = {}
-		self.board: Board | None = None
+		self.comments: List[str] = []
+		self.arrows: List[Arrow] = []
+		self.fills: Dict[int, str] = {}
+		self.board: Optional[Board] = None
 
 	def set_board(self, board: Board) -> None:
 		self.board = board
@@ -113,6 +114,9 @@ class Page:
 		return rendered
 
 	def render_svg(self, path: str) -> None:
+		if self.board is None:
+			return
+
 		if self.board.ply():
 			lastmove = self.board.peek()
 		else:
