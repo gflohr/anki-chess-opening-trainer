@@ -1,5 +1,5 @@
 # German translations for opening-trainer
-# Copyright (C) 2023 Guido Flohr <http://www.guido-flohr.net>
+# Copyright (C) 2023-2024 Guido Flohr <http://www.guido-flohr.net>
 # This file is distributed under the same license as the opening-trainer package.
 # Guido Flohr <guido.flohr@cantanea.com>, 2023.
 #
