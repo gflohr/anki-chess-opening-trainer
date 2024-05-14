@@ -103,9 +103,10 @@ class ImportDialog(QDialog):
 		self.layout.addWidget(QLabel(_('Deck')), 1, 0)
 		self.deck_combo = QComboBox()
 		self.layout.addWidget(self.deck_combo, 1, 1)
-		decknames: [str] = []
-		for deck in mw.col.decks.all():
-			decknames.append(deck['name'])
+		decknames: List[str] = []
+		if mw is not None:
+			for deck in mw.col.decks.all():
+				decknames.append(deck['name'])
 		for deckname in sorted(decknames):
 			self.deck_combo.addItem(deckname)
 
@@ -119,9 +120,10 @@ class ImportDialog(QDialog):
 		self.layout.addWidget(QLabel(_('Note type')), 3, 0)
 		self.model_combo = QComboBox()
 		self.layout.addWidget(self.model_combo, 3, 1)
-		modelnames: [str] = []
-		for model in mw.col.models.all():
-			modelnames.append(model['name'])
+		modelnames: List[str] = []
+		if mw is not None:
+			for model in mw.col.models.all():
+				modelnames.append(model['name'])
 		index = -1
 		current_index = -1
 		for modelname in sorted(modelnames):
@@ -219,7 +221,7 @@ class ImportDialog(QDialog):
 		try:
 			if not self.file_list.count():
 				raise RuntimeError(_('No input files specified!'))
-			config = self.config.save(self)
+			config = self.config.save(self) # type: ignore[attr-defined]
 			assert isinstance(mw, AnkiQt)
 			op = QueryOp(
 			    parent=mw,
@@ -268,8 +270,9 @@ def _save_config(self, dlg: ImportDialog) -> dict:
 		'decks': self.decks,
 	}
 
-	mw.addonManager.writeConfig(__name__, config)
+	if mw is not None:
+		mw.addonManager.writeConfig(__name__, config)
 
 	return config
 
-_Config.save = _save_config
+_Config.save = _save_config # type: ignore[attr-defined]
