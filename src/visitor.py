@@ -8,7 +8,7 @@
 # http://www.wtfpl.net/ for more details.
 
 import typing
-from typing import Literal
+from typing import Dict, Literal
 
 import chess
 from chess import Color
@@ -43,8 +43,8 @@ class PositionVisitor(BaseVisitor):
 	def __init__(self, colour):
 		self.colour: Color = colour
 		self.initial = chess.Board()
-		self.seen: [str, str] = {}
-		self.cards: [str, Page] = {}
+		self.seen: Dict[str, str] = {}
+		self.cards: Dict[str, Page] = {}
 		self.last_text = None
 		self.accumulated_comments = []
 		self.my_move = True
