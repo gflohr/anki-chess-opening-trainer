@@ -9,13 +9,16 @@
 
 import os
 from pathlib import Path
+from typing import Dict, List
 
 from aqt import mw, AnkiQt
 from aqt.operations import QueryOp
 # pylint: disable=no-name-in-module
-from aqt.qt import (QComboBox, QDialog, QDialogButtonBox, QFileDialog,
-                    QGridLayout, QLabel, QListWidget, QListWidgetItem,
-                    QPushButton, Qt)
+from aqt.qt import (QComboBox, QDialog,  # type: ignore[attr-defined]
+                    QDialogButtonBox, QFileDialog,  # type: ignore[attr-defined]
+                    QGridLayout, QLabel,  # type: ignore[attr-defined]
+                    QListWidget, QListWidgetItem,  # type: ignore[attr-defined]
+                    QPushButton, Qt) # type: ignore[attr-defined]
 from aqt.utils import showCritical, showInfo
 
 from .importer import Importer
@@ -25,51 +28,57 @@ class _Config():
 	# pylint: disable=too-few-public-methods
 	def __init__(self):
 		# pylint: disable=too-many-branches
-		config = mw.addonManager.getConfig(__name__)
-		if not config:
-			config = {}
-		col = mw.col
 
-		if ('colour' in config and isinstance(config['colour'], str)
-		    and 'black' == config['colour']):
-			self.colour = 'black'
-		else:
-			self.colour = 'white'
+		if mw is not None:
+			config = mw.addonManager.getConfig(__name__)
+			if not config:
+				config = {}
+			col = mw.col
 
-		if 'notetype' in config and isinstance(config['notetype'], str):
-			notetype = config['notetype']
-		else:
-			notetype = _('Basic')
-		if notetype in list(map(lambda m: m['name'], col.models.all())):
-			self.notetype = notetype
-		else:
-			self.notetype = None
+			if ('colour' in config and isinstance(config['colour'], str)
+				and 'black' == config['colour']):
+				self.colour = 'black'
+			else:
+				self.colour = 'white'
 
-		self.files = {'white': [], 'black': []}
-		if 'files' in config and isinstance(config['files'], dict):
-			files = config['files']
-			if 'white' in files and isinstance(config['files']['white'], list):
-				self.files['white'] = []
-				for filename in files['white']:
-					if isinstance(filename, str):
-						self.files['white'].append(filename)
-			if 'black' in files and isinstance(config['files']['black'], list):
-				self.files['black'] = []
-				for filename in files['black']:
-					if isinstance(filename, str):
-						self.files['black'].append(filename)
+			if 'notetype' in config and isinstance(config['notetype'], str):
+				notetype = config['notetype']
+			else:
+				notetype = _('Basic')
+			if notetype in list(map(lambda m: m['name'], col.models.all())):
+				self.notetype = notetype
+			else:
+				self.notetype = str(None)
 
-		self.decks = {'white': None, 'black': None}
-		if 'decks' in config and isinstance(config['decks'], dict):
-			decks = config['decks']
-			if ('white' in decks and isinstance(decks['white'], str)
-			    and decks['white'] in list(
-			        map(lambda d: d['name'], col.decks.all()))):
-				self.decks['white'] = decks['white']
-			if ('black' in decks and isinstance(decks['black'], str)
-			    and decks['black'] in list(
-			        map(lambda d: d['name'], col.decks.all()))):
-				self.decks['black'] = decks['black']
+			self.files: Dict[str, List[str]] = {'white': [], 'black': []}
+			if 'files' in config and isinstance(config['files'], dict):
+				files = config['files']
+				if 'white' in files and isinstance(config['files']['white'], list):
+					self.files['white'] = []
+					for filename in files['white']:
+						if isinstance(filename, str):
+							self.files['white'].append(filename)
+				if 'black' in files and isinstance(config['files']['black'], list):
+					self.files['black'] = []
+					for filename in files['black']:
+						if isinstance(filename, str):
+							self.files['black'].append(filename)
+
+			self.decks: Dict[str, str] = {}
+			if 'decks' in config and isinstance(config['decks'], dict):
+				decks = config['decks']
+				if ('white' in decks and isinstance(decks['white'], str)
+					and decks['white'] in list(
+						map(lambda d: d['name'], col.decks.all()))):
+					self.decks['white'] = decks['white']
+				else:
+					self.decks['white'] = ''
+				if ('black' in decks and isinstance(decks['black'], str)
+					and decks['black'] in list(
+						map(lambda d: d['name'], col.decks.all()))):
+					self.decks['black'] = decks['black']
+				else:
+					self.decks['black'] = ''
 
 
 class ImportDialog(QDialog):
