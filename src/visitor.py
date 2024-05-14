@@ -8,7 +8,7 @@
 # http://www.wtfpl.net/ for more details.
 
 import typing
-from typing import Dict, Literal
+from typing import Dict, Literal, cast
 
 import chess
 from chess import Color
@@ -79,21 +79,18 @@ class PositionVisitor(BaseVisitor):
 
 			if text not in self.cards:
 				turn = not board.turn
-				self.cards[text] = Question(
+				question = self.cards[text] = Question(
 				    text,
 				    turn=turn,
 				    colour=self.colour,
 				)
 				if hasattr(self, 'accumulated_comments'):
 					for comment in self.accumulated_comments:
-						self.cards[text].add_comment(comment)
+						question.add_comment(comment)
 						self.accumulated_comments = []
-				self.cards[text].set_board(board.copy())
-			elif answer.find(self.cards[text].answers):
-				# Already seen.  Is this redundant?
-				return
+				question.set_board(board.copy())
 
-			self.cards[text].add_answer(answer)
+			question.add_answer(answer)
 			self.my_move = True
 			self.last_text = text
 		else:
@@ -102,8 +99,8 @@ class PositionVisitor(BaseVisitor):
 
 
 	def visit_comment(self, comment: str) -> None:
-		if self.last_text:
-			question = self.cards[self.last_text]
+		if self.last_text and isinstance(self.cards[self.last_text], Question):
+			question: Question = cast(Question, self.cards[self.last_text])
 			if self.my_move:
 				question.answers[-1].add_comment(comment)
 			elif self.accumulated_comments:
@@ -113,7 +110,8 @@ class PositionVisitor(BaseVisitor):
 		return True
 
 	def print_cards(self) -> None:
-		for question in self.cards.values():
+		for page in self.cards.values():
+			question: Question = cast(Question, page)
 			print(f'Q: {question.render()}')
 			print('A: Playable moves:')
 
