@@ -21,7 +21,7 @@ fix:
 mypy:
 	# See https://github.com/python/mypy/issues/8727
 	-python -m mypy src tests *.py --exclude=src/vendor --exclude=src/forms \
-		--disable-error-code name-defined
+		--check-untyped-defs --disable-error-code name-defined
 
 pylint:
 	-python -m pylint src tests *.py
