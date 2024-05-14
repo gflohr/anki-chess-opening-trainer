@@ -8,7 +8,7 @@
 # http://www.wtfpl.net/ for more details.
 
 import typing
-from typing import Any, Dict, Literal
+from typing import Dict, Literal
 
 import chess
 from chess import Color
@@ -20,7 +20,7 @@ from .question import Question
 
 
 # Monkey-patch the piece_symbol() method.
-def i18n_piece_symbol(piece: chess.PieceType):
+def i18n_piece_symbol(piece: chess.PieceType) -> str:
 	piece_symbols = [
 	    None,
 	    # TRANSLATORS: This is the letter to use for a pawn.
@@ -36,8 +36,7 @@ def i18n_piece_symbol(piece: chess.PieceType):
 	    # TRANSLATORS: This is the letter to use for a king.
 	    _('k'),
 	]
-	symbol: Any = piece_symbols[piece]
-	return typing.cast(str, symbol)
+	return typing.cast(str, piece_symbols[piece])
 
 
 class PositionVisitor(BaseVisitor):
@@ -50,7 +49,7 @@ class PositionVisitor(BaseVisitor):
 		self.accumulated_comments = []
 		self.my_move = True
 
-	def visit_move(self, board, move) -> chess.Board:
+	def visit_move(self, board, move) -> None:
 		if board.turn == self.colour:
 			if board.ply():
 				saved_piece_symbol = chess.piece_symbol
@@ -68,7 +67,7 @@ class PositionVisitor(BaseVisitor):
 			fen = answer_board.fen
 			if fen in self.seen:
 				# Already seen.
-				return board
+				return
 
 			answer = Answer(
 			    san,
@@ -92,7 +91,7 @@ class PositionVisitor(BaseVisitor):
 				self.cards[text].set_board(board.copy())
 			elif answer.find(self.cards[text].answers):
 				# Already seen.  Is this redundant?
-				return board
+				return
 
 			self.cards[text].add_answer(answer)
 			self.my_move = True
@@ -101,7 +100,6 @@ class PositionVisitor(BaseVisitor):
 			self.accumulated_comments = []
 			self.my_move = False
 
-		return board
 
 	def visit_comment(self, comment: str) -> None:
 		if self.last_text:
