@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 
 from aqt import mw, AnkiQt
-from aqt.operations import CollectionOp, QueryOp
+from aqt.operations import QueryOp
 # pylint: disable=no-name-in-module
 from aqt.qt import (QComboBox, QDialog, QDialogButtonBox, QFileDialog,
                     QGridLayout, QLabel, QListWidget, QListWidgetItem,
@@ -179,7 +179,7 @@ class ImportDialog(QDialog):
 			self.file_list.addItem(filename)
 
 	def accept(self) -> None:
-		assert(isinstance(mw, AnkiQt))
+		assert isinstance(mw, AnkiQt)
 
 		def _on_success(counts: tuple[int, int, int, int, int]) -> None:
 			msgs = (
@@ -211,7 +211,7 @@ class ImportDialog(QDialog):
 			if not self.file_list.count():
 				raise RuntimeError(_('No input files specified!'))
 			config = self.config.save(self)
-			assert(isinstance(mw, AnkiQt))
+			assert isinstance(mw, AnkiQt)
 			op = QueryOp(
 			    parent=mw,
 			    op=lambda _unused: _do_import(config, _unused),
