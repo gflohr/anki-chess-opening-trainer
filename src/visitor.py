@@ -20,7 +20,7 @@ from .question import Question
 
 
 # Monkey-patch the piece_symbol() method.
-def i18n_piece_symbol(piece: chess.PieceType) -> str:
+def i18n_piece_symbol(piece_type: chess.PieceType) -> str:
 	piece_symbols = [
 	    None,
 	    # TRANSLATORS: This is the letter to use for a pawn.
@@ -36,7 +36,7 @@ def i18n_piece_symbol(piece: chess.PieceType) -> str:
 	    # TRANSLATORS: This is the letter to use for a king.
 	    _('k'),
 	]
-	return typing.cast(str, piece_symbols[piece])
+	return typing.cast(str, piece_symbols[piece_type])
 
 
 class PositionVisitor(BaseVisitor):
