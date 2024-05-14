@@ -1,5 +1,5 @@
 # English translations for opening-trainer package.
-# Copyright (C) 2023 Guido Flohr <http://www.guido-flohr.net>
+# Copyright (C) 2023-2024 Guido Flohr <http://www.guido-flohr.net>
 # This file is distributed under the same license as the PACKAGE package.
 # Guido Flohr <guido.flohr@cantanea.com>, 2023.
 #

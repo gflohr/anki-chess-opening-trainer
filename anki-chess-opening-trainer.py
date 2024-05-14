@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-# Copyright (C) 2023 Guido Flohr <guido.flohr@cantanea.com>,
+# Copyright (C) 2023-2024 Guido Flohr <guido.flohr@cantanea.com>,
 # all rights reserved.
 
 # This program is free software. It comes without any warranty, to
@@ -46,10 +46,11 @@ if __name__ == '__main__':
 		sys.exit(1)
 
 	colour_arg = sys.argv[1].lower()[0]
+	colour: chess.Color
 	if colour_arg == 'w':
-		colour: chess.Color = chess.WHITE
+		colour = chess.WHITE
 	else:
-		colour: chess.Color = chess.BLACK
+		colour = chess.BLACK
 
 	config = read_config()
 

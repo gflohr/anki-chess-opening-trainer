@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Guido Flohr <guido.flohr@cantanea.com>,
+# Copyright (C) 2023-2024 Guido Flohr <guido.flohr@cantanea.com>,
 # all rights reserved.
 
 # This program is free software. It comes without any warranty, to
@@ -14,7 +14,7 @@ import sys
 import anki
 from aqt import mw
 # pylint: disable=no-name-in-module
-from aqt.qt import QAction
+from aqt.qt import QAction # type: ignore[attr-defined]
 from aqt.utils import qconnect
 
 moduledir = os.path.dirname(__file__)
@@ -48,7 +48,8 @@ def add_menu_item():
 	# set it to call testFunction when it's clicked
 	qconnect(action.triggered, show_import_dialog)
 	# and add it to the tools menu
-	mw.form.menuTools.addAction(action)
+	if mw is not None:
+		mw.form.menuTools.addAction(action)
 
 
 init_i18n()

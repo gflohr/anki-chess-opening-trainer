@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Guido Flohr <guido.flohr@cantanea.com>,
+# Copyright (C) 2023-2024 Guido Flohr <guido.flohr@cantanea.com>,
 # all rights reserved.
 
 # This program is free software. It comes without any warranty, to
@@ -8,7 +8,7 @@
 # http://www.wtfpl.net/ for more details.
 
 import typing
-from typing import Literal
+from typing import Dict, Literal, cast
 
 import chess
 from chess import Color
@@ -20,7 +20,7 @@ from .question import Question
 
 
 # Monkey-patch the piece_symbol() method.
-def i18n_piece_symbol(piece: chess.PieceType):
+def i18n_piece_symbol(piece_type: chess.PieceType) -> str:
 	piece_symbols = [
 	    None,
 	    # TRANSLATORS: This is the letter to use for a pawn.
@@ -36,20 +36,20 @@ def i18n_piece_symbol(piece: chess.PieceType):
 	    # TRANSLATORS: This is the letter to use for a king.
 	    _('k'),
 	]
-	return typing.cast(str, piece_symbols[piece])
+	return typing.cast(str, piece_symbols[piece_type])
 
 
 class PositionVisitor(BaseVisitor):
 	def __init__(self, colour):
 		self.colour: Color = colour
 		self.initial = chess.Board()
-		self.seen: [str, str] = {}
-		self.cards: [str, Page] = {}
+		self.seen: Dict[str, str] = {}
+		self.cards: Dict[str, Page] = {}
 		self.last_text = None
 		self.accumulated_comments = []
 		self.my_move = True
 
-	def visit_move(self, board, move) -> chess.Board:
+	def visit_move(self, board, move) -> None:
 		if board.turn == self.colour:
 			if board.ply():
 				saved_piece_symbol = chess.piece_symbol
@@ -67,7 +67,7 @@ class PositionVisitor(BaseVisitor):
 			fen = answer_board.fen
 			if fen in self.seen:
 				# Already seen.
-				return board
+				return
 
 			answer = Answer(
 			    san,
@@ -79,32 +79,28 @@ class PositionVisitor(BaseVisitor):
 
 			if text not in self.cards:
 				turn = not board.turn
-				self.cards[text] = Question(
+				question = self.cards[text] = Question(
 				    text,
 				    turn=turn,
 				    colour=self.colour,
 				)
 				if hasattr(self, 'accumulated_comments'):
 					for comment in self.accumulated_comments:
-						self.cards[text].add_comment(comment)
+						question.add_comment(comment)
 						self.accumulated_comments = []
-				self.cards[text].set_board(board.copy())
-			elif answer.find(self.cards[text].answers):
-				# Already seen.  Is this redundant?
-				return board
-
-			self.cards[text].add_answer(answer)
-			self.my_move = True
-			self.last_text = text
+				question.set_board(board.copy())
+			elif not answer.find(self.cards[text].answers):
+				self.cards[text].add_answer(answer)
+				self.my_move = True
+				self.last_text = text
 		else:
 			self.accumulated_comments = []
 			self.my_move = False
 
-		return board
 
 	def visit_comment(self, comment: str) -> None:
-		if self.last_text:
-			question = self.cards[self.last_text]
+		if self.last_text and isinstance(self.cards[self.last_text], Question):
+			question: Question = cast(Question, self.cards[self.last_text])
 			if self.my_move:
 				question.answers[-1].add_comment(comment)
 			elif self.accumulated_comments:
@@ -114,7 +110,8 @@ class PositionVisitor(BaseVisitor):
 		return True
 
 	def print_cards(self) -> None:
-		for question in self.cards.values():
+		for page in self.cards.values():
+			question: Question = cast(Question, page)
 			print(f'Q: {question.render()}')
 			print('A: Playable moves:')
 

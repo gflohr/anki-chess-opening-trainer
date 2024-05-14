@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Guido Flohr <guido.flohr@cantanea.com>,
+# Copyright (C) 2023-2024 Guido Flohr <guido.flohr@cantanea.com>,
 # all rights reserved.
 
 # This program is free software. It comes without any warranty, to
@@ -9,11 +9,15 @@
 
 import os
 import re
+from typing import Dict, List, Sequence, Tuple, cast
 
 import chess
 from anki.collection import Collection
-from anki.notes import Note
+from anki.notes import Note, NoteId
+from anki.decks import Deck
 
+from .answer import Answer
+from .question import Question
 from .page import Page
 from .patchset import PatchSet, patch
 from .visitor import PositionVisitor
@@ -23,7 +27,7 @@ class Importer:
 	# pylint: disable=too-many-arguments, too-few-public-methods
 	def __init__(
 	    self,
-	    filenames: [str],
+	    filenames: List[str],
 	    collection: Collection,
 	    colour: chess.Color,
 	    notetype: str,
@@ -37,7 +41,7 @@ class Importer:
 		if not self.model:
 			raise KeyError(f"Note type '{notetype}' does not exist")
 
-		self.deck = collection.decks.by_name(deck_name)
+		self.deck = cast(Deck, collection.decks.by_name(deck_name))
 		if not self.deck:
 			raise KeyError(f"Deck '{deck_name}' does not exist")
 
@@ -46,7 +50,7 @@ class Importer:
 
 		self.do_print = do_print
 
-	def run(self) -> [int, int, int]:
+	def run(self) -> Tuple[int, int, int, int, int]:
 		for filename in self.filenames:
 			self._read_study(filename)
 		if self.do_print:
@@ -80,12 +84,12 @@ class Importer:
 	def _compute_patch_set(self, got: dict[str, Note]) -> PatchSet:
 		# FIXME! Use the PatchSet that gets returned here.
 		# pylint: disable=too-many-locals, too-many-branches
-		used: list[str] = []
-		inserts: list[Note] = []
-		updates: list[Note] = []
-		deletes: list[int] = []
-		image_inserts: [str, Page] = {}
-		image_deletes: list[str] = []
+		used: List[str] = []
+		inserts: List[Note] = []
+		updates: List[Note] = []
+		deletes: List[NoteId] = []
+		image_inserts: Dict[str, Page] = {}
+		image_deletes: List[str] = []
 		media_path = self.collection.media.dir()
 
 		wanted = self.visitor.cards
@@ -102,8 +106,9 @@ class Importer:
 				if re.match(regex, filename):
 					image_deletes.append(filename)
 
-		for key, question in wanted.items():
-			answer = question.render_answers()
+		for key, q in wanted.items():
+			question: Question = cast(Question, q)
+			answer: Answer = cast(Answer, question.render_answers())
 
 			# Questions always get a board image.
 			image_path = question.image_path()
@@ -112,7 +117,8 @@ class Importer:
 			else:
 				image_inserts[image_path] = question
 
-			rendered_question = wanted[key].render()
+			q2: Question = cast(Question, wanted[key])
+			rendered_question: Question = cast(Question, q2.render())
 			if key in got:
 				used.append(key)
 				note = got[key]
@@ -138,8 +144,10 @@ class Importer:
 			if not key in used:
 				deletes.append(note.id)
 
+		deletes_sequence: Sequence = cast(Sequence, deletes)
+
 		return PatchSet(inserts=inserts,
-		                deletes=deletes,
+		                deletes=deletes_sequence,
 		                updates=updates,
 		                image_inserts=image_inserts,
 		                image_deletes=image_deletes,

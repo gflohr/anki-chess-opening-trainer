@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Guido Flohr <guido.flohr@cantanea.com>,
+# Copyright (C) 2023-2024 Guido Flohr <guido.flohr@cantanea.com>,
 # all rights reserved.
 
 # This program is free software. It comes without any warranty, to
@@ -7,6 +7,7 @@
 # to Public License, Version 2, as published by Sam Hocevar. See
 # http://www.wtfpl.net/ for more details.
 
+from typing import List
 from chess import Color
 
 from .answer import Answer
@@ -21,7 +22,7 @@ class Question(Page):
 	    colour: Color,
 	) -> None:
 		self.moves = moves
-		self.answers: [Answer] = []
+		self.answers: List[Answer] = []
 		Page.__init__(self, colour=colour, turn=turn)
 
 	def add_answer(self, answer: Answer) -> None:
