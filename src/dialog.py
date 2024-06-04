@@ -22,12 +22,15 @@ from aqt.qt import (QComboBox, QDialog,  # type: ignore[attr-defined]
 from aqt.utils import showCritical, showInfo
 
 from .importer import Importer
+from .config import Config, ConfigSchema
 
 
 class _Config():
 	# pylint: disable=too-few-public-methods
 	def __init__(self):
 		# pylint: disable=too-many-branches
+
+		c = Config()
 
 		if mw is not None:
 			config = mw.addonManager.getConfig(__name__)

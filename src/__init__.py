@@ -24,7 +24,6 @@ sys.path.append(os.path.join(moduledir, 'vendor'))
 # pylint: disable=wrong-import-order, wrong-import-position
 from .dialog import ImportDialog
 
-
 def show_import_dialog() -> None:
 	dlg = ImportDialog()
 	dlg.exec()
@@ -40,7 +39,7 @@ def init_i18n() -> None:
 	t = gettext.translation('anki-chess-opening-trainer',
 	                        localedir=localedir,
 	                        languages=[lang])
-	t.install(names=['ngettext'])
+	t.install(names=['_', 'ngettext'])
 
 
 def add_menu_item():
@@ -50,6 +49,7 @@ def add_menu_item():
 	# and add it to the tools menu
 	if mw is not None:
 		mw.form.menuTools.addAction(action)
+
 
 
 init_i18n()

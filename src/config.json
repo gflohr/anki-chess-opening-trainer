@@ -1,5 +1,4 @@
 {
-	"version": null,
 	"colour": "white",
 	"decks": {
 		"white": null,
@@ -7,7 +6,7 @@
 	},
 	"files": {
 		"white": [],
-		"black": [] 
+		"black": []
 	},
 	"notetype": "Basic"
 }
