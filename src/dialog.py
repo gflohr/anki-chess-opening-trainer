@@ -22,7 +22,7 @@ from aqt.qt import (QComboBox, QDialog,  # type: ignore[attr-defined]
 from aqt.utils import showCritical, showInfo
 
 from .importer import Importer
-from .config import Config, ConfigSchema
+from .config_reader import ConfigReader
 
 
 class _Config():
@@ -30,7 +30,8 @@ class _Config():
 	def __init__(self):
 		# pylint: disable=too-many-branches
 
-		c = Config()
+		c = ConfigReader().get_config()
+		print(c)
 
 		if mw is not None:
 			config = mw.addonManager.getConfig(__name__)

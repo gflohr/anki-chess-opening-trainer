@@ -7,35 +7,58 @@
 # to Public License, Version 2, as published by Sam Hocevar. See
 # http://www.wtfpl.net/ for more details.
 
+import sys
 import semantic_version as sv
 
-from typing import List, cast
+from typing import cast
 from aqt import mw
+from jsonschema import ValidationError, validate
 
-from .config_schema import ConfigSchema
+from .config import Config
 from .version import __version__
+from .schema import schema
 
-
-class Config:
+class ConfigReader:
 	def __init__(self) -> None:
 		if mw is not None:
 			rawConfig = mw.addonManager.getConfig(__name__)
+		else:
+			rawConfig = { 'version': __version__ }
 
-		self.config:ConfigSchema = cast(ConfigSchema, self._update(rawConfig))
-		print(self.config)
+		self.config:Config = cast(Config, self._update(rawConfig))
+
+		try:
+			validate(self.config, schema=schema)
+		except ValidationError as e:
+			print(f'validation error: {e}', file=sys.stderr)
+			self.config:Config = { 'version': __version__ }
 
 
-	def _update(self, raw: any) -> ConfigSchema:
+	def save(self):
+		if mw:
+			mw.addonManager.writeConfig(__name__, self.config)
+
+
+	def get_config(self):
+		return self.config
+
+
+	def _update(self, raw: any) -> Config:
 		if not raw:
 			raw = {}
 
 		if 'version' not in raw or not raw['version']:
 			raw['version'] = '0.0.0'
 
+		if raw['version'] == __version__:
+			return raw
+
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			self._update_v1_0_0(raw)
 
 		raw['version'] = __version__
+
+		mw.addonManager.writeConfig(__name__, raw)
 
 		return raw
 

@@ -1,2 +1,4 @@
 chess == 1.10.0
 semantic_version == 2.10.0
+jsonschema == 4.22.0
+typing_extensions == 4.12.1

@@ -7,3 +7,4 @@ mypy
 pylint
 pytest
 datamodel-code-generator=0.25.6
+yapf

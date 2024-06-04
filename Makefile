@@ -4,10 +4,12 @@ default: all
 
 all: zip ankiweb
 
-zip: src/version.py src/config_schema.py vendor
+generated: src/version.py src/config.py src/schema.py
+
+zip: generated vendor
 	python -m ankiscripts.build --type package --qt all --exclude user_files/**/*
 
-ankiweb: src/version.py src/config_schema.py vendor build/ankiweb-description.md
+ankiweb: generated vendor build/ankiweb-description.md
 	python -m ankiscripts.build --type ankiweb --qt all --exclude user_files/**/*
 
 build/ankiweb-description.md: description.md CHANGELOG.md
@@ -16,12 +18,15 @@ build/ankiweb-description.md: description.md CHANGELOG.md
 src/version.py: ./VERSION
 	@echo "__version__ = '$(VERSION)'" >$@
 
-src/config_schema.py: ./src/config-new.schema.json
+src/config.py: ./src/config.schema.json
 	datamodel-codegen \
 		--input=$< \
 		--input-file-type=jsonschema \
 		--output-model-type=typing.TypedDict \
-		--class-name=ConfigSchema | sed -e "s/    /\t/g" >$@
+		| sed -e "s/    /\t/g" >$@
+
+src/schema.py: ./src/config.schema.json
+	python3 ./tools/json2python.py <$< >$@
 
 vendor:
 	python -m ankiscripts.vendor
@@ -47,6 +52,6 @@ sourcedist:
 	python -m ankiscripts.sourcedist
 
 clean:
-	rm -rf build/ src/version.py src/config_schema.py
+	rm -rf build/ src/version.py src/config.py
 
 .PHONY: all zip ankiweb vendor fix mypy pylint lint test sourcedist clean
