@@ -42,6 +42,7 @@ class ImportDialog(QDialog):
 		self.layout.addWidget(self.colour_combo, 0, 1)
 		self.colour_combo.addItem(_('White'))
 		self.colour_combo.addItem(_('Black'))
+		self.updating = False
 		self.colour_combo.currentIndexChanged.connect(self._colour_changed)
 
 		self.layout.addWidget(QLabel(_('Deck')), 1, 0)
@@ -91,21 +92,33 @@ class ImportDialog(QDialog):
 		self._fill_dialog()
 
 	def _colour_changed(self) -> None:
+		if self.updating:
+			return
+		self.updating = True
+
 		if self.colour_combo.currentIndex() == 1:
 			colour = 'black'
 		else:
 			colour = 'white'
 		config = self.config
 
-		wanted = config.decks[colour]
-		for i in range(self.deck_combo.count()):
-			if wanted == self.deck_combo.itemText(i):
-				self.deck_combo.setCurrentIndex(i)
-				break
+		deck_id = config['decks'][colour]
+		deck = mw.col.decks.get(deck_id)
+		if deck is not None:
+			name = deck['name']
+			for i in range(self.deck_combo.count()):
+				if name == self.deck_combo.itemText(i):
+					self.deck_combo.setCurrentIndex(i)
+					break
 
-		self.file_list.clear()
-		for filename in config.files[colour]:
-			self.file_list.addItem(filename)
+			self.file_list.clear()
+
+			if str(deck_id) in config['imports']:
+				record = config['imports'][str(deck_id)]
+			for filename in record['files']:
+				self.file_list.addItem(filename)
+
+		self.updating = False
 
 	def _fill_dialog(self) -> None:
 		config = self.config
