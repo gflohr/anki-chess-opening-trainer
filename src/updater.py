@@ -7,8 +7,11 @@
 # to Public License, Version 2, as published by Sam Hocevar. See
 # http://www.wtfpl.net/ for more details.
 
+from typing import Tuple
 import semantic_version as sv
+import anki
 
+from basic_names import basic_names
 
 class Updater:
 	def __init__(self, mw: any, version: sv.Version):
@@ -16,12 +19,11 @@ class Updater:
 		self.version = version
 
 
-	def update_config(self, raw: any) -> any:
-		raw = self._update(raw)
-		raw = self._fill_config(raw)
+	def update_config(self, old: any) -> any:
+		config = self._update(old)
+		config = self._fill_config(config)
 
-		return raw
-
+		return config
 
 	def _update(self, raw: any) -> any:
 		if not raw:
@@ -34,7 +36,7 @@ class Updater:
 			return raw
 
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
-			self._update_v1_0_0(raw)
+			raw = self._update_v1_0_0(raw)
 
 		raw['version'] = self.version
 
@@ -49,7 +51,7 @@ class Updater:
 			if 'white' in decks:
 				deck_id = self.mw.col.decks.id_for_name(decks['white'])
 				if deck_id:
-					raw['imports'][f'{deck_id}'] = {
+					raw['imports'][str(deck_id)] = {
 						'colour': 'white',
 						'files': raw['files']['white']
 					}
@@ -57,7 +59,7 @@ class Updater:
 			if 'black' in decks:
 				deck_id = self.mw.col.decks.id_for_name(decks['black'])
 				if deck_id:
-					raw['imports'][f'{deck_id}'] = {
+					raw['imports'][str(deck_id)] = {
 						'colour': 'black',
 						'files': raw['files']['black']
 					}
@@ -67,6 +69,8 @@ class Updater:
 			del(raw['files'])
 
 		raw['version'] = '1.0.0'
+
+		return raw
 
 
 	def _fill_config(self, raw: any) -> any:
@@ -91,7 +95,24 @@ class Updater:
 		if 'imports' not in raw:
 			raw['imports'] = {}
 
-		if 'notetype' not in raw:
-			raw['notetype'] = 'Basic'
+		if 'notetype' not in raw or raw['notetype'] is None:
+			raw['notetype'] = self._get_basic_notetype()
 
 		return raw
+
+	def _get_basic_notetype(self):
+		names = []
+
+		lang = anki.lang.current_lang
+		if lang in basic_names:
+			names.append(basic_names[lang])
+
+		names.extend(list(basic_names.values()))
+
+		for name in names:
+			id = self.mw.col.models.id_for_name(name)
+			if id is not None:
+				return id
+
+		return None
+

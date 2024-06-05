@@ -5,7 +5,7 @@
 	"description": "Configuration for the Anki Chess Opening Trainer Add-On",
 	"type": "object",
 	"additionalProperties": false,
-	"required": ["version"],
+	"required": ["version", "colour", "decks", "imports", "notetype"],
 	"properties": {
 		"version": {
 			"description": "The add-on version that has generated this configuration",
@@ -67,8 +67,9 @@
 		},
 		"notetype": {
 			"description": "The notetype to use for card generation.",
-			"type": ["string", "null"],
-			"default": null
+			"type": ["integer", "null"],
+			"default": null,
+			"minimum": 1
 		}
 	}
 }

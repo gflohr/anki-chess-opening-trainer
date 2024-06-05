@@ -31,9 +31,8 @@ class ImportDialog(QDialog):
 		super().__init__()
 
 		self.config = ConfigReader().get_config()
-		print(self.config)
 
-		self.setWindowTitle(_('Import Opening PGN'))
+		self.setWindowTitle(_('Import PGN File'))
 
 		self.layout = QGridLayout()
 		self.setLayout(self.layout)
@@ -111,29 +110,37 @@ class ImportDialog(QDialog):
 	def _fill_dialog(self) -> None:
 		config = self.config
 		colour = config['colour']
+		if colour is None:
+			colour = 'white'
+
 		if 'black' == colour:
 			self.colour_combo.setCurrentIndex(1)
 		else:
 			self.colour_combo.setCurrentIndex(0)
 
-		if config.decks[colour] is not None:
-			print(f'current deck: {config.decks[colour]}')
-			wanted = config.decks[colour]
-			for i in range(self.deck_combo.count()):
-				if wanted == self.deck_combo.itemText(i):
-					self.deck_combo.setCurrentIndex(i)
-					break
-
-		if config.notetype is not None:
-			wanted = config.notetype
-			for i in range(self.model_combo.count()):
-				if wanted == self.model_combo.itemText(i):
-					self.model_combo.setCurrentIndex(i)
-					break
-
 		self.file_list.clear()
-		for filename in config.files[colour]:
-			self.file_list.addItem(filename)
+
+		if config['decks'][colour] is not None:
+			wanted_id = config['decks'][colour]
+			for i in range(self.deck_combo.count()):
+				deck = mw.col.decks.get(did=wanted_id, default=False)
+				if deck['name'] == self.deck_combo.itemText(i):
+					self.deck_combo.setCurrentIndex(i)
+
+					if str(wanted_id) in config['imports']:
+						record = config['imports'][str(wanted_id)]
+						for filename in record['files']:
+							self.file_list.addItem(filename)
+					break
+
+		if config['notetype'] is not None:
+			notetype_id = config['notetype']
+			name = mw.col.models.get(notetype_id)
+			if name is not None:
+				for i in range(self.model_combo.count()):
+					if name == self.model_combo.itemText(i):
+						self.model_combo.setCurrentIndex(i)
+						break
 
 	def accept(self) -> None:
 		assert isinstance(mw, AnkiQt)

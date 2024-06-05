@@ -28,6 +28,9 @@ src/config.py: ./src/config.schema.json
 src/schema.py: ./src/config.schema.json
 	python3 ./tools/json2python.py <$< >$@
 
+src/basic_names.py:
+	sh ./tools/get-basic-notetype-names.sh >$@
+
 vendor:
 	python -m ankiscripts.vendor
 
