@@ -95,7 +95,7 @@ class Updater:
 		if 'imports' not in raw:
 			raw['imports'] = {}
 
-		if 'notetype' not in raw or raw['notetype'] is None:
+		if 'notetype' not in raw or raw['notetype'] is None or isinstance(raw['notetype'], str):
 			raw['notetype'] = self._get_basic_notetype()
 
 		return raw
