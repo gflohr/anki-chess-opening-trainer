@@ -29,13 +29,9 @@ class ConfigReader:
 		updater = Updater(mw, __version__)
 		config = updater.update_config(raw_config)
 		self.config:Config = cast(Config, config)
-		mw.addonManager.writeConfig(__name__, self.config)
 
-		try:
-			validate(self.config, schema=schema)
-		except ValidationError as e:
-			print(f'validation error: {e}', file=sys.stderr)
-			self.config:Config = { 'version': __version__ }
+		validate(self.config, schema=schema)
+		mw.addonManager.writeConfig(__name__, self.config)
 
 
 	def get_config(self):
