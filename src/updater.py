@@ -11,14 +11,62 @@ import semantic_version as sv
 
 
 class Updater:
-	def __init__(self, version: sv.Version):
+	def __init__(self, mw: any, version: sv.Version):
+		self.mw = mw
 		self.version = version
 
 
 	def update_config(self, raw: any) -> any:
+		raw = self._update(raw)
 		raw = self._fill_config(raw)
 
 		return raw
+
+
+	def _update(self, raw: any) -> any:
+		if not raw:
+			raw = {}
+
+		if 'version' not in raw or not raw['version']:
+			raw['version'] = '0.0.0'
+
+		if raw['version'] == self.version:
+			return raw
+
+		if sv.Version(raw['version']) < sv.Version('1.0.0'):
+			self._update_v1_0_0(raw)
+
+		raw['version'] = self.version
+
+		return raw
+
+
+	def _update_v1_0_0(self, raw: any):
+		raw['imports'] = {}
+
+		if 'decks' in raw:
+			decks = raw['decks']
+			if 'white' in decks:
+				deck_id = self.mw.col.decks.id_for_name(decks['white'])
+				if deck_id:
+					raw['imports'][f'{deck_id}'] = {
+						'colour': 'white',
+						'files': raw['files']['white']
+					}
+					raw['decks']['white'] = deck_id
+			if 'black' in decks:
+				deck_id = self.mw.col.decks.id_for_name(decks['black'])
+				if deck_id:
+					raw['imports'][f'{deck_id}'] = {
+						'colour': 'black',
+						'files': raw['files']['black']
+					}
+					raw['decks']['black'] = deck_id
+
+		if 'files' in raw:
+			del(raw['files'])
+
+		raw['version'] = '1.0.0'
 
 
 	def _fill_config(self, raw: any) -> any:
