@@ -7,11 +7,14 @@
 # to Public License, Version 2, as published by Sam Hocevar. See
 # http://www.wtfpl.net/ for more details.
 
+import os
+import re
 from typing import Tuple
 import semantic_version as sv
 import anki
 
 from basic_names import basic_names
+from config import Config
 
 class Updater:
 	def __init__(self, mw: any, version: sv.Version):
@@ -22,6 +25,9 @@ class Updater:
 	def update_config(self, old: any) -> any:
 		config = self._update(old)
 		config = self._fill_config(config)
+
+		# FIXME! Remove this!
+		self._rename_media_files_v1_0_0(config)
 
 		return config
 
@@ -70,8 +76,37 @@ class Updater:
 
 		raw['version'] = '1.0.0'
 
+		self._rename_media_files_v1_0_0(raw)
+
 		return raw
 
+	def _rename_media_files_v1_0_0(self, config:Config):
+		media_path = self.mw.col.media.dir()
+
+		white_deck_id = config['decks']['white']
+		black_deck_id = config['decks']['black']
+
+		for path in os.scandir(media_path):
+			if not os.path.isdir(path.path):
+				filename = os.path.basename(path)
+				regex = '^chess-opening-trainer-([wb])-[0-9a-f]{40}\.svg'
+				match = re.match(regex, filename)
+				if match:
+					colour = match.group(1)
+					if colour == 'w' and white_deck_id:
+						new_filename = filename.replace('-w-', f'-{str(white_deck_id)}-')
+					elif colour == 'b' and black_deck_id:
+						new_filename = filename.replace('-b-', f'-{str(white_deck_id)}-')
+					else:
+						new_filename = None
+
+					if new_filename is not None:
+						# At this stage we will just copy the file.  Unlinking
+						# it will be handled by the importer, resp. the
+						# importer dialog.  The orphaned files will be picked
+						# up by the resolution of
+						# https://github.com/gflohr/anki-chess-opening-trainer/issues/12
+						print(f'copy {filename} to {new_filename}')
 
 	def _fill_config(self, raw: any) -> any:
 		if raw is None:
