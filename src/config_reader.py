@@ -30,8 +30,14 @@ class ConfigReader:
 		config = updater.update_config(raw_config)
 		self.config:Config = cast(Config, config)
 
-		validate(self.config, schema=schema)
-		mw.addonManager.writeConfig(__name__, self.config)
+		try:
+			validate(self.config, schema=schema)
+			mw.addonManager.writeConfig(__name__, self.config)
+		except ValidationError as e:
+			print(f'error validating Chess Opening Trainer configuration:')
+			print(e)
+			config = updater.update_config(None)
+			self.config:Config = cast(Config, config)
 
 
 	def get_config(self):

@@ -9,7 +9,7 @@
 
 import os
 from pathlib import Path
-from typing import Dict, List
+from typing import List, Literal
 
 from aqt import mw, AnkiQt
 from aqt.operations import QueryOp
@@ -26,6 +26,8 @@ from .config_reader import ConfigReader
 
 
 class ImportDialog(QDialog):
+
+
 	# pylint: disable=too-few-public-methods, too-many-instance-attributes
 	def __init__(self) -> None:
 		super().__init__()
@@ -52,8 +54,10 @@ class ImportDialog(QDialog):
 		if mw is not None:
 			for deck in mw.col.decks.all():
 				decknames.append(deck['name'])
+
 		for deckname in sorted(decknames):
 			self.deck_combo.addItem(deckname)
+		self.deck_combo.currentIndexChanged.connect(self._deck_changed)
 
 		self.layout.addWidget(QLabel(_('Input Files')), 2, 0)
 		self.file_list = QListWidget()
@@ -120,16 +124,37 @@ class ImportDialog(QDialog):
 
 		self.updating = False
 
+	def _deck_changed(self):
+		if self.updating:
+			return
+		self.updating = True
+
+		self.file_list.clear()
+
+		deck_name = self.deck_combo.currentText()
+		deck_id = mw.col.decks.id_for_name(deck_name)
+		if deck_id is not None and str(deck_id) in self.config['imports']:
+			record = self.config['imports'][str(deck_id)]
+			self._set_colour_combo(record['colour'])
+
+			for filename in record['files']:
+				self.file_list.addItem(filename)
+
+		self.updating = False
+
+	def _set_colour_combo(self, colour: Literal['white', 'black']):
+		if 'black' == colour:
+			self.colour_combo.setCurrentIndex(1)
+		else:
+			self.colour_combo.setCurrentIndex(0)
+
 	def _fill_dialog(self) -> None:
 		config = self.config
 		colour = config['colour']
 		if colour is None:
 			colour = 'white'
 
-		if 'black' == colour:
-			self.colour_combo.setCurrentIndex(1)
-		else:
-			self.colour_combo.setCurrentIndex(0)
+		self._set_colour_combo(colour)
 
 		self.file_list.clear()
 
