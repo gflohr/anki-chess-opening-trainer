@@ -26,13 +26,15 @@
 			"properties": {
 				"white": {
 					"description": "Currently selected deck for white",
-					"type": ["string", "null"],
-					"default": null
+					"type": ["integer", "null"],
+					"default": null,
+					"minimum": 1
 				},
 				"black": {
 					"description": "Currently selected deck for black",
-					"type": ["string", "null"],
-					"default": null
+					"type": ["integer", "null"],
+					"default": null,
+					"minimum": 1
 				}
 			}
 		},
@@ -65,7 +67,8 @@
 		},
 		"notetype": {
 			"description": "The notetype to use for card generation.",
-			"type": "string"
+			"type": ["string", "null"],
+			"default": null
 		}
 	}
 }

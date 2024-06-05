@@ -25,72 +25,13 @@ from .importer import Importer
 from .config_reader import ConfigReader
 
 
-class _Config():
-	# pylint: disable=too-few-public-methods
-	def __init__(self):
-		# pylint: disable=too-many-branches
-
-		c = ConfigReader().get_config()
-		print(c)
-
-		if mw is not None:
-			config = mw.addonManager.getConfig(__name__)
-			if not config:
-				config = {}
-			col = mw.col
-
-			if ('colour' in config and isinstance(config['colour'], str)
-				and 'black' == config['colour']):
-				self.colour = 'black'
-			else:
-				self.colour = 'white'
-
-			if 'notetype' in config and isinstance(config['notetype'], str):
-				notetype = config['notetype']
-			else:
-				notetype = _('Basic')
-			if notetype in list(map(lambda m: m['name'], col.models.all())):
-				self.notetype = notetype
-			else:
-				self.notetype = str(None)
-
-			self.files: Dict[str, List[str]] = {'white': [], 'black': []}
-			if 'files' in config and isinstance(config['files'], dict):
-				files = config['files']
-				if 'white' in files and isinstance(config['files']['white'], list):
-					self.files['white'] = []
-					for filename in files['white']:
-						if isinstance(filename, str):
-							self.files['white'].append(filename)
-				if 'black' in files and isinstance(config['files']['black'], list):
-					self.files['black'] = []
-					for filename in files['black']:
-						if isinstance(filename, str):
-							self.files['black'].append(filename)
-
-			self.decks: Dict[str, str] = {}
-			if 'decks' in config and isinstance(config['decks'], dict):
-				decks = config['decks']
-				if ('white' in decks and isinstance(decks['white'], str)
-					and decks['white'] in list(
-						map(lambda d: d['name'], col.decks.all()))):
-					self.decks['white'] = decks['white']
-				else:
-					self.decks['white'] = ''
-				if ('black' in decks and isinstance(decks['black'], str)
-					and decks['black'] in list(
-						map(lambda d: d['name'], col.decks.all()))):
-					self.decks['black'] = decks['black']
-				else:
-					self.decks['black'] = ''
-
-
 class ImportDialog(QDialog):
 	# pylint: disable=too-few-public-methods, too-many-instance-attributes
 	def __init__(self) -> None:
 		super().__init__()
 
-		self.config = _Config()
+		self.config = ConfigReader().get_config()
+		print(self.config)
 
 		self.setWindowTitle(_('Import Opening PGN'))
 
@@ -169,13 +110,14 @@ class ImportDialog(QDialog):
 
 	def _fill_dialog(self) -> None:
 		config = self.config
-		colour = config.colour
+		colour = config['colour']
 		if 'black' == colour:
 			self.colour_combo.setCurrentIndex(1)
 		else:
 			self.colour_combo.setCurrentIndex(0)
 
 		if config.decks[colour] is not None:
+			print(f'current deck: {config.decks[colour]}')
 			wanted = config.decks[colour]
 			for i in range(self.deck_combo.count()):
 				if wanted == self.deck_combo.itemText(i):
@@ -279,4 +221,4 @@ def _save_config(self, dlg: ImportDialog) -> dict:
 
 	return config
 
-_Config.save = _save_config # type: ignore[attr-defined]
+#_Config.save = _save_config # type: ignore[attr-defined]

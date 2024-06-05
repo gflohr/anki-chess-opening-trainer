@@ -18,6 +18,7 @@ from .config import Config
 from .version import __version__
 from .schema import schema
 
+
 class ConfigReader:
 	def __init__(self) -> None:
 		if mw is not None:
@@ -25,7 +26,21 @@ class ConfigReader:
 		else:
 			rawConfig = { 'version': __version__ }
 
+		# rawConfig = {
+		# 	"colour": "white",
+		# 	"decks": {
+		# 			"white": "Chess::Opening::White",
+		# 			"black": "Chess::Opening::Black"
+		# 		},
+		# 		"files": {
+		# 			"white": ["/Users/guidoflohr/python/anki-chess-opening-trainer/weiss.pgn"],
+		# 			"black": ["/Users/guidoflohr/python/anki-chess-opening-trainer/schwarz.pgn"]
+		# 		},
+		# 		"notetype": "Basic"
+		# }
+
 		self.config:Config = cast(Config, self._update(rawConfig))
+		print(self.config)
 
 		try:
 			validate(self.config, schema=schema)
@@ -40,10 +55,17 @@ class ConfigReader:
 
 
 	def get_config(self):
+		# Fill default values.
+		if 'colour' not in self.config:
+			self.config['colour'] = 'white'
+
 		return self.config
 
 
 	def _update(self, raw: any) -> Config:
+		if mw is None:
+			raise RuntimeError(_('Cannot upgrade without a main window!'))
+
 		if not raw:
 			raw = {}
 
@@ -53,20 +75,17 @@ class ConfigReader:
 		if raw['version'] == __version__:
 			return raw
 
-		if sv.Version(raw['version']) < sv.Version('1.0.0'):
+		if sv.Version(raw['version']) < sv.Version('2.0.0'):
 			self._update_v1_0_0(raw)
 
 		raw['version'] = __version__
 
-		mw.addonManager.writeConfig(__name__, raw)
+		#mw.addonManager.writeConfig(__name__, raw)
 
 		return raw
 
 
 	def _update_v1_0_0(self, raw: any):
-		if mw is None:
-			raise RuntimeError(_('Cannot upgrade without a main window!'))
-
 		raw['imports'] = {}
 
 		if 'decks' in raw:
@@ -74,17 +93,19 @@ class ConfigReader:
 			if 'white' in decks:
 				deck_id = mw.col.decks.id_for_name(decks['white'])
 				if deck_id:
-					raw['imports'][deck_id] = {
+					raw['imports'][f'{deck_id}'] = {
 						'colour': 'white',
 						'files': raw['files']['white']
 					}
+					raw['decks']['white'] = deck_id
 			if 'black' in decks:
 				deck_id = mw.col.decks.id_for_name(decks['black'])
 				if deck_id:
-					raw['imports'][deck_id] = {
+					raw['imports'][f'{deck_id}'] = {
 						'colour': 'black',
 						'files': raw['files']['black']
 					}
+					raw['decks']['black'] = deck_id
 
 		del(raw['files'])
 
