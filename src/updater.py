@@ -9,7 +9,7 @@
 
 import os
 import re
-from typing import Tuple
+import shutil
 import semantic_version as sv
 import anki
 
@@ -88,8 +88,8 @@ class Updater:
 
 		for path in os.scandir(media_path):
 			if not os.path.isdir(path.path):
-				filename = os.path.basename(path)
-				regex = '^chess-opening-trainer-([wb])-[0-9a-f]{40}\.svg'
+				directory, filename = os.path.split(path)
+				regex = '^chess-opening-trainer-([wb])-[0-9a-f]{40}\.svg$'
 				match = re.match(regex, filename)
 				if match:
 					colour = match.group(1)
@@ -106,7 +106,9 @@ class Updater:
 						# importer dialog.  The orphaned files will be picked
 						# up by the resolution of
 						# https://github.com/gflohr/anki-chess-opening-trainer/issues/12
-						print(f'copy {filename} to {new_filename}')
+						new_path = os.path.join(directory, new_filename)
+						shutil.copyfile(path, new_path)
+						os.remove(path)
 
 	def _fill_config(self, raw: any) -> any:
 		if raw is None:
