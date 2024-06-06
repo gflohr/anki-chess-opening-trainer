@@ -23,12 +23,12 @@ class Answer(Page):
 		Page.__init__(self, colour=colour, turn=turn)
 		self.set_board(board)
 
-	def render(self) -> str:
+	def render(self, note_id) -> str:
 		rendered = str(self.fullmove_number) + '.'
 		if not self.turn:
 			rendered += '...'
 		rendered += ' ' + self.move
-		rendered += self.extra_html()
+		rendered += self.extra_html(note_id)
 
 		return rendered
 

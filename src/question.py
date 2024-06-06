@@ -15,6 +15,8 @@ from .page import Page
 
 
 class Question(Page):
+
+
 	def __init__(
 	    self,
 	    moves: str,
@@ -28,14 +30,18 @@ class Question(Page):
 	def add_answer(self, answer: Answer) -> None:
 		self.answers.append(answer)
 
-	def render(self) -> str:
+	def render(self, note_id: int) -> str:
 		rendered = self.moves
-		rendered += self.extra_html()
+		rendered += self.extra_html(note_id)
 
 		return rendered
 
-	def render_answers(self) -> str:
-		lines = list(map(Answer.render, self.answers))
+	def render_answers(self, note_id: int) -> str:
+		lines: List[str] = []
+
+		for answer in self.answers:
+			lines.append(answer.render(note_id))
+
 		return '<br>'.join(lines)
 
 	def object_id(self) -> str:

@@ -260,6 +260,7 @@ class ImportDialog(QDialog):
 			_('Traceback:'),
 		)
 		msg = '<br />'.join(msgs) + '<br  />'.join(ftb)
+		print(msg)
 
 		parent = mw.app.activeWindow() or mw
 		msg_box = QMessageBox(parent)

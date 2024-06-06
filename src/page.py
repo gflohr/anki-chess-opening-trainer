@@ -82,7 +82,7 @@ class Page:
 		if not re.match('^[ \t\n\v\\f]*$', comment):
 			self.comments.append(comment)
 
-	def image_path(self) -> str:
+	def image_path(self, note_id: int) -> str:
 		path = ''
 
 		if not self.board:
@@ -95,20 +95,16 @@ class Page:
 			name += '-' + str(square) + '-' + self.fills[square]
 
 		name = hashlib.sha1(name.encode('ascii')).hexdigest() + '.svg'
-		if self.colour:
-			colour = 'w'
-		else:
-			colour = 'b'
-		path = f'chess-opening-trainer-{colour}-{name}'
+		path = f'chess-opening-trainer-{note_id}-{name}'
 
 		return path
 
-	def extra_html(self) -> str:
+	def extra_html(self, note_id: int) -> str:
 		rendered = ''
 		for comment in self.comments:
 			rendered += ' <em>' + comment + '</em>'
 
-		image_path = self.image_path()
+		image_path = self.image_path(note_id)
 		rendered += f'<br><img src="{image_path}">'
 
 		return rendered
