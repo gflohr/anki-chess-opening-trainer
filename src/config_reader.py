@@ -13,6 +13,8 @@ from typing import cast
 from aqt import mw
 from jsonschema import ValidationError, validate
 
+from aqt.utils import showCritical
+
 from .config import Config
 from .version import __version__
 from .schema import schema
@@ -34,8 +36,7 @@ class ConfigReader:
 			validate(self.config, schema=schema)
 			mw.addonManager.writeConfig(__name__, self.config)
 		except ValidationError as e:
-			print(f'error validating Chess Opening Trainer configuration:')
-			print(e)
+			showCritical(_('Your add-on configuration is invalid, restoring defaults.'))
 			config = updater.update_config(None)
 			self.config:Config = cast(Config, config)
 

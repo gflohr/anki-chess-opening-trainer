@@ -29,9 +29,6 @@ class Updater:
 		config = self._update(old)
 		config = self._fill_config(config)
 
-		# FIXME! Remove this!
-		self._patch_notes_v1_0_0(config)
-
 		return config
 
 	def _update(self, raw: any) -> any:
@@ -57,6 +54,7 @@ class Updater:
 
 		if 'decks' in raw:
 			decks = raw['decks']
+			print(decks)
 			if 'white' in decks:
 				deck_id = self.mw.col.decks.id_for_name(decks['white'])
 				if deck_id:
