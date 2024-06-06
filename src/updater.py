@@ -10,8 +10,11 @@
 import os
 import re
 import shutil
+from typing import List, Sequence
+import anki.types
 import semantic_version as sv
 import anki
+from anki.cards import Card
 
 from basic_names import basic_names
 from config import Config
@@ -27,7 +30,7 @@ class Updater:
 		config = self._fill_config(config)
 
 		# FIXME! Remove this!
-		self._rename_media_files_v1_0_0(config)
+		self._patch_notes_v1_0_0(config)
 
 		return config
 
@@ -76,6 +79,7 @@ class Updater:
 
 		raw['version'] = '1.0.0'
 
+		self._patch_notes_v1_0_0(raw)
 		self._rename_media_files_v1_0_0(raw)
 
 		return raw
@@ -109,6 +113,22 @@ class Updater:
 						new_path = os.path.join(directory, new_filename)
 						shutil.copyfile(path, new_path)
 						os.remove(path)
+
+	def _patch_notes_v1_0_0(self, config:Config):
+		col = self.mw.col
+		for colour, deck_id in config['decks'].items():
+			if deck_id is not None:
+				c = colour[0]
+				search = f'<img src="chess-opening-trainer-{c}-'
+				replace = f'<img src="chess-opening-trainer-{deck_id}-'
+				for cid in col.decks.cids(deck_id):
+					card = col.get_card(cid)
+					note = card.note()
+					# We avoid col.find_and_replace() here because it goes
+					# over all fields which is too unspecific for our needs.
+					note.fields[0] = note.fields[0].replace(search, replace)
+					note.fields[1] = note.fields[1].replace(search, replace)
+					col.update_note(note, skip_undo_entry=True)
 
 	def _fill_config(self, raw: any) -> any:
 		if raw is None:
