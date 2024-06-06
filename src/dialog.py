@@ -8,18 +8,24 @@
 # http://www.wtfpl.net/ for more details.
 
 import os
+import html
 from pathlib import Path
-from typing import List, Literal
+import traceback
+from typing import List, Literal, Union
 
-from aqt import mw, AnkiQt
+from aqt import mw, AnkiQt, qconnect
 from aqt.operations import QueryOp
 # pylint: disable=no-name-in-module
-from aqt.qt import (QComboBox, QDialog,  # type: ignore[attr-defined]
-                    QDialogButtonBox, QFileDialog,  # type: ignore[attr-defined]
-                    QGridLayout, QLabel,  # type: ignore[attr-defined]
-                    QListWidget, QListWidgetItem,  # type: ignore[attr-defined]
-                    QPushButton, Qt) # type: ignore[attr-defined]
-from aqt.utils import showCritical, showInfo
+from aqt.qt import (QComboBox, QDialog, # type: ignore[attr-defined]
+                    QDialogButtonBox, QFileDialog, # type: ignore[attr-defined]
+                    QGridLayout, QLabel, # type: ignore[attr-defined]
+                    QListWidget, QListWidgetItem, # type: ignore[attr-defined]
+                    QPushButton, Qt, QMessageBox, # type: ignore[attr-defined]
+					QDesktopServices, QUrl) # type: ignore[attr-defined]
+from aqt.utils import showCritical, showInfo, showWarning
+from anki.utils import no_bundled_libs
+
+from config import Config
 
 from .importer import Importer
 from .config_reader import ConfigReader
@@ -119,8 +125,8 @@ class ImportDialog(QDialog):
 
 			if str(deck_id) in config['imports']:
 				record = config['imports'][str(deck_id)]
-			for filename in record['files']:
-				self.file_list.addItem(filename)
+				for filename in record['files']:
+					self.file_list.addItem(filename)
 
 		self.updating = False
 
@@ -183,7 +189,11 @@ class ImportDialog(QDialog):
 	def accept(self) -> None:
 		assert isinstance(mw, AnkiQt)
 
-		def _on_success(counts: tuple[int, int, int, int, int]) -> None:
+		def _on_success(counts: Union[Exception, tuple[int, int, int, int, int]]):
+			if isinstance(counts, Exception):
+				self._show_exception(counts)
+				return
+
 			msgs = (
 			    ngettext('%d note inserted.', '%d notes inserted.',
 			             counts[0]) % (counts[0]),
@@ -197,32 +207,85 @@ class ImportDialog(QDialog):
 			             counts[4]) % (counts[4]),
 			)
 			mw.reset()
+			mw.addonManager.writeConfig(__name__, self.config)
+
 			showInfo(' '.join(msgs))
 
-		def _do_import(config, _unused) -> tuple[int, int, int, int, int]:
-			importer = Importer(
-			    collection=mw.col,
-			    filenames=config['files'][config['colour']],
-			    notetype=config['notetype'],
-			    colour=('white' == config['colour']),
-			    deck_name=config['decks'][config['colour']],
-			)
-			return importer.run()
+		def _do_import(config: Config, _) -> Union[Exception, tuple[int, int, int, int, int]]:
+			try:
+				colour = config['colour']
+				deck_id = config['decks'][colour]
+				record = config['imports'][str(deck_id)]
+				filenames = record['files']
+				notetype_id = config['notetype']
 
-		try:
-			if not self.file_list.count():
-				raise RuntimeError(_('No input files specified!'))
-			config = self.config.save(self) # type: ignore[attr-defined]
+				importer = Importer(
+					collection=mw.col,
+					deck_id=deck_id,
+					notetype_id=notetype_id,
+					filenames=filenames,
+					colour=('white' == colour),
+				)
+				return importer.run()
+			except Exception as e:
+				return e
+
+		if not self.file_list.count():
+			raise RuntimeError(_('No input files specified!'))
+		config = self._save_config()
+		if config is None:
+			self.reject()
+		else:
 			assert isinstance(mw, AnkiQt)
 			op = QueryOp(
-			    parent=mw,
-			    op=lambda _unused: _do_import(config, _unused),
-			    success=_on_success,
+				parent=mw,
+				op=lambda _unused: _do_import(config, _unused),
+				success=_on_success,
 			)
 			op.with_progress().run_in_background()
 			super().accept()
-		except OSError as e:
-			showCritical(str(e))
+
+	def _show_exception(self, e: Exception):
+		ftb = list(traceback.format_tb(e.__traceback__))
+
+		msgs = (
+			_('An error occurred!'),
+			_('Clicking the help button will open a web page explaining how to report a bug.'),
+			_('Please include the following information in your bug report:'),
+			_('<hr />'),
+			_('Exception type:') + ' ' + html.escape(type(e).__name__),
+			_('Exception message:') + ' ' + html.escape(str(e)),
+			_('Traceback:'),
+		)
+		msg = '<br />'.join(msgs) + '<br  />'.join(ftb)
+
+		parent = mw.app.activeWindow() or mw
+		msg_box = QMessageBox(parent)
+		msg_box.setIcon(QMessageBox.Icon.Critical)
+		msg_box.setTextFormat(Qt.TextFormat.MarkdownText)
+		msg_box.setText(msg)
+		msg_box.setWindowTitle(_('Chess Opening Trainer'))
+
+		# This is the reason, whey the customBtn argument for `showInfo()`
+		# cannot be used.  You can only call setDefault() or use
+		# qconnect() with the return value of addButton() which is a
+		# pointer to QPushButton.
+		ok_button = msg_box.addButton(QMessageBox.StandardButton.Ok)
+		ok_button.setDefault(True)
+
+		def open_link(link: str):
+			with no_bundled_libs():
+				QDesktopServices.openUrl(QUrl(link))
+
+		help_button = msg_box.addButton(QMessageBox.StandardButton.Help)
+		link = _('https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs')
+		help_button.clicked = qconnect(
+			help_button.clicked,
+			lambda: open_link(link),
+		)
+		help_button.setAutoDefault(False)
+
+		return msg_box.exec()
 
 	def _select_input_file(self) -> None:
 		if self.file_list.count():
@@ -241,29 +304,40 @@ class ImportDialog(QDialog):
 			self.file_list.addItems(
 			    [str(Path(filename)) for filename in filenames])
 
+	def _save_config(self) -> Config:
+		colour_index = self.colour_combo.currentIndex()
+		if colour_index == 1:
+			colour = 'black'
+		else:
+			colour = 'white'
 
-def _save_config(self, dlg: ImportDialog) -> dict:
-	colour_index = dlg.colour_combo.currentIndex()
-	if colour_index == 1:
-		colour = 'black'
-	else:
-		colour = 'white'
-	self.colour = colour
-	self.notetype = dlg.model_combo.currentText()
-	self.files[colour] = []
-	for i in range(dlg.file_list.count()):
-		self.files[colour].append(dlg.file_list.item(i).text())
-	self.decks[colour] = dlg.deck_combo.currentText()
-	config = {
-		'colour': self.colour,
-		'notetype': self.notetype,
-		'files': self.files,
-		'decks': self.decks,
-	}
+		col = mw.col
 
-	if mw is not None:
-		mw.addonManager.writeConfig(__name__, config)
+		deck_name = self.deck_combo.currentText()
+		deck_id = col.decks.id_for_name(deck_name)
+		if deck_id is None:
+			showWarning(_('The selected deck does not exist! Try again!'))
+			return None
 
-	return config
+		notetype_name = self.model_combo.currentText()
 
-#_Config.save = _save_config # type: ignore[attr-defined]
+		notetype_id = col.models.id_for_name(notetype_name)
+		if notetype_id is None:
+			showWarning(_('The selected note type does not exist! Try again!'))
+			return None
+
+		files: List[str] = []
+		for i in range(self.file_list.count()):
+			files.append(self.file_list.item(i).text())
+
+		self.config['colour'] = colour
+		self.config['decks'][colour] = deck_id
+
+		self.config['imports'][deck_id] = {
+			'colour': colour,
+			'files': files,
+		}
+
+		self.config['notetype'] = notetype_id
+
+		return self.config

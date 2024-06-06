@@ -30,20 +30,20 @@ class Importer:
 	    filenames: List[str],
 	    collection: Collection,
 	    colour: chess.Color,
-	    notetype: str,
-	    deck_name: str,
+	    notetype_id: int,
+	    deck_id: int,
 	    do_print: bool = False,
 	) -> None:
 		self.collection = collection
 		self.colour = colour
 
-		self.model = self.collection.models.by_name(notetype)
+		self.model = self.collection.models.get(notetype_id)
 		if not self.model:
-			raise KeyError(f"Note type '{notetype}' does not exist")
+			raise KeyError(_('Selected note type does not exist!'))
 
-		self.deck = cast(Deck, collection.decks.by_name(deck_name))
+		self.deck = self.collection.decks.get(did=deck_id)
 		if not self.deck:
-			raise KeyError(f"Deck '{deck_name}' does not exist")
+			raise KeyError(_('Selected deck does not exist!'))
 
 		self.visitor = PositionVisitor(colour=colour)
 		self.filenames = filenames

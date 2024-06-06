@@ -71,8 +71,6 @@ class PositionVisitor(BaseVisitor):
 
 			answer = Answer(
 			    san,
-			    fullmove_number=board.fullmove_number,
-			    turn=board.turn,
 			    board=answer_board,
 			    colour=self.colour,
 			)

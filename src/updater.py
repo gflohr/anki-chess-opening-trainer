@@ -54,7 +54,6 @@ class Updater:
 
 		if 'decks' in raw:
 			decks = raw['decks']
-			print(decks)
 			if 'white' in decks:
 				deck_id = self.mw.col.decks.id_for_name(decks['white'])
 				if deck_id:
