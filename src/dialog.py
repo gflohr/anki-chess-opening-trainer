@@ -165,16 +165,18 @@ class ImportDialog(QDialog):
 		self.file_list.clear()
 
 		if config['decks'][colour] is not None:
-			wanted_id = config['decks'][colour]
+			deck_id = config['decks'][colour]
+			deck = mw.col.decks.get(did=deck_id, default=False)
+
 			for i in range(self.deck_combo.count()):
-				deck = mw.col.decks.get(did=wanted_id, default=False)
 				if deck['name'] == self.deck_combo.itemText(i):
 					self.deck_combo.setCurrentIndex(i)
 
-					if str(wanted_id) in config['imports']:
-						record = config['imports'][str(wanted_id)]
-						for filename in record['files']:
-							self.file_list.addItem(filename)
+			self.file_list.clear()
+			if str(deck_id) in config['imports']:
+				record = config['imports'][str(deck_id)]
+				for filename in record['files']:
+					self.file_list.addItem(filename)
 					break
 
 		if config['notetype'] is not None:
