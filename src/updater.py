@@ -9,18 +9,16 @@
 
 import os
 import re
-import shutil
-from typing import List, Sequence
-import anki.types
+from typing import List
 import semantic_version as sv
 import anki
-from anki.cards import Card
+from anki.media import MediaManager
 
 from basic_names import basic_names
 from config import Config
 
 class Updater:
-	def __init__(self, mw: any, version: sv.Version):
+	def __init__(self, mw: MediaManager, version: sv.Version):
 		self.mw = mw
 		self.version = version
 
@@ -77,54 +75,43 @@ class Updater:
 		raw['version'] = '1.0.0'
 
 		self._patch_notes_v1_0_0(raw)
-		self._rename_media_files_v1_0_0(raw)
 
 		return raw
 
-	def _rename_media_files_v1_0_0(self, config:Config):
-		media_path = self.mw.col.media.dir()
-
-		white_deck_id = config['decks']['white']
-		black_deck_id = config['decks']['black']
-
-		for path in os.scandir(media_path):
-			if not os.path.isdir(path.path):
-				directory, filename = os.path.split(path)
-				regex = '^chess-opening-trainer-([wb])-[0-9a-f]{40}\.svg$'
-				match = re.match(regex, filename)
-				if match:
-					colour = match.group(1)
-					if colour == 'w' and white_deck_id:
-						new_filename = filename.replace('-w-', f'-{str(white_deck_id)}-')
-					elif colour == 'b' and black_deck_id:
-						new_filename = filename.replace('-b-', f'-{str(white_deck_id)}-')
-					else:
-						new_filename = None
-
-					if new_filename is not None:
-						# At this stage we will just copy the file.  Unlinking
-						# it will be handled by the importer, resp. the
-						# importer dialog.  The orphaned files will be picked
-						# up by the resolution of
-						# https://github.com/gflohr/anki-chess-opening-trainer/issues/12
-						new_path = os.path.join(directory, new_filename)
-						shutil.copyfile(path, new_path)
-						os.remove(path)
-
 	def _patch_notes_v1_0_0(self, config:Config):
 		col = self.mw.col
+		mm  = col.media
+		media_dir = mm.dir()
+
 		for colour, deck_id in config['decks'].items():
 			if deck_id is not None:
 				c = colour[0]
-				search = f'<img src="chess-opening-trainer-{c}-'
-				replace = f'<img src="chess-opening-trainer-{deck_id}-'
 				for cid in col.decks.cids(deck_id):
 					card = col.get_card(cid)
 					note = card.note()
+
+					pattern = r'<img src="(chess-opening-trainer-[wb]-([0-9a-f]{40})\.svg)">'
+					text = note.fields[0] + note.fields[1]
+					for match in re.finditer(pattern, text):
+						old_name = match.group(1)
+						digest = match.group(2)
+						new_name = f'chess-opening-trainer-{note.id}-{digest}.svg'
+
+						if not mm.have(old_name):
+							continue
+
+						old_path = os.path.join(media_dir, old_name)
+						with open(old_path, 'rb') as file:
+							data = file.read()
+							new_name = mm.write_data(new_name, data)
+
 					# We avoid col.find_and_replace() here because it goes
 					# over all fields which is too unspecific for our needs.
+					search = f'<img src="{old_name}">'
+					replace = f'<img src="{new_name}">'
 					note.fields[0] = note.fields[0].replace(search, replace)
 					note.fields[1] = note.fields[1].replace(search, replace)
+
 					col.update_note(note, skip_undo_entry=True)
 
 	def _fill_config(self, raw: any) -> any:
