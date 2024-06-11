@@ -9,7 +9,6 @@
 
 import os
 import re
-import shutil
 from typing import Dict, List, Sequence, Tuple, cast
 
 import chess
@@ -62,6 +61,7 @@ class Importer:
 		return self._patch_deck(current_notes)
 
 	def _read_study(self, filename: str) -> None:
+		print(f'reading study {filename}')
 		with open(filename, encoding='utf-8') as study_pgn:
 
 			def get_visitor() -> chess.pgn.BaseVisitor:
@@ -138,18 +138,6 @@ class Importer:
 
 		return note
 
-	def _delete_images(self, image_deletes: List[str]):
-		media_path = self.collection.media.dir()
-		for filename in image_deletes:
-			path = os.path.join(media_path, filename)
-			if os.path.isdir(path):
-				shutil.rmtree(path, ignore_errors=True)
-			else:
-				try:
-					os.unlink(path)
-				except OSError:
-					pass
-
 	def _insert_images(self, image_inserts: Dict[str, Page]):
 		media_path = self.collection.media.dir()
 		for image_path, page in image_inserts.items():
@@ -160,6 +148,9 @@ class Importer:
 		# These are the cards that we want to have from the current studies
 		# that were read.
 		wanted = self.visitor.cards
+
+		print(f'cards in study: {len(wanted)}')
+		print(f'cards in Anki: {len(got)}')
 
 		num_deletes = self._delete_unused(wanted, got)
 
@@ -200,7 +191,7 @@ class Importer:
 					image_inserts[image_path] = answer
 
 		self._insert_images(image_inserts)
-		self._delete_images(image_deletes)
+		self.collection.media.trash_files(image_deletes)
 
 		num_image_deletes = len(image_deletes)
 		num_image_inserts = len(image_inserts)
