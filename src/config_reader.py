@@ -24,7 +24,7 @@ from .updater import Updater
 class ConfigReader:
 	def __init__(self) -> None:
 		if mw is None:
-			raise RuntimeError(_('Cannot run without main window'))
+			raise RuntimeError(_('Cannot run without main window!'))
 
 		raw_config = mw.addonManager.getConfig(__name__)
 

@@ -261,7 +261,7 @@ class ImportDialog(QDialog):
 			_('An error occurred!'),
 			_('Clicking the help button will open a web page explaining how to report a bug.'),
 			_('Please include the following information in your bug report:'),
-			_('<hr />'),
+			'<hr />',
 			_('Exception type:') + ' ' + html.escape(type(e).__name__),
 			_('Exception message:') + ' ' + html.escape(str(e)),
 			_('Traceback:'),
