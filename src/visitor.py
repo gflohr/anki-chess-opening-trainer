@@ -87,10 +87,12 @@ class PositionVisitor(BaseVisitor):
 						question.add_comment(comment)
 						self.accumulated_comments = []
 				question.set_board(board.copy())
-			elif not answer.find(self.cards[text].answers):
-				self.cards[text].add_answer(answer)
-				self.my_move = True
-				self.last_text = text
+			elif answer.find(self.cards[text].answers):
+				return board
+
+			self.cards[text].add_answer(answer)
+			self.my_move = True
+			self.last_text = text
 		else:
 			self.accumulated_comments = []
 			self.my_move = False
