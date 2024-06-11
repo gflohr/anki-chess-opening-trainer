@@ -1,7 +1,7 @@
 This extension creates a deck with chess openings from a collection of chess
 games in PGN format.  If you select "white" as the colour, when importing the
 file, all black moves become questions, and all white replies to that move
-will become a reply.  For "black" it it the other way round.
+will become a reply.  For "black" it is the other way round.
 
 If you re-import a game collection, its contents will be merged into the
 deck.  Positions that are no longer present in the game collection will be
