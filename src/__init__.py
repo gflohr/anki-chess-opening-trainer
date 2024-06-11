@@ -23,6 +23,7 @@ sys.path.append(os.path.join(moduledir, 'vendor'))
 
 # pylint: disable=wrong-import-order, wrong-import-position
 from .dialog import ImportDialog
+from .delete_hook import DeleteHook
 
 def show_import_dialog() -> None:
 	dlg = ImportDialog()
@@ -53,4 +54,5 @@ def add_menu_item():
 
 
 init_i18n()
+DeleteHook().installHook()
 add_menu_item()
