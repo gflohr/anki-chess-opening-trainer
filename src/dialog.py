@@ -196,22 +196,27 @@ class ImportDialog(QDialog):
 				self._show_exception(counts)
 				return
 
-			msgs = (
-			    ngettext('%d note inserted.', '%d notes inserted.',
-			             counts[0]) % (counts[0]),
-			    ngettext('%d note updated.', '%d notes updated.', counts[1]) %
-			    (counts[1]),
-			    ngettext('%d note deleted.', '%d notes deleted.', counts[2]) %
-			    (counts[2]),
-			    ngettext('%d image created.', '%d images created.',
-			             counts[3]) % (counts[3]),
-			    ngettext('%d image deleted.', '%d images deleted.',
-			             counts[4]) % (counts[4]),
-			)
+			if sum(counts) == 0:
+				msg = _('No changes since last import into this deck.')
+			else:
+				msgs = (
+					ngettext('%d note inserted.', '%d notes inserted.',
+							counts[0]) % (counts[0]),
+					ngettext('%d note updated.', '%d notes updated.', counts[1]) %
+					(counts[1]),
+					ngettext('%d note deleted.', '%d notes deleted.', counts[2]) %
+					(counts[2]),
+					ngettext('%d image created.', '%d images created.',
+							counts[3]) % (counts[3]),
+					ngettext('%d image deleted.', '%d images deleted.',
+							counts[4]) % (counts[4]),
+				)
+				msg = ' '.join(msgs)
+
 			mw.reset()
 			mw.addonManager.writeConfig(__name__, self.config)
 
-			showInfo(' '.join(msgs))
+			showInfo(msg)
 
 		def _do_import(config: Config, _) -> Union[Exception, tuple[int, int, int, int, int]]:
 			try:

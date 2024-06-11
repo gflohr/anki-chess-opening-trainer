@@ -9,6 +9,7 @@
 
 import os
 import re
+import shutil
 from typing import Dict, List, Sequence, Tuple, cast
 
 import chess
@@ -19,7 +20,6 @@ from anki.decks import Deck
 from .answer import Answer
 from .question import Question
 from .page import Page
-from .patchset import PatchSet, patch
 from .visitor import PositionVisitor
 
 
@@ -58,9 +58,8 @@ class Importer:
 		if self.do_print:
 			self.visitor.print_cards()
 		current_notes = self._read_notes()
-		ps = self._compute_patch_set(current_notes)
 
-		return patch(ps, self.collection, self.deck)
+		return self._patch_deck(current_notes)
 
 	def _read_study(self, filename: str) -> None:
 		with open(filename, encoding='utf-8') as study_pgn:
@@ -86,19 +85,18 @@ class Importer:
 
 		return notes
 
-	def _compute_patch_set(self, got: dict[str, Note]) -> PatchSet:
-		# These are the cards that we want to have from the current studies
-		# that were read.
-		wanted = self.visitor.cards
-
-		# Find notes that are no longer needed.
+	def _delete_unused(self,  wanted: Dict[str, Page], got: dict[str, Note]) -> int:
 		deletes: List[NoteId] = []
 		for moves in got:
 			if moves not in wanted:
 				note = got[moves]
 				deletes.append(note.id)
 		deletes_sequence: Sequence = cast(Sequence, deletes)
+		self.collection.remove_notes(deletes_sequence)
 
+		return len(deletes_sequence)
+
+	def _images_in_deck(self, got: dict[str, Note]) -> List[str]:
 		# Initialize image_deletes with all images we find for this deck.
 		image_deletes: List[str] = []
 		media_path = self.collection.media.dir()
@@ -114,10 +112,65 @@ class Importer:
 				if note_id in note_ids:
 					image_deletes.append(filename)
 
-		inserts: List[Note] = []
-		updates: List[Note] = []
+		return image_deletes
+
+	def _update_note(self, note: Note, question: Question) -> bool:
+		rendered_question = question.render(note.id)
+		answer: Answer = cast(Answer, question.render_answers(note.id))
+		if not note.fields[0] == rendered_question or not note.fields[1] == answer:
+			note.fields[0] = rendered_question
+			note.fields[1] = answer
+			self.collection.update_note(note)
+			return True
+		else:
+			return False
+
+	def _create_note(self, question: Question) -> Note:
+		note = Note(self.collection, self.model)
+
+		# We have to add the note first without content so that we have a
+		# note id to work with.
+		self.collection.add_note(note, deck_id=self.deck['id'])
+		note.fields[0] = question.render(note.id)
+		answer: Answer = cast(Answer, question.render_answers(note.id))
+		note.fields[1] = answer
+		self.collection.update_note(note)
+
+		return note
+
+	def _delete_images(self, image_deletes: List[str]):
+		media_path = self.collection.media.dir()
+		for filename in image_deletes:
+			path = os.path.join(media_path, filename)
+			if os.path.isdir(path):
+				shutil.rmtree(path, ignore_errors=True)
+			else:
+				try:
+					os.unlink(path)
+				except OSError:
+					pass
+
+	def _insert_images(self, image_inserts: Dict[str, Page]):
+		media_path = self.collection.media.dir()
+		for image_path, page in image_inserts.items():
+			path = os.path.join(media_path, image_path)
+			page.render_svg(path)
+
+	def _patch_deck(self, got: dict[str, Note]) -> Tuple[int, int, int, int, int]:
+		# These are the cards that we want to have from the current studies
+		# that were read.
+		wanted = self.visitor.cards
+
+		num_deletes = self._delete_unused(wanted, got)
+
+		# Initialize the images to delete with a list of all images for the
+		# current notes.
+		image_deletes = self._images_in_deck(got)
+
 		image_inserts: Dict[str, Page] = {}
 
+		num_updates = 0
+		num_inserts = 0
 		for moves in wanted:
 			# FIXME! Get rid of the cast by modifying the visitor!
 			question: Question = cast(Question, wanted[moves])
@@ -125,19 +178,12 @@ class Importer:
 			if moves in got:
 				# There is a note for it but maybe it has changed.
 				note = got[moves]
-				rendered_question = question.render(note.id)
-				answer: Answer = cast(Answer, question.render_answers(note.id))
-				if not note.fields[0] == rendered_question or not note.fields[1] == answer:
-					note.fields[0] = rendered_question
-					note.fields[1] = answer
-					updates.append(note)
+				if self._update_note(note, question):
+					num_updates = num_updates + 1
 			else:
 				# The note must be created.
-				note = Note(self.collection, self.model)
-				note.fields[0] = question.render(note.id)
-				answer: Answer = cast(Answer, question.render_answers(note.id))
-				note.fields[1] = answer
-				inserts.append(note)
+				note = self._create_note(question)
+				num_inserts = num_inserts + 1
 
 			# Questions always get a board image.
 			image_path = question.image_path(note.id)
@@ -153,9 +199,10 @@ class Importer:
 				elif image_path:
 					image_inserts[image_path] = answer
 
-		return PatchSet(inserts=inserts,
-		                deletes=deletes_sequence,
-		                updates=updates,
-		                image_inserts=image_inserts,
-		                image_deletes=image_deletes,
-		                media_path=media_path)
+		self._insert_images(image_inserts)
+		self._delete_images(image_deletes)
+
+		num_image_deletes = len(image_deletes)
+		num_image_inserts = len(image_inserts)
+
+		return num_inserts, num_updates, num_deletes, num_image_inserts, num_image_deletes;
