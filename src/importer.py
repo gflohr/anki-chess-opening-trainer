@@ -61,7 +61,6 @@ class Importer:
 		return self._patch_deck(current_notes)
 
 	def _read_study(self, filename: str) -> None:
-		print(f'reading study {filename}')
 		with open(filename, encoding='utf-8') as study_pgn:
 
 			def get_visitor() -> chess.pgn.BaseVisitor:
@@ -149,14 +148,11 @@ class Importer:
 		# that were read.
 		wanted = self.visitor.cards
 
-		print(f'cards in study: {len(wanted)}')
-		print(f'cards in Anki: {len(got)}')
-
-		num_deletes = self._delete_unused(wanted, got)
-
 		# Initialize the images to delete with a list of all images for the
 		# current notes.
 		image_deletes = self._images_in_deck(got)
+
+		num_deletes = self._delete_unused(wanted, got)
 
 		image_inserts: Dict[str, Page] = {}
 
