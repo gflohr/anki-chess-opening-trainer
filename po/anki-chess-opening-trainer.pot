@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2023-11-21 17:55+0200\n"
+"POT-Creation-Date: 2024-06-11 21:16+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,91 +18,149 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: ../anki-chess-opening-trainer.py:83 ../src/dialog.py:207
+#: ../src/__init__.py:47 ../src/dialog.py:277
+msgid "Chess Opening Trainer"
+msgstr ""
+
+#: ../src/config_reader.py:27
+msgid "Cannot run without main window!"
+msgstr ""
+
+#: ../src/config_reader.py:39
+msgid "Your add-on configuration is invalid, restoring defaults."
+msgstr ""
+
+#: ../src/dialog.py:45
+msgid "Import PGN File"
+msgstr ""
+
+#: ../src/dialog.py:50
+msgid "Color"
+msgstr ""
+
+#: ../src/dialog.py:53
+msgid "White"
+msgstr ""
+
+#: ../src/dialog.py:54
+msgid "Black"
+msgstr ""
+
+#: ../src/dialog.py:58
+msgid "Deck"
+msgstr ""
+
+#: ../src/dialog.py:70
+msgid "Input Files"
+msgstr ""
+
+#: ../src/dialog.py:73
+msgid "Select files"
+msgstr ""
+
+#: ../src/dialog.py:77
+msgid "Note type"
+msgstr ""
+
+#: ../src/dialog.py:89
+msgid "Basic"
+msgstr ""
+
+#: ../src/dialog.py:202
+msgid "No changes since last import into this deck."
+msgstr ""
+
+#: ../src/dialog.py:205
 #, python-format
 msgid "%d note inserted."
 msgid_plural "%d notes inserted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../anki-chess-opening-trainer.py:86 ../src/dialog.py:209
+#: ../src/dialog.py:207
 #, python-format
 msgid "%d note updated."
 msgid_plural "%d notes updated."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../anki-chess-opening-trainer.py:88 ../src/dialog.py:211
+#: ../src/dialog.py:209
 #, python-format
 msgid "%d note deleted."
 msgid_plural "%d notes deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../anki-chess-opening-trainer.py:90 ../src/dialog.py:213
+#: ../src/dialog.py:211
 #, python-format
 msgid "%d image created."
 msgid_plural "%d images created."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../anki-chess-opening-trainer.py:93 ../src/dialog.py:215
+#: ../src/dialog.py:213
 #, python-format
 msgid "%d image deleted."
 msgid_plural "%d images deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:42 ../src/dialog.py:144
-msgid "Basic"
-msgstr ""
-
-#: ../src/dialog.py:105
-msgid "Import Opening PGN"
-msgstr ""
-
-#: ../src/dialog.py:110
-msgid "Input Files"
-msgstr ""
-
-#: ../src/dialog.py:113
-msgid "Select files"
-msgstr ""
-
-#: ../src/dialog.py:117
-msgid "Deck"
-msgstr ""
-
-#: ../src/dialog.py:126
-msgid "Color"
-msgstr ""
-
-#: ../src/dialog.py:129
-msgid "White"
-msgstr ""
-
-#: ../src/dialog.py:130
-msgid "Black"
-msgstr ""
-
-#: ../src/dialog.py:133
-msgid "Note type"
-msgstr ""
-
-#: ../src/dialog.py:232
+#: ../src/dialog.py:243
 msgid "No input files specified!"
 msgstr ""
 
-#: ../src/dialog.py:252
+#: ../src/dialog.py:261
+msgid "An error occurred!"
+msgstr ""
+
+#: ../src/dialog.py:262
+msgid ""
+"Clicking the help button will open a web page explaining how to report a bug."
+msgstr ""
+
+#: ../src/dialog.py:263
+msgid "Please include the following information in your bug report:"
+msgstr ""
+
+#: ../src/dialog.py:265
+msgid "Exception type:"
+msgstr ""
+
+#: ../src/dialog.py:266
+msgid "Exception message:"
+msgstr ""
+
+#: ../src/dialog.py:267
+msgid "Traceback:"
+msgstr ""
+
+#: ../src/dialog.py:291
+msgid ""
+"https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs"
+msgstr ""
+
+#: ../src/dialog.py:308
 msgid "Open PGN files"
 msgstr ""
 
-#: ../src/dialog.py:253
+#: ../src/dialog.py:309
 msgid "Portable Game Notation files (*.pgn)"
 msgstr ""
 
-#: ../src/__init__.py:47
-msgid "Chess Opening Trainer"
+#: ../src/dialog.py:329
+msgid "The selected deck does not exist! Try again!"
+msgstr ""
+
+#: ../src/dialog.py:336
+msgid "The selected note type does not exist! Try again!"
+msgstr ""
+
+#: ../src/importer.py:43
+msgid "Selected note type does not exist!"
+msgstr ""
+
+#: ../src/importer.py:47
+msgid "Selected deck does not exist!"
 msgstr ""
 
 #. TRANSLATORS: This is the letter to use for a pawn.

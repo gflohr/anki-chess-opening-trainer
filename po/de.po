@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: opening-trainer 0.1.0\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2023-11-21 17:55+0200\n"
-"PO-Revision-Date: 2023-11-02 20:50+0200\n"
+"POT-Creation-Date: 2024-06-11 21:16+0300\n"
+"PO-Revision-Date: 2024-06-11 21:15+0300\n"
 "Last-Translator: Guido Flohr <guido.flohr@cantanea.com>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -16,93 +16,157 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.2\n"
 
-#: ../anki-chess-opening-trainer.py:83 ../src/dialog.py:207
+#: ../src/__init__.py:47 ../src/dialog.py:277
+msgid "Chess Opening Trainer"
+msgstr "Schach-Eröffnungs-Trainer"
+
+#: ../src/config_reader.py:27
+msgid "Cannot run without main window!"
+msgstr "Add-on kann ohne Hauptfenster nicht gestartet werden!"
+
+#: ../src/config_reader.py:39
+msgid "Your add-on configuration is invalid, restoring defaults."
+msgstr "Die Add-on-Konfiguration ist ungültig, stelle Standard wieder her."
+
+#: ../src/dialog.py:45
+msgid "Import PGN File"
+msgstr "PGN-Dateien importieren"
+
+#: ../src/dialog.py:50
+msgid "Color"
+msgstr "Farbe"
+
+#: ../src/dialog.py:53
+msgid "White"
+msgstr "Weiß"
+
+#: ../src/dialog.py:54
+msgid "Black"
+msgstr "Schwarz"
+
+#: ../src/dialog.py:58
+msgid "Deck"
+msgstr "Stapel"
+
+#: ../src/dialog.py:70
+msgid "Input Files"
+msgstr "Eingabedateien"
+
+#: ../src/dialog.py:73
+msgid "Select files"
+msgstr "Dateiauswahl"
+
+#: ../src/dialog.py:77
+msgid "Note type"
+msgstr "Notiztyp"
+
+#: ../src/dialog.py:89
+msgid "Basic"
+msgstr "Einfach"
+
+#: ../src/dialog.py:202
+msgid "No changes since last import into this deck."
+msgstr "Keine Änderungen seit dem letzten Import in diesen Stapel."
+
+#: ../src/dialog.py:205
 #, python-format
 msgid "%d note inserted."
 msgid_plural "%d notes inserted."
 msgstr[0] "%d Notiz eingefügt."
 msgstr[1] "%d Notizen eingefügt."
 
-#: ../anki-chess-opening-trainer.py:86 ../src/dialog.py:209
+#: ../src/dialog.py:207
 #, python-format
 msgid "%d note updated."
 msgid_plural "%d notes updated."
 msgstr[0] "%d Notiz aktualisiert."
 msgstr[1] "%d Notizen aktualisiert."
 
-#: ../anki-chess-opening-trainer.py:88 ../src/dialog.py:211
+#: ../src/dialog.py:209
 #, python-format
 msgid "%d note deleted."
 msgid_plural "%d notes deleted."
 msgstr[0] "%d Notiz gelöscht."
 msgstr[1] "%d Notizen gelöscht."
 
-#: ../anki-chess-opening-trainer.py:90 ../src/dialog.py:213
+#: ../src/dialog.py:211
 #, python-format
 msgid "%d image created."
 msgid_plural "%d images created."
 msgstr[0] "%d Bild erzeugt."
 msgstr[1] "%d Bilder erzeugt."
 
-#: ../anki-chess-opening-trainer.py:93 ../src/dialog.py:215
+#: ../src/dialog.py:213
 #, python-format
 msgid "%d image deleted."
 msgid_plural "%d images deleted."
 msgstr[0] "%d Bild gelöscht."
 msgstr[1] "%d Bilder gelöscht."
 
-#: ../src/dialog.py:42 ../src/dialog.py:144
-msgid "Basic"
-msgstr "Einfach"
-
-#: ../src/dialog.py:105
-msgid "Import Opening PGN"
-msgstr "Importiere Eröffnungs-PGN"
-
-#: ../src/dialog.py:110
-msgid "Input Files"
-msgstr "Eingabedateien"
-
-#: ../src/dialog.py:113
-msgid "Select files"
-msgstr "Dateiauswahl"
-
-#: ../src/dialog.py:117
-msgid "Deck"
-msgstr "Stapel"
-
-#: ../src/dialog.py:126
-msgid "Color"
-msgstr "Farbe"
-
-#: ../src/dialog.py:129
-msgid "White"
-msgstr "Weiß"
-
-#: ../src/dialog.py:130
-msgid "Black"
-msgstr "Schwarz"
-
-#: ../src/dialog.py:133
-msgid "Note type"
-msgstr "Notiztyp"
-
-#: ../src/dialog.py:232
+#: ../src/dialog.py:243
 msgid "No input files specified!"
 msgstr "Keine Eingabedateien angegeben!"
 
-#: ../src/dialog.py:252
+#: ../src/dialog.py:261
+msgid "An error occurred!"
+msgstr "Ein Fehler ist aufgetreten!"
+
+#: ../src/dialog.py:262
+msgid ""
+"Clicking the help button will open a web page explaining how to report a bug."
+msgstr ""
+"Ein Klick auf den Hilfe-Button öffnet eine Webseite, die erklärt, wie man "
+"Fehler melden kann."
+
+#: ../src/dialog.py:263
+msgid "Please include the following information in your bug report:"
+msgstr ""
+"Die folgenden Informationen sollten im Fehlerbericht mitgeschickt werden!"
+
+#: ../src/dialog.py:265
+msgid "Exception type:"
+msgstr "Ausnahmetyp"
+
+#: ../src/dialog.py:266
+msgid "Exception message:"
+msgstr "Ausnahmemeldung"
+
+#: ../src/dialog.py:267
+msgid "Traceback:"
+msgstr "Traceback:"
+
+#: ../src/dialog.py:291
+msgid ""
+"https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs"
+msgstr ""
+"https://www.guido-flohr.net/schach-eroeffnungen-mit-anki-trainieren/#bugs-"
+"melden"
+
+#: ../src/dialog.py:308
 msgid "Open PGN files"
 msgstr "PGN-Dateien öffnen"
 
-#: ../src/dialog.py:253
+#: ../src/dialog.py:309
 msgid "Portable Game Notation files (*.pgn)"
 msgstr "Portable Spiel Notation (*.pgn)"
 
-#: ../src/__init__.py:47
-msgid "Chess Opening Trainer"
-msgstr "Schach-Eröffnungs-Trainer"
+#: ../src/dialog.py:329
+msgid "The selected deck does not exist! Try again!"
+msgstr "Der ausgewählte Stapel existiert nicht! Bitte noch einmal versuchen!"
+
+#: ../src/dialog.py:336
+msgid "The selected note type does not exist! Try again!"
+msgstr "Der ausgewählte Notiztyp existiert nicht! Bitte noch einmal versuchen!"
+
+#: ../src/importer.py:43
+msgid "Selected note type does not exist!"
+msgstr "Der ausgewählte Notiztyp existiert nicht!"
+
+#: ../src/importer.py:47
+msgid "Selected deck does not exist!"
+msgstr "Der ausgewählte Stapel existiert nicht!"
 
 #. TRANSLATORS: This is the letter to use for a pawn.
 #: ../src/visitor.py:27
@@ -137,3 +201,6 @@ msgstr "k"
 #: ../src/visitor.py:60
 msgid "Moves from starting position?"
 msgstr "Züge von der Grundstellung?"
+
+#~ msgid "Import Opening PGN"
+#~ msgstr "Importiere Eröffnungs-PGN"
