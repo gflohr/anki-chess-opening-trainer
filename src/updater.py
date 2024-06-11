@@ -9,6 +9,7 @@
 
 import os
 import re
+from pathlib import Path
 from typing import List
 import semantic_version as sv
 import anki
@@ -101,9 +102,14 @@ class Updater:
 							continue
 
 						old_path = os.path.join(media_dir, old_name)
-						with open(old_path, 'rb') as file:
-							data = file.read()
+						with open(old_path, 'rb') as old_file:
+							data = old_file.read()
+							new_path = os.path.join(media_dir, new_name)
+							with open(new_path, 'w', encoding='cp1252') as new_file:
+								new_file.write(data)
+
 							new_name = mm.write_data(new_name, data)
+							Path.unlink(old_path, missing_ok=True)
 
 					# We avoid col.find_and_replace() here because it goes
 					# over all fields which is too unspecific for our needs.
