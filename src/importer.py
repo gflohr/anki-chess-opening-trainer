@@ -99,15 +99,19 @@ class Importer:
 				deletes.append(note.id)
 		deletes_sequence: Sequence = cast(Sequence, deletes)
 
-		# Initialize image_deletes with all images we find.
+		# Initialize image_deletes with all images we find for this deck.
 		image_deletes: List[str] = []
 		media_path = self.collection.media.dir()
+		note_ids = list(map(lambda moves: str(got[moves].id), got))
 		for path in os.scandir(media_path):
 			if not os.path.isdir(path.path):
 				filename = os.path.basename(path)
 				regex = r'^chess-opening-trainer-([1-9][0-9]*)-[0-9a-f]{40}\.svg$'
 				match = re.match(regex, filename)
-				if match:
+				if not match:
+					continue
+				note_id = match.group(1)
+				if note_id in note_ids:
 					image_deletes.append(filename)
 
 		inserts: List[Note] = []
