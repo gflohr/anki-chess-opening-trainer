@@ -1,15 +1,35 @@
+include ./VERSION
+
 default: all
 
 all: zip ankiweb
 
-zip: vendor
+generated: src/version.py src/config.py src/schema.py
+
+zip: generated vendor
 	python -m ankiscripts.build --type package --qt all --exclude user_files/**/*
 
-ankiweb: vendor build/ankiweb-description.md
+ankiweb: generated vendor build/ankiweb-description.md
 	python -m ankiscripts.build --type ankiweb --qt all --exclude user_files/**/*
 
 build/ankiweb-description.md: description.md CHANGELOG.md
 	cat description.md CHANGELOG.md >$@
+
+src/version.py: ./VERSION
+	@echo "__version__ = '$(VERSION)'" >$@
+
+src/config.py: ./src/config.schema.json
+	datamodel-codegen \
+		--input=$< \
+		--input-file-type=jsonschema \
+		--output-model-type=typing.TypedDict \
+		| sed -e "s/    /\t/g" >$@
+
+src/schema.py: ./src/config.schema.json
+	python3 ./tools/json2python.py <$< >$@
+
+src/basic_names.py:
+	sh ./tools/get-basic-notetype-names.sh >$@
 
 vendor:
 	python -m ankiscripts.vendor
@@ -35,6 +55,6 @@ sourcedist:
 	python -m ankiscripts.sourcedist
 
 clean:
-	rm -rf build/
+	rm -rf build/ src/version.py src/config.py
 
 .PHONY: all zip ankiweb vendor fix mypy pylint lint test sourcedist clean

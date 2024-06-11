@@ -2,6 +2,16 @@
 
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2024-06-12
+
+### Added
+
+* allow multiple imports per colour (thanks to Norbert Hies for the suggestion)
+
+### Changed
+
+* validate the configuration on load against the JSON schema
+
 ## [0.1.2] - 2023-12-12
 
 ### Fixed

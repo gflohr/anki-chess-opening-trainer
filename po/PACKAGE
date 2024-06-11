@@ -10,5 +10,5 @@ TEXTDOMAIN = anki-chess-opening-trainer
 # Initial copyright holder added to pot and po files.
 COPYRIGHT_HOLDER = Guido Flohr <http://www.guido-flohr.net>
 
-# Where to send msgid bugs?  
+# Where to send msgid bugs?
 MSGID_BUGS_ADDRESS = Guido Flohr <guido.flohr@cantanea.com>

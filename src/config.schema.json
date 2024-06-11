@@ -1,12 +1,17 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"$id": "https://www.guido-flohr.net/schema/anki-chess-opening-trainer.json",
-	"title": "Configuration",
+	"title": "Config",
 	"description": "Configuration for the Anki Chess Opening Trainer Add-On",
 	"type": "object",
 	"additionalProperties": false,
-	"required": ["colour", "decks", "files", "notetype"],
+	"required": ["version", "colour", "decks", "imports", "notetype"],
 	"properties": {
+		"version": {
+			"description": "The add-on version that has generated this configuration",
+			"type": "string",
+			"pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$"
+		},
 		"colour": {
 			"description": "The side (black or white) that this game collection contains good moves for.",
 			"type": "string",
@@ -21,46 +26,50 @@
 			"properties": {
 				"white": {
 					"description": "Currently selected deck for white",
-					"type": ["string", "null"],
-					"default": null
+					"type": ["integer", "null"],
+					"default": null,
+					"minimum": 1
 				},
 				"black": {
 					"description": "Currently selected deck for black",
-					"type": ["string", "null"],
-					"default": null
+					"type": ["integer", "null"],
+					"default": null,
+					"minimum": 1
 				}
 			}
 		},
-		"files": {
-			"description": "The currently selected set of game collection files for each colour.",
+		"imports": {
 			"type": "object",
 			"additionalProperties": false,
-			"required": ["white", "black"],
-			"properties": {
-				"white": {
-					"description": "The currently selected set of game collection files for white.",
-					"type": "array",
-					"default": [],
-					"items": {
-						"description": "Path to the game collection file.",
-						"type": "string"
-					}
-				},
-				"black": {
-					"description": "The currently selected set of game collection files for black.",
-					"type": "array",
-					"default": [],
-					"items": {
-						"description": "Path to the game collection file.",
-						"type": "string"
-					}
+			"description": "The previous imports by deck id",
+			"patternProperties": {
+				"[1-9][0-9]*": {
+					"type": "object",
+					"additionalProperties": false,
+					"description": "One import",
+					"properties": {
+						"colour": {
+							"type": "string",
+							"description": "The colour (either black or white)",
+							"enum": ["black", "white"]
+						},
+						"files": {
+							"type": "array",
+							"description": "The list of imported file names",
+							"items": {
+							"type": "string"
+							}
+						}
+					},
+					"required": ["colour", "files"]
 				}
 			}
 		},
 		"notetype": {
 			"description": "The notetype to use for card generation.",
-			"type": "string",
-			"default": "Basic"
+			"type": ["integer", "null"],
+			"default": null,
+			"minimum": 1
 		}
 	}
 }

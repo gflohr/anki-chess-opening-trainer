@@ -19,31 +19,32 @@ from anki.decks import Deck
 from .answer import Answer
 from .question import Question
 from .page import Page
-from .patchset import PatchSet, patch
 from .visitor import PositionVisitor
 
 
 class Importer:
+
+
 	# pylint: disable=too-many-arguments, too-few-public-methods
 	def __init__(
 	    self,
 	    filenames: List[str],
 	    collection: Collection,
 	    colour: chess.Color,
-	    notetype: str,
-	    deck_name: str,
+	    notetype_id: int,
+	    deck_id: int,
 	    do_print: bool = False,
 	) -> None:
 		self.collection = collection
 		self.colour = colour
 
-		self.model = self.collection.models.by_name(notetype)
+		self.model = self.collection.models.get(notetype_id)
 		if not self.model:
-			raise KeyError(f"Note type '{notetype}' does not exist")
+			raise KeyError(_('Selected note type does not exist!'))
 
-		self.deck = cast(Deck, collection.decks.by_name(deck_name))
+		self.deck = self.collection.decks.get(did=deck_id)
 		if not self.deck:
-			raise KeyError(f"Deck '{deck_name}' does not exist")
+			raise KeyError(_('Selected deck does not exist!'))
 
 		self.visitor = PositionVisitor(colour=colour)
 		self.filenames = filenames
@@ -56,8 +57,8 @@ class Importer:
 		if self.do_print:
 			self.visitor.print_cards()
 		current_notes = self._read_notes()
-		ps = self._compute_patch_set(current_notes)
-		return patch(ps, self.collection, self.deck)
+
+		return self._patch_deck(current_notes)
 
 	def _read_study(self, filename: str) -> None:
 		with open(filename, encoding='utf-8') as study_pgn:
@@ -76,79 +77,119 @@ class Importer:
 		for cid in col.decks.cids(deck_id):
 			card = col.get_card(cid)
 			note = card.note()
+			# Remove all the markup from the end.  It is actually a br followed
+			# by an img.  Questions do not have comments.
 			name = re.sub('[ \t\r\n]*<.*', '', note.fields[0])
 			notes[name] = note
 
 		return notes
 
-	def _compute_patch_set(self, got: dict[str, Note]) -> PatchSet:
-		# FIXME! Use the PatchSet that gets returned here.
-		# pylint: disable=too-many-locals, too-many-branches
-		used: List[str] = []
-		inserts: List[Note] = []
-		updates: List[Note] = []
+	def _delete_unused(self,  wanted: Dict[str, Page], got: dict[str, Note]) -> int:
 		deletes: List[NoteId] = []
-		image_inserts: Dict[str, Page] = {}
+		for moves in got:
+			if moves not in wanted:
+				note = got[moves]
+				deletes.append(note.id)
+		deletes_sequence: Sequence = cast(Sequence, deletes)
+		self.collection.remove_notes(deletes_sequence)
+
+		return len(deletes_sequence)
+
+	def _images_in_deck(self, got: dict[str, Note]) -> List[str]:
+		# Initialize image_deletes with all images we find for this deck.
 		image_deletes: List[str] = []
 		media_path = self.collection.media.dir()
-
-		wanted = self.visitor.cards
-		model = self.model
-		if self.colour:
-			colour = 'w'
-		else:
-			colour = 'b'
+		note_ids = list(map(lambda moves: str(got[moves].id), got))
 		for path in os.scandir(media_path):
 			if not os.path.isdir(path.path):
 				filename = os.path.basename(path)
-				prefix = '^chess-opening-trainer-' + colour
-				regex = prefix + r'-[0-9a-f]{40}\.svg'
-				if re.match(regex, filename):
+				regex = r'^chess-opening-trainer-([1-9][0-9]*)-[0-9a-f]{40}\.svg$'
+				match = re.match(regex, filename)
+				if not match:
+					continue
+				note_id = match.group(1)
+				if note_id in note_ids:
 					image_deletes.append(filename)
 
-		for key, q in wanted.items():
-			question: Question = cast(Question, q)
-			answer: Answer = cast(Answer, question.render_answers())
+		return image_deletes
+
+	def _update_note(self, note: Note, question: Question) -> bool:
+		rendered_question = question.render(note.id)
+		answer: Answer = cast(Answer, question.render_answers(note.id))
+		if not note.fields[0] == rendered_question or not note.fields[1] == answer:
+			note.fields[0] = rendered_question
+			note.fields[1] = answer
+			self.collection.update_note(note)
+			return True
+		else:
+			return False
+
+	def _create_note(self, question: Question) -> Note:
+		note = Note(self.collection, self.model)
+
+		# We have to add the note first without content so that we have a
+		# note id to work with.
+		self.collection.add_note(note, deck_id=self.deck['id'])
+		note.fields[0] = question.render(note.id)
+		answer: Answer = cast(Answer, question.render_answers(note.id))
+		note.fields[1] = answer
+		self.collection.update_note(note)
+
+		return note
+
+	def _insert_images(self, image_inserts: Dict[str, Page]):
+		media_path = self.collection.media.dir()
+		for image_path, page in image_inserts.items():
+			path = os.path.join(media_path, image_path)
+			page.render_svg(path)
+
+	def _patch_deck(self, got: dict[str, Note]) -> Tuple[int, int, int, int, int]:
+		# These are the cards that we want to have from the current studies
+		# that were read.
+		wanted = self.visitor.cards
+
+		# Initialize the images to delete with a list of all images for the
+		# current notes.
+		image_deletes = self._images_in_deck(got)
+
+		num_deletes = self._delete_unused(wanted, got)
+
+		image_inserts: Dict[str, Page] = {}
+
+		num_updates = 0
+		num_inserts = 0
+		for moves in wanted:
+			# FIXME! Get rid of the cast by modifying the visitor!
+			question: Question = cast(Question, wanted[moves])
+
+			if moves in got:
+				# There is a note for it but maybe it has changed.
+				note = got[moves]
+				if self._update_note(note, question):
+					num_updates = num_updates + 1
+			else:
+				# The note must be created.
+				note = self._create_note(question)
+				num_inserts = num_inserts + 1
 
 			# Questions always get a board image.
-			image_path = question.image_path()
+			image_path = question.image_path(note.id)
 			if image_path in image_deletes:
 				image_deletes.remove(image_path)
 			else:
 				image_inserts[image_path] = question
 
-			q2: Question = cast(Question, wanted[key])
-			rendered_question: Question = cast(Question, q2.render())
-			if key in got:
-				used.append(key)
-				note = got[key]
-				if not note.fields[0] == rendered_question or not note.fields[
-				    1] == answer:
-					note.fields[0] = rendered_question
-					note.fields[1] = answer
-					updates.append(note)
-			else:
-				note = Note(self.collection, model)
-				note.fields[0] = rendered_question
-				note.fields[1] = answer
-				inserts.append(note)
-
 			for answer in question.answers:
-				image_path = answer.image_path()
+				image_path = answer.image_path(note.id)
 				if image_path in image_deletes:
 					image_deletes.remove(image_path)
 				elif image_path:
 					image_inserts[image_path] = answer
 
-		for key, note in got.items():
-			if not key in used:
-				deletes.append(note.id)
+		self._insert_images(image_inserts)
+		self.collection.media.trash_files(image_deletes)
 
-		deletes_sequence: Sequence = cast(Sequence, deletes)
+		num_image_deletes = len(image_deletes)
+		num_image_inserts = len(image_inserts)
 
-		return PatchSet(inserts=inserts,
-		                deletes=deletes_sequence,
-		                updates=updates,
-		                image_inserts=image_inserts,
-		                image_deletes=image_deletes,
-		                media_path=media_path)
+		return num_inserts, num_updates, num_deletes, num_image_inserts, num_image_deletes;

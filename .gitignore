@@ -6,6 +6,7 @@ __pycache__
 src/vendor
 src/manifest.json
 src/meta.json
+src/version.py
 /build
 /ankidata
 /ankiweb-description.md

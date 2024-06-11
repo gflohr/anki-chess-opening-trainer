@@ -1,12 +1,10 @@
 {
+	"version": "0.0.0",
 	"colour": "white",
 	"decks": {
 		"white": null,
 		"black": null
 	},
-	"files": {
-		"white": [],
-		"black": [] 
-	},
-	"notetype": "Basic"
+	"imports": {},
+	"notetype": null
 }
