@@ -38,6 +38,8 @@ class ImportDialog(QDialog):
 	def __init__(self) -> None:
 		super().__init__()
 
+		mw.col.media.trash_files(['foobar.svg'])
+
 		self.config = ConfigReader().get_config()
 
 		self.setWindowTitle(_('Import PGN File'))
@@ -218,13 +220,13 @@ class ImportDialog(QDialog):
 
 			showInfo(msg)
 
-		def _do_import(config: Config, _) -> Union[Exception, tuple[int, int, int, int, int]]:
+		def _do_import(_) -> Union[Exception, tuple[int, int, int, int, int]]:
 			try:
-				colour = config['colour']
-				deck_id = config['decks'][colour]
-				record = config['imports'][str(deck_id)]
+				colour = self.config['colour']
+				deck_id = self.config['decks'][colour]
+				record = self.config['imports'][str(deck_id)]
 				filenames = record['files']
-				notetype_id = config['notetype']
+				notetype_id = self.config['notetype']
 
 				importer = Importer(
 					collection=mw.col,
@@ -239,14 +241,14 @@ class ImportDialog(QDialog):
 
 		if not self.file_list.count():
 			raise RuntimeError(_('No input files specified!'))
-		config = self._save_config()
-		if config is None:
+		self.config = self._save_config()
+		if self.config is None:
 			self.reject()
 		else:
 			assert isinstance(mw, AnkiQt)
 			op = QueryOp(
 				parent=mw,
-				op=lambda _unused: _do_import(config, _unused),
+				op=lambda _unused: _do_import(_unused),
 				success=_on_success,
 			)
 			op.with_progress().run_in_background()
@@ -341,7 +343,7 @@ class ImportDialog(QDialog):
 		self.config['colour'] = colour
 		self.config['decks'][colour] = deck_id
 
-		self.config['imports'][deck_id] = {
+		self.config['imports'][str(deck_id)] = {
 			'colour': colour,
 			'files': files,
 		}
