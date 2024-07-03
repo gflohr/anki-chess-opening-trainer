@@ -2,7 +2,7 @@
 
 # Add more languages here!  Beware that this is a makefile snippet and
 # you have to adhere to make syntax.
-LINGUAS = en en-GB de
+LINGUAS = en bg de en-GB
 
 # Textdomain for our package.
 TEXTDOMAIN = anki-chess-opening-trainer
