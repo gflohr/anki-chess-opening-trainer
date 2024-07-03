@@ -1,10 +1,9 @@
 # Anki Opening Trainer
 
-This repository contains an add-on for [Anki](https://apps.ankiweb.net/),
-a popular flash card application. It takes a collection of chess games
-and creates flash cards for it so that you can memorize the right moves
-in the opening phase of a chess game.  This is useful for building up and
-opening repertoire.
+This is the source code repository for the [Anki](https://apps.ankiweb.net/)-add-on
+"Chess Opening Traier". Anki is a popular, open-source flashcard application.
+The add-on takes a collection of chess games and creates flashcards from it,
+helping you in building up an opening repertoire.
 
 ## How It Works
 
