@@ -1,9 +1,11 @@
 # Anki Opening Trainer
 
-This is the source code repository for the [Anki](https://apps.ankiweb.net/)-add-on
-"Chess Opening Traier". Anki is a popular, open-source flashcard application.
-The add-on takes a collection of chess games and creates flashcards from it,
-helping you in building up an opening repertoire.
+This is the source code repository for the
+[Anki](https://apps.ankiweb.net/)-add-on
+"[Chess Opening Trainer](https://ankiweb.net/shared/info/705507113)". Anki is
+a popular, open-source flashcard application.  The add-on takes a collection of
+chess games and creates flashcards from it, helping you in building up an
+opening repertoire.
 
 ## How It Works
 
@@ -33,7 +35,7 @@ the other side.
 It is also important that you reserve one Anki deck exclusively for one
 collection of games.  When you import that collection again, the deck is
 synchronized with the games in that collection.  Modified lines are updated,
-and flash cards (called "notes" in Anki) that are no longer contained in the
+and flashcards (called "notes" in Anki) that are no longer contained in the
 collection are deleted.
 
 ## Usage
@@ -46,7 +48,7 @@ When you open Anki, you will find a new menu entry `Tools` ->
 * the side that you are training for (black or white)
 * the note type
 
-The Anki "note type" is the layout of the flash card.  This add-on requires
+The Anki "note type" is the layout of the flashcard.  This add-on requires
 a note type with just two fields (front and back side) and no additional
 elements.  This note type is one of the default types of Anki, usually called
 "Basic".
