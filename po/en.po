@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: opening-trainer 0.1.0\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2024-06-12 14:02+0300\n"
+"POT-Creation-Date: 2024-07-04 00:28+0300\n"
 "PO-Revision-Date: 2024-06-11 21:25+0300\n"
 "Last-Translator: Guido Flohr <guido.flohr@cantanea.com>\n"
 "Language-Team: English\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/__init__.py:47 ../src/dialog.py:277
+#: ../src/__init__.py:47 ../src/dialog.py:279
 msgid "Chess Opening Trainer"
 msgstr ""
 
@@ -65,92 +65,92 @@ msgstr ""
 msgid "Basic"
 msgstr ""
 
-#: ../src/dialog.py:202
+#: ../src/dialog.py:204
 msgid "No changes since last import into this deck."
 msgstr ""
 
-#: ../src/dialog.py:205
+#: ../src/dialog.py:207
 #, python-format
 msgid "%d note inserted."
 msgid_plural "%d notes inserted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:207
+#: ../src/dialog.py:209
 #, python-format
 msgid "%d note updated."
 msgid_plural "%d notes updated."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:209
+#: ../src/dialog.py:211
 #, python-format
 msgid "%d note deleted."
 msgid_plural "%d notes deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:211
+#: ../src/dialog.py:213
 #, python-format
 msgid "%d image created."
 msgid_plural "%d images created."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:213
+#: ../src/dialog.py:215
 #, python-format
 msgid "%d image deleted."
 msgid_plural "%d images deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:243
+#: ../src/dialog.py:245
 msgid "No input files specified!"
 msgstr ""
 
-#: ../src/dialog.py:261
+#: ../src/dialog.py:263
 msgid "An error occurred!"
 msgstr ""
 
-#: ../src/dialog.py:262
+#: ../src/dialog.py:264
 msgid ""
 "Clicking the help button will open a web page explaining how to report a bug."
 msgstr ""
 
-#: ../src/dialog.py:263
+#: ../src/dialog.py:265
 msgid "Please include the following information in your bug report:"
 msgstr ""
 
-#: ../src/dialog.py:265
+#: ../src/dialog.py:267
 msgid "Exception type:"
 msgstr ""
 
-#: ../src/dialog.py:266
+#: ../src/dialog.py:268
 msgid "Exception message:"
 msgstr ""
 
-#: ../src/dialog.py:267
+#: ../src/dialog.py:269
 msgid "Traceback:"
 msgstr ""
 
-#: ../src/dialog.py:291
+#: ../src/dialog.py:293
 msgid ""
 "https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs"
 msgstr ""
 
-#: ../src/dialog.py:308
+#: ../src/dialog.py:310
 msgid "Open PGN files"
 msgstr ""
 
-#: ../src/dialog.py:309
+#: ../src/dialog.py:311
 msgid "Portable Game Notation files (*.pgn)"
 msgstr ""
 
-#: ../src/dialog.py:329
+#: ../src/dialog.py:331
 msgid "The selected deck does not exist! Try again!"
 msgstr ""
 
-#: ../src/dialog.py:336
+#: ../src/dialog.py:338
 msgid "The selected note type does not exist! Try again!"
 msgstr ""
 
@@ -192,6 +192,6 @@ msgstr ""
 msgid "k"
 msgstr ""
 
-#: ../src/visitor.py:60
+#: ../src/visitor.py:67
 msgid "Moves from starting position?"
 msgstr ""
