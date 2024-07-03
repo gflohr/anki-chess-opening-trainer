@@ -112,10 +112,7 @@ download directory.
 
 ## Import into Anki
 
-You should either create a distinct profile for the chess openings or at
-least make a backup of your Anki collection (`File -> Create Backup`).
-
-Open Anki, click `Tools -> Opening Trainer`. Click the "Select files" button,
+Open Anki, click `Tools -> Chess Opening Trainer`. Click the "Select files" button,
 and navigate to the file(s) containing your games.  You can also select multiple
 files at once.
 
@@ -126,6 +123,10 @@ an updated version again, that gets merged into the existing deck.  Your
 progress will be preserved to the extent possible.
 
 *Important!* The PGN file must be in UTF-8 encoding!
+
+You can import more files but you should always be sure whether the
+currently selected deck is holding games from white's or black's
+perspective.
 
 ## Copyright
 
