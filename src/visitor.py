@@ -11,8 +11,8 @@ import typing
 from typing import Dict, Literal, cast
 
 import chess
-from chess import Color
-from chess.pgn import BaseVisitor
+from chess import Color, Board
+from chess.pgn import BaseVisitor, SkipType
 
 from .answer import Answer
 from .page import Page
@@ -42,12 +42,19 @@ def i18n_piece_symbol(piece_type: chess.PieceType) -> str:
 class PositionVisitor(BaseVisitor):
 	def __init__(self, colour):
 		self.colour: Color = colour
-		self.initial = chess.Board()
+		self.initial: Board
 		self.seen: Dict[str, str] = {}
 		self.cards: Dict[str, Page] = {}
 		self.last_text = None
 		self.accumulated_comments = []
 		self.my_move = True
+
+	def begin_game(self) -> None:
+		self.initial = None
+
+	def visit_board(self, board) -> None:
+		if self.initial == None:
+			self.initial = board.copy()
 
 	def visit_move(self, board, move) -> None:
 		if board.turn == self.colour:

@@ -113,10 +113,11 @@ class Page:
 		if self.board is None:
 			return
 
-		if self.board.ply():
+		if len(self.board.move_stack):
 			lastmove = self.board.peek()
 		else:
 			lastmove = None
+
 		if self.board.is_check():
 			check = self.board.king(not self.turn)
 		else:

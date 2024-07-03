@@ -170,9 +170,11 @@ class ImportDialog(QDialog):
 			deck_id = config['decks'][colour]
 			deck = mw.col.decks.get(did=deck_id, default=False)
 
-			for i in range(self.deck_combo.count()):
-				if deck['name'] == self.deck_combo.itemText(i):
-					self.deck_combo.setCurrentIndex(i)
+			# The deck may have been deleted in the meantime.
+			if deck:
+				for i in range(self.deck_combo.count()):
+					if deck['name'] == self.deck_combo.itemText(i):
+						self.deck_combo.setCurrentIndex(i)
 
 			self.file_list.clear()
 			if str(deck_id) in config['imports']:
