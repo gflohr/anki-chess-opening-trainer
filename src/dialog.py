@@ -248,7 +248,7 @@ class ImportDialog(QDialog):
 				return e
 
 		if not self.file_list.count():
-			show_critical(_('No input files specified or the input files do not exist!'))
+			show_critical(_('No input files specified!'))
 			self.reject()
 
 		if not self._save_config():
