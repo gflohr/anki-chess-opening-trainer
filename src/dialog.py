@@ -13,7 +13,7 @@ from pathlib import Path
 import traceback
 from typing import List, Literal, Union
 
-from aqt import mw, AnkiQt, qconnect
+from aqt import mw, AnkiQt
 from aqt.operations import QueryOp
 # pylint: disable=no-name-in-module
 from aqt.qt import (QComboBox, QDialog, # type: ignore[attr-defined]
@@ -22,10 +22,8 @@ from aqt.qt import (QComboBox, QDialog, # type: ignore[attr-defined]
                     QListWidget, QListWidgetItem, # type: ignore[attr-defined]
                     QPushButton, Qt, QMessageBox, # type: ignore[attr-defined]
 					QDesktopServices, QUrl) # type: ignore[attr-defined]
-from aqt.utils import showCritical, showInfo, showWarning
+from aqt.utils import showInfo, showWarning
 from anki.utils import no_bundled_libs
-
-from .config import Config
 
 from .importer import Importer
 from .config_reader import ConfigReader
