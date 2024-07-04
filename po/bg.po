@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: anki-chess-opening-trainer 1.1.0\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
 "POT-Creation-Date: 2024-07-04 00:28+0300\n"
-"PO-Revision-Date: 2024-07-04 00:22+0300\n"
+"PO-Revision-Date: 2024-07-04 11:46+0300\n"
 "Last-Translator: Guido Flohr <guido.flohr@cantanea.com>\n"
 "Language-Team: Bulgarian <dict@ludost.net>\n"
 "Language: bg\n"
@@ -67,7 +67,7 @@ msgstr "Тип бележка"
 
 #: ../src/dialog.py:89
 msgid "Basic"
-msgstr "Основна (Basic)"
+msgstr "Основен"
 
 #: ../src/dialog.py:204
 msgid "No changes since last import into this deck."
