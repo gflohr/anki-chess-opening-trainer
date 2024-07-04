@@ -22,7 +22,7 @@ from aqt.qt import (QComboBox, QDialog, # type: ignore[attr-defined]
                     QListWidget, QListWidgetItem, # type: ignore[attr-defined]
                     QPushButton, Qt, QMessageBox, # type: ignore[attr-defined]
 					QDesktopServices, QUrl) # type: ignore[attr-defined]
-from aqt.utils import showInfo, showWarning
+from aqt.utils import show_critical, show_info, show_warning
 from anki.utils import no_bundled_libs
 
 from .importer import Importer
@@ -220,7 +220,7 @@ class ImportDialog(QDialog):
 			mw.reset()
 			mw.addonManager.writeConfig(__name__, self.config)
 
-			showInfo(msg)
+			show_info(msg)
 
 		def _do_import(_) -> Union[Exception, tuple[int, int, int, int, int]]:
 			try:
@@ -243,7 +243,9 @@ class ImportDialog(QDialog):
 				return e
 
 		if not self.file_list.count():
-			raise RuntimeError(_('No input files specified!'))
+			show_critical(_('No input files specified or the input files do not exist!'))
+			self.reject()
+
 		if not self._save_config():
 			self.reject()
 		else:
@@ -327,14 +329,14 @@ class ImportDialog(QDialog):
 		deck_name = self.deck_combo.currentText()
 		deck_id = col.decks.id_for_name(deck_name)
 		if deck_id is None:
-			showWarning(_('The selected deck does not exist! Try again!'))
+			show_warning(_('The selected deck does not exist! Try again!'))
 			return False
 
 		notetype_name = self.model_combo.currentText()
 
 		notetype_id = col.models.id_for_name(notetype_name)
 		if notetype_id is None:
-			showWarning(_('The selected note type does not exist! Try again!'))
+			show_warning(_('The selected note type does not exist! Try again!'))
 			return False
 
 		files: List[str] = []
