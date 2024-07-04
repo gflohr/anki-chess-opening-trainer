@@ -245,8 +245,7 @@ class ImportDialog(QDialog):
 
 		if not self.file_list.count():
 			raise RuntimeError(_('No input files specified!'))
-		self.config = self._save_config()
-		if self.config is None:
+		if not self._save_config():
 			self.reject()
 		else:
 			assert isinstance(mw, AnkiQt)
@@ -317,7 +316,7 @@ class ImportDialog(QDialog):
 			self.file_list.addItems(
 			    [str(Path(filename)) for filename in filenames])
 
-	def _save_config(self) -> Config | None:
+	def _save_config(self) -> bool:
 		colour_index = self.colour_combo.currentIndex()
 		if colour_index == 1:
 			colour = 'black'
@@ -330,14 +329,14 @@ class ImportDialog(QDialog):
 		deck_id = col.decks.id_for_name(deck_name)
 		if deck_id is None:
 			showWarning(_('The selected deck does not exist! Try again!'))
-			return None
+			return False
 
 		notetype_name = self.model_combo.currentText()
 
 		notetype_id = col.models.id_for_name(notetype_name)
 		if notetype_id is None:
 			showWarning(_('The selected note type does not exist! Try again!'))
-			return None
+			return False
 
 		files: List[str] = []
 		for i in range(self.file_list.count()):
@@ -355,4 +354,4 @@ class ImportDialog(QDialog):
 
 		self.config['notetype'] = notetype_id
 
-		return self.config
+		return True
