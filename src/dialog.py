@@ -240,7 +240,7 @@ class ImportDialog(QDialog):
 					colour=('white' == colour),
 				)
 				return importer.run()
-			except Exception as e:
+			except Exception as e: # pylint: disable=broad-except
 				return e
 
 		if not self.file_list.count():
@@ -251,7 +251,7 @@ class ImportDialog(QDialog):
 			assert isinstance(mw, AnkiQt)
 			op = QueryOp(
 				parent=mw,
-				op=lambda _unused: _do_import(_unused),
+				op=_do_import,
 				success=_on_success,
 			)
 			op.with_progress().run_in_background()
