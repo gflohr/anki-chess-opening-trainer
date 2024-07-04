@@ -156,7 +156,7 @@ class Importer:
 
 		num_updates = 0
 		num_inserts = 0
-		for question, moves in wanted.items():
+		for moves, question in wanted.items():
 
 			if moves in got:
 				# There is a note for it but maybe it has changed.
