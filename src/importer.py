@@ -20,6 +20,7 @@ from .answer import Answer
 from .question import Question
 from .page import Page
 from .visitor import PositionVisitor
+from .utils import find_media_files
 
 
 class Importer:
@@ -95,21 +96,10 @@ class Importer:
 
 	def _images_in_deck(self, got: dict[str, Note]) -> List[str]:
 		# Initialize image_deletes with all images we find for this deck.
-		image_deletes: List[str] = []
 		media_path = self.collection.media.dir()
-		note_ids = list(map(lambda moves: str(got[moves].id), got))
-		for path in os.scandir(media_path):
-			if not os.path.isdir(path.path):
-				filename = os.path.basename(path)
-				regex = r'^chess-opening-trainer-([1-9][0-9]*)-[0-9a-f]{40}\.svg$'
-				match = re.match(regex, filename)
-				if not match:
-					continue
-				note_id = match.group(1)
-				if note_id in note_ids:
-					image_deletes.append(filename)
+		note_ids = [str(got[moves].id) for moves in got]
 
-		return image_deletes
+		return find_media_files(media_path, note_ids)
 
 	def _update_note(self, note: Note, question: Question) -> bool:
 		rendered_question = question.render(note.id)
