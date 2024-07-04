@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: anki-chess-opening-trainer 1.1.0\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2024-07-04 00:28+0300\n"
-"PO-Revision-Date: 2024-07-04 11:46+0300\n"
+"POT-Creation-Date: 2024-07-04 16:38+0300\n"
+"PO-Revision-Date: 2024-07-04 16:42+0300\n"
 "Last-Translator: Guido Flohr <guido.flohr@cantanea.com>\n"
 "Language-Team: Bulgarian <dict@ludost.net>\n"
 "Language: bg\n"
@@ -19,15 +19,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.4.4\n"
 
-#: ../src/__init__.py:47 ../src/dialog.py:279
+#: ../src/__init__.py:47 ../src/dialog.py:286
 msgid "Chess Opening Trainer"
 msgstr "Треньор за шахматни дебюти"
 
-#: ../src/config_reader.py:27
+#: ../src/config_reader.py:26 ../src/dialog.py:38 ../src/updater.py:27
 msgid "Cannot run without main window!"
 msgstr "Не може да се стартира без главния прозорец!"
 
-#: ../src/config_reader.py:39
+#: ../src/config_reader.py:37
 msgid "Your add-on configuration is invalid, restoring defaults."
 msgstr ""
 "Конфигурацията на добавката е невалидна, възстановете настройките по "
@@ -69,95 +69,100 @@ msgstr "Тип бележка"
 msgid "Basic"
 msgstr "Основен"
 
-#: ../src/dialog.py:204
+#: ../src/dialog.py:202
+#, python-brace-format
+msgid "There was an error importing a file: {error}"
+msgstr "Възникнала е грешка при внос на файл: {error}"
+
+#: ../src/dialog.py:208
 msgid "No changes since last import into this deck."
 msgstr "Няма промени от последното импортиране в това тесте."
 
-#: ../src/dialog.py:207
+#: ../src/dialog.py:211
 #, python-format
 msgid "%d note inserted."
 msgid_plural "%d notes inserted."
 msgstr[0] "%d бълежка вмъкната."
 msgstr[1] "%d бълежки вмъкнати."
 
-#: ../src/dialog.py:209
+#: ../src/dialog.py:213
 #, python-format
 msgid "%d note updated."
 msgid_plural "%d notes updated."
 msgstr[0] "%d бележка актуализирана."
 msgstr[1] "%d бележки актуализирани."
 
-#: ../src/dialog.py:211
+#: ../src/dialog.py:215
 #, python-format
 msgid "%d note deleted."
 msgid_plural "%d notes deleted."
 msgstr[0] "%d бележка изтрита."
 msgstr[1] "%d бележки изтрити."
 
-#: ../src/dialog.py:213
+#: ../src/dialog.py:217
 #, python-format
 msgid "%d image created."
 msgid_plural "%d images created."
-msgstr[0] "%d диаграм създаден"
-msgstr[1] "%d диаграми създадени"
+msgstr[0] "%d диаграм създаден."
+msgstr[1] "%d диаграми създадени."
 
-#: ../src/dialog.py:215
+#: ../src/dialog.py:219
 #, python-format
 msgid "%d image deleted."
 msgid_plural "%d images deleted."
-msgstr[0] "%d диаграм изтрит"
-msgstr[1] "%d диаграми изтрити"
+msgstr[0] "%d диаграм изтрит."
+msgstr[1] "%d диаграми изтрити."
 
-#: ../src/dialog.py:245
+#: ../src/dialog.py:251
 msgid "No input files specified!"
 msgstr "Не е зададен входящ файл!"
 
-#: ../src/dialog.py:263
+#: ../src/dialog.py:270
 msgid "An error occurred!"
 msgstr "Възникнала е грешка!"
 
-#: ../src/dialog.py:264
+#: ../src/dialog.py:271
 msgid ""
 "Clicking the help button will open a web page explaining how to report a bug."
 msgstr ""
 "Щракването върху бутона Помощ ще отвори уеб страница, в която се обяснява "
 "как да се докладва за грешка."
 
-#: ../src/dialog.py:265
+#: ../src/dialog.py:272
 msgid "Please include the following information in your bug report:"
 msgstr "Моля, включете следната информация в доклада си за грешка:"
 
-#: ../src/dialog.py:267
+#: ../src/dialog.py:274
 msgid "Exception type:"
-msgstr "Тип изключение"
+msgstr "Тип изключение:"
 
-#: ../src/dialog.py:268
+#: ../src/dialog.py:275
 msgid "Exception message:"
-msgstr "Съобщение за изключение"
+msgstr "Съобщение за изключение:"
 
-#: ../src/dialog.py:269
+#: ../src/dialog.py:276
 msgid "Traceback:"
-msgstr "Следа на изключение"
+msgstr "Следа на изключение:"
 
-#: ../src/dialog.py:293
+#: ../src/dialog.py:302
 msgid ""
 "https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs"
 msgstr ""
 "https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs"
 
-#: ../src/dialog.py:310
+#: ../src/dialog.py:316
 msgid "Open PGN files"
 msgstr "Отваряне на файлове PGN"
 
-#: ../src/dialog.py:311
+#: ../src/dialog.py:317
 msgid "Portable Game Notation files (*.pgn)"
 msgstr "Файлове с преносима нотация на игри (Portable Game Notation *.pgn)"
 
-#: ../src/dialog.py:331
+#: ../src/dialog.py:337
 msgid "The selected deck does not exist! Try again!"
 msgstr "Избранато тесте не съществува! Опитайте отново!"
 
-#: ../src/dialog.py:338
+#: ../src/dialog.py:344
 msgid "The selected note type does not exist! Try again!"
 msgstr "Избрания вид бележка не съществува! Опитайте отново!"
 
@@ -165,40 +170,40 @@ msgstr "Избрания вид бележка не съществува! Опи
 msgid "Selected note type does not exist!"
 msgstr "Избрания вид бележка не съществува!"
 
-#: ../src/importer.py:47
+#: ../src/importer.py:48
 msgid "Selected deck does not exist!"
 msgstr "Избраното тесто не съществува!"
 
 #. TRANSLATORS: This is the letter to use for a pawn.
-#: ../src/visitor.py:27
+#: ../src/visitor.py:26
 msgid "p"
 msgstr "п"
 
 #. TRANSLATORS: This is the letter to use for a knight.
-#: ../src/visitor.py:29
+#: ../src/visitor.py:28
 msgid "n"
 msgstr "к"
 
 #. TRANSLATORS: This is the letter to use for a bishop.
-#: ../src/visitor.py:31
+#: ../src/visitor.py:30
 msgid "b"
 msgstr "о"
 
 #. TRANSLATORS: This is the letter to use for a rook.
-#: ../src/visitor.py:33
+#: ../src/visitor.py:32
 msgid "r"
 msgstr "т"
 
 #. TRANSLATORS: This is the letter to use for a queen.
-#: ../src/visitor.py:35
+#: ../src/visitor.py:34
 msgid "q"
 msgstr "д"
 
 #. TRANSLATORS: This is the letter to use for a king.
-#: ../src/visitor.py:37
+#: ../src/visitor.py:36
 msgid "k"
 msgstr "ц"
 
-#: ../src/visitor.py:67
+#: ../src/visitor.py:71
 msgid "Moves from starting position?"
 msgstr "Ходове от началната позиция?"

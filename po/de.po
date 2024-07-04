@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: opening-trainer 0.1.0\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2024-07-04 00:28+0300\n"
-"PO-Revision-Date: 2024-06-11 21:15+0300\n"
+"POT-Creation-Date: 2024-07-04 16:38+0300\n"
+"PO-Revision-Date: 2024-07-04 16:40+0300\n"
 "Last-Translator: Guido Flohr <guido.flohr@cantanea.com>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -16,17 +16,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
-#: ../src/__init__.py:47 ../src/dialog.py:279
+#: ../src/__init__.py:47 ../src/dialog.py:286
 msgid "Chess Opening Trainer"
 msgstr "Schach-Eröffnungs-Trainer"
 
-#: ../src/config_reader.py:27
+#: ../src/config_reader.py:26 ../src/dialog.py:38 ../src/updater.py:27
 msgid "Cannot run without main window!"
 msgstr "Add-on kann ohne Hauptfenster nicht gestartet werden!"
 
-#: ../src/config_reader.py:39
+#: ../src/config_reader.py:37
 msgid "Your add-on configuration is invalid, restoring defaults."
 msgstr "Die Add-on-Konfiguration ist ungültig, stelle Standard wieder her."
 
@@ -66,97 +66,102 @@ msgstr "Notiztyp"
 msgid "Basic"
 msgstr "Einfach"
 
-#: ../src/dialog.py:204
+#: ../src/dialog.py:202
+#, python-brace-format
+msgid "There was an error importing a file: {error}"
+msgstr "Beim Importieren einer Datei ist ein Fehler aufgetreten: {error}"
+
+#: ../src/dialog.py:208
 msgid "No changes since last import into this deck."
 msgstr "Keine Änderungen seit dem letzten Import in diesen Stapel."
 
-#: ../src/dialog.py:207
+#: ../src/dialog.py:211
 #, python-format
 msgid "%d note inserted."
 msgid_plural "%d notes inserted."
 msgstr[0] "%d Notiz eingefügt."
 msgstr[1] "%d Notizen eingefügt."
 
-#: ../src/dialog.py:209
+#: ../src/dialog.py:213
 #, python-format
 msgid "%d note updated."
 msgid_plural "%d notes updated."
 msgstr[0] "%d Notiz aktualisiert."
 msgstr[1] "%d Notizen aktualisiert."
 
-#: ../src/dialog.py:211
+#: ../src/dialog.py:215
 #, python-format
 msgid "%d note deleted."
 msgid_plural "%d notes deleted."
 msgstr[0] "%d Notiz gelöscht."
 msgstr[1] "%d Notizen gelöscht."
 
-#: ../src/dialog.py:213
+#: ../src/dialog.py:217
 #, python-format
 msgid "%d image created."
 msgid_plural "%d images created."
 msgstr[0] "%d Bild erzeugt."
 msgstr[1] "%d Bilder erzeugt."
 
-#: ../src/dialog.py:215
+#: ../src/dialog.py:219
 #, python-format
 msgid "%d image deleted."
 msgid_plural "%d images deleted."
 msgstr[0] "%d Bild gelöscht."
 msgstr[1] "%d Bilder gelöscht."
 
-#: ../src/dialog.py:245
+#: ../src/dialog.py:251
 msgid "No input files specified!"
 msgstr "Keine Eingabedateien angegeben!"
 
-#: ../src/dialog.py:263
+#: ../src/dialog.py:270
 msgid "An error occurred!"
 msgstr "Ein Fehler ist aufgetreten!"
 
-#: ../src/dialog.py:264
+#: ../src/dialog.py:271
 msgid ""
 "Clicking the help button will open a web page explaining how to report a bug."
 msgstr ""
 "Ein Klick auf den Hilfe-Button öffnet eine Webseite, die erklärt, wie man "
 "Fehler melden kann."
 
-#: ../src/dialog.py:265
+#: ../src/dialog.py:272
 msgid "Please include the following information in your bug report:"
 msgstr ""
-"Die folgenden Informationen sollten im Fehlerbericht mitgeschickt werden!"
+"Die folgenden Informationen sollten im Fehlerbericht mitgeschickt werden:"
 
-#: ../src/dialog.py:267
+#: ../src/dialog.py:274
 msgid "Exception type:"
-msgstr "Ausnahmetyp"
+msgstr "Ausnahmetyp:"
 
-#: ../src/dialog.py:268
+#: ../src/dialog.py:275
 msgid "Exception message:"
-msgstr "Ausnahmemeldung"
+msgstr "Ausnahmemeldung:"
 
-#: ../src/dialog.py:269
+#: ../src/dialog.py:276
 msgid "Traceback:"
 msgstr "Traceback:"
 
-#: ../src/dialog.py:293
+#: ../src/dialog.py:302
 msgid ""
 "https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs"
 msgstr ""
 "https://www.guido-flohr.net/schach-eroeffnungen-mit-anki-trainieren/#bugs-"
 "melden"
 
-#: ../src/dialog.py:310
+#: ../src/dialog.py:316
 msgid "Open PGN files"
 msgstr "PGN-Dateien öffnen"
 
-#: ../src/dialog.py:311
+#: ../src/dialog.py:317
 msgid "Portable Game Notation files (*.pgn)"
 msgstr "Portable Spiel Notation (*.pgn)"
 
-#: ../src/dialog.py:331
+#: ../src/dialog.py:337
 msgid "The selected deck does not exist! Try again!"
 msgstr "Der ausgewählte Stapel existiert nicht! Bitte noch einmal versuchen!"
 
-#: ../src/dialog.py:338
+#: ../src/dialog.py:344
 msgid "The selected note type does not exist! Try again!"
 msgstr "Der ausgewählte Notiztyp existiert nicht! Bitte noch einmal versuchen!"
 
@@ -164,41 +169,41 @@ msgstr "Der ausgewählte Notiztyp existiert nicht! Bitte noch einmal versuchen!"
 msgid "Selected note type does not exist!"
 msgstr "Der ausgewählte Notiztyp existiert nicht!"
 
-#: ../src/importer.py:47
+#: ../src/importer.py:48
 msgid "Selected deck does not exist!"
 msgstr "Der ausgewählte Stapel existiert nicht!"
 
 #. TRANSLATORS: This is the letter to use for a pawn.
-#: ../src/visitor.py:27
+#: ../src/visitor.py:26
 msgid "p"
 msgstr "b"
 
 #. TRANSLATORS: This is the letter to use for a knight.
-#: ../src/visitor.py:29
+#: ../src/visitor.py:28
 msgid "n"
 msgstr "s"
 
 #. TRANSLATORS: This is the letter to use for a bishop.
-#: ../src/visitor.py:31
+#: ../src/visitor.py:30
 msgid "b"
 msgstr "l"
 
 #. TRANSLATORS: This is the letter to use for a rook.
-#: ../src/visitor.py:33
+#: ../src/visitor.py:32
 msgid "r"
 msgstr "t"
 
 #. TRANSLATORS: This is the letter to use for a queen.
-#: ../src/visitor.py:35
+#: ../src/visitor.py:34
 msgid "q"
 msgstr "d"
 
 #. TRANSLATORS: This is the letter to use for a king.
-#: ../src/visitor.py:37
+#: ../src/visitor.py:36
 msgid "k"
 msgstr "k"
 
-#: ../src/visitor.py:67
+#: ../src/visitor.py:71
 msgid "Moves from starting position?"
 msgstr "Züge von der Grundstellung?"
 
