@@ -25,7 +25,7 @@ from aqt.qt import (QComboBox, QDialog, # type: ignore[attr-defined]
 from aqt.utils import showCritical, showInfo, showWarning
 from anki.utils import no_bundled_libs
 
-from config import Config
+from .config import Config
 
 from .importer import Importer
 from .config_reader import ConfigReader

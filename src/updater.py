@@ -15,8 +15,8 @@ import semantic_version as sv
 import anki
 from anki.media import MediaManager
 
-from basic_names import basic_names
-from config import Config
+from .basic_names import basic_names
+from .config import Config
 
 class Updater:
 	def __init__(self, mw: MediaManager, version: sv.Version):
