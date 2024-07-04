@@ -7,12 +7,10 @@
 # to Public License, Version 2, as published by Sam Hocevar. See
 # http://www.wtfpl.net/ for more details.
 
-import sys
-
 from typing import Any, cast
-from aqt import mw
 from jsonschema import ValidationError, validate
 
+from aqt import mw
 from aqt.utils import showCritical
 
 from .config import Config
@@ -22,6 +20,7 @@ from .updater import Updater
 
 
 class ConfigReader:
+	# pylint: disable=too-few-public-methods
 	def __init__(self) -> None:
 		if mw is None:
 			raise RuntimeError(_('Cannot run without main window!'))
@@ -34,7 +33,7 @@ class ConfigReader:
 		try:
 			validate(raw_config, schema=schema)
 			mw.addonManager.writeConfig(__name__, cast(dict[Any, Any], raw_config))
-		except ValidationError as e:
+		except ValidationError:
 			showCritical(_('Your add-on configuration is invalid, restoring defaults.'))
 			raw_config = updater.update_config(None)
 
