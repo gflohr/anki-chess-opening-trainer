@@ -10,7 +10,7 @@
 import os
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, Union
 import semantic_version as sv
 import anki
 from aqt import mw
@@ -151,7 +151,7 @@ class Updater:
 
 		return raw
 
-	def _get_basic_notetype(self) -> NotetypeId | None:
+	def _get_basic_notetype(self) -> Union[NotetypeId, None]:
 		names = []
 
 		lang = anki.lang.current_lang
