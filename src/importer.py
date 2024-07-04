@@ -119,8 +119,8 @@ class Importer:
 			note.fields[1] = answer
 			self.collection.update_note(note)
 			return True
-		else:
-			return False
+
+		return False
 
 	def _create_note(self, question: Question) -> Note:
 		note = Note(self.collection, self.model)
@@ -156,9 +156,7 @@ class Importer:
 
 		num_updates = 0
 		num_inserts = 0
-		for moves in wanted:
-			# FIXME! Get rid of the cast by modifying the visitor!
-			question: Question = cast(Question, wanted[moves])
+		for question, moves in wanted.items():
 
 			if moves in got:
 				# There is a note for it but maybe it has changed.
@@ -190,4 +188,4 @@ class Importer:
 		num_image_deletes = len(image_deletes)
 		num_image_inserts = len(image_inserts)
 
-		return num_inserts, num_updates, num_deletes, num_image_inserts, num_image_deletes;
+		return num_inserts, num_updates, num_deletes, num_image_inserts, num_image_deletes
