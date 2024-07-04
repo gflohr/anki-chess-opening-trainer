@@ -4,7 +4,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### 1.0.1 - 2024-04-07
 
-* fixed a crash, when decks where deleted (GitHub issue #15)
+* fixed a crash, when decks were deleted (GitHub issue #15)
 * allow custom start position (GitHub issue #16)
 * added Bulgarian translation
 
