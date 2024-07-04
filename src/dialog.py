@@ -197,7 +197,11 @@ class ImportDialog(QDialog):
 
 		def _on_success(counts: Union[Exception, tuple[int, int, int, int, int]]):
 			if isinstance(counts, Exception):
-				self._show_exception(counts)
+				x = counts
+				if (isinstance(x, OSError)):
+					show_critical(_('There was an error importing a file: {error}'.format(error=x)))
+				else:
+					self._show_exception(counts)
 				return
 
 			if sum(counts) == 0:
@@ -240,6 +244,7 @@ class ImportDialog(QDialog):
 
 				return importer.run()
 			except Exception as e: # pylint: disable=broad-except
+				print('caught exception ...')
 				return e
 
 		if not self.file_list.count():
