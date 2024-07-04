@@ -35,16 +35,16 @@ vendor:
 	python -m ankiscripts.vendor
 
 fix:
-	python -m yapf src tests --recursive --in-place
-	python -m isort src tests
+	python -m yapf src --recursive --in-place
+	python -m isort src
 
 mypy:
 	# See https://github.com/python/mypy/issues/8727
-	-python -m mypy src tests --exclude=src/vendor --exclude=src/forms \
+	-python -m mypy src --exclude=src/vendor --exclude=src/forms \
 		--check-untyped-defs --disable-error-code name-defined
 
 pylint:
-	-python -m pylint src tests
+	-python -m pylint src
 
 lint: mypy pylint
 
