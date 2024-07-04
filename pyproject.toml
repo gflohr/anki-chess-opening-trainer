@@ -32,3 +32,8 @@ check-quote-consistency = true
 
 [tool.pylint.variables]
 additional-builtins = ["_", "ngettext"]
+
+[[tool.mypy.overrides]]
+module = "semantic_version.*"
+ignore_missing_imports = true
+

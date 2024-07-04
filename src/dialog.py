@@ -36,28 +36,30 @@ class ImportDialog(QDialog):
 
 	# pylint: disable=too-few-public-methods, too-many-instance-attributes
 	def __init__(self) -> None:
+		if mw is None:
+			raise RuntimeError(_('Cannot run without main window!'))
+
 		super().__init__()
 
-		mw.col.media.trash_files(['foobar.svg'])
-
+		self.mw = mw
 		self.config = ConfigReader().get_config()
 
 		self.setWindowTitle(_('Import PGN File'))
 
-		self.layout = QGridLayout()
-		self.setLayout(self.layout)
+		layout = QGridLayout()
+		self.setLayout(layout)
 
-		self.layout.addWidget(QLabel(_('Color')), 0, 0)
+		layout.addWidget(QLabel(_('Color')), 0, 0)
 		self.colour_combo = QComboBox()
-		self.layout.addWidget(self.colour_combo, 0, 1)
+		layout.addWidget(self.colour_combo, 0, 1)
 		self.colour_combo.addItem(_('White'))
 		self.colour_combo.addItem(_('Black'))
 		self.updating = False
 		self.colour_combo.currentIndexChanged.connect(self._colour_changed)
 
-		self.layout.addWidget(QLabel(_('Deck')), 1, 0)
+		layout.addWidget(QLabel(_('Deck')), 1, 0)
 		self.deck_combo = QComboBox()
-		self.layout.addWidget(self.deck_combo, 1, 1)
+		layout.addWidget(self.deck_combo, 1, 1)
 		decknames: List[str] = []
 		if mw is not None:
 			for deck in mw.col.decks.all():
@@ -67,16 +69,16 @@ class ImportDialog(QDialog):
 			self.deck_combo.addItem(deckname)
 		self.deck_combo.currentIndexChanged.connect(self._deck_changed)
 
-		self.layout.addWidget(QLabel(_('Input Files')), 2, 0)
+		layout.addWidget(QLabel(_('Input Files')), 2, 0)
 		self.file_list = QListWidget()
-		self.layout.addWidget(self.file_list, 2, 1)
+		layout.addWidget(self.file_list, 2, 1)
 		self.select_file_button = QPushButton(_('Select files'))
 		self.select_file_button.clicked.connect(self._select_input_file)
-		self.layout.addWidget(self.select_file_button, 2, 2)
+		layout.addWidget(self.select_file_button, 2, 2)
 
-		self.layout.addWidget(QLabel(_('Note type')), 3, 0)
+		layout.addWidget(QLabel(_('Note type')), 3, 0)
 		self.model_combo = QComboBox()
-		self.layout.addWidget(self.model_combo, 3, 1)
+		layout.addWidget(self.model_combo, 3, 1)
 		modelnames: List[str] = []
 		if mw is not None:
 			for model in mw.col.models.all():
@@ -93,12 +95,12 @@ class ImportDialog(QDialog):
 
 		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
 		self.button_box = QDialogButtonBox(btn)
-		self.layout.addWidget(self.button_box,
-		                      4,
-		                      0,
-		                      1,
-		                      3,
-		                      alignment=Qt.AlignmentFlag.AlignRight)
+		layout.addWidget(self.button_box,
+		                 4,
+		                 0,
+		                 1,
+		                 3,
+		                 alignment=Qt.AlignmentFlag.AlignRight)
 		self.button_box.accepted.connect(self.accept)
 		self.button_box.rejected.connect(self.reject)
 		self._fill_dialog()
@@ -115,7 +117,7 @@ class ImportDialog(QDialog):
 		config = self.config
 
 		deck_id = config['decks'][colour]
-		deck = mw.col.decks.get(deck_id)
+		deck = self.mw.col.decks.get(deck_id)
 		if deck is not None:
 			name = deck['name']
 			for i in range(self.deck_combo.count()):
@@ -140,7 +142,7 @@ class ImportDialog(QDialog):
 		self.file_list.clear()
 
 		deck_name = self.deck_combo.currentText()
-		deck_id = mw.col.decks.id_for_name(deck_name)
+		deck_id = self.mw.col.decks.id_for_name(deck_name)
 		if deck_id is not None and str(deck_id) in self.config['imports']:
 			record = self.config['imports'][str(deck_id)]
 			self._set_colour_combo(record['colour'])
@@ -168,7 +170,7 @@ class ImportDialog(QDialog):
 
 		if config['decks'][colour] is not None:
 			deck_id = config['decks'][colour]
-			deck = mw.col.decks.get(did=deck_id, default=False)
+			deck = self.mw.col.decks.get(did=deck_id, default=False)
 
 			# The deck may have been deleted in the meantime.
 			if deck:
@@ -185,7 +187,7 @@ class ImportDialog(QDialog):
 
 		if config['notetype'] is not None:
 			notetype_id = config['notetype']
-			name = mw.col.models.get(notetype_id)
+			name = self.mw.col.models.get(notetype_id)
 			if name is not None:
 				for i in range(self.model_combo.count()):
 					if name == self.model_combo.itemText(i):
@@ -271,7 +273,7 @@ class ImportDialog(QDialog):
 		msg = '<br />'.join(msgs) + '<br  />'.join(ftb)
 		print(msg)
 
-		parent = mw.app.activeWindow() or mw
+		parent = self.mw.app.activeWindow() or mw
 		msg_box = QMessageBox(parent)
 		msg_box.setIcon(QMessageBox.Icon.Critical)
 		msg_box.setTextFormat(Qt.TextFormat.MarkdownText)
@@ -283,19 +285,18 @@ class ImportDialog(QDialog):
 		# qconnect() with the return value of addButton() which is a
 		# pointer to QPushButton.
 		ok_button = msg_box.addButton(QMessageBox.StandardButton.Ok)
-		ok_button.setDefault(True)
+		if ok_button is not None:
+			ok_button.setDefault(True)
 
 		def open_link(link: str):
 			with no_bundled_libs():
 				QDesktopServices.openUrl(QUrl(link))
 
 		help_button = msg_box.addButton(QMessageBox.StandardButton.Help)
-		link = _('https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs')
-		help_button.clicked = qconnect(
-			help_button.clicked,
-			lambda: open_link(link),
-		)
-		help_button.setAutoDefault(False)
+		if help_button is not None:
+			link = _('https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs')
+			help_button.clicked.connect(open_link(link))
+			help_button.setAutoDefault(False)
 
 		return msg_box.exec()
 
@@ -316,14 +317,14 @@ class ImportDialog(QDialog):
 			self.file_list.addItems(
 			    [str(Path(filename)) for filename in filenames])
 
-	def _save_config(self) -> Config:
+	def _save_config(self) -> Config | None:
 		colour_index = self.colour_combo.currentIndex()
 		if colour_index == 1:
 			colour = 'black'
 		else:
 			colour = 'white'
 
-		col = mw.col
+		col = self.mw.col
 
 		deck_name = self.deck_combo.currentText()
 		deck_id = col.decks.id_for_name(deck_name)
@@ -340,7 +341,9 @@ class ImportDialog(QDialog):
 
 		files: List[str] = []
 		for i in range(self.file_list.count()):
-			files.append(self.file_list.item(i).text())
+			item = self.file_list.item(i)
+			if item is not None:
+				files.append(item.text())
 
 		self.config['colour'] = colour
 		self.config['decks'][colour] = deck_id

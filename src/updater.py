@@ -10,27 +10,28 @@
 import os
 import re
 from pathlib import Path
-from typing import List
+from typing import Any, List
 import semantic_version as sv
 import anki
-from anki.media import MediaManager
+from aqt import mw
 
 from .basic_names import basic_names
-from .config import Config
 
 class Updater:
-	def __init__(self, mw: MediaManager, version: sv.Version):
+	def __init__(self, version: sv.Version):
+		if mw is None:
+			raise RuntimeError(_('Cannot run without main window!'))
 		self.mw = mw
 		self.version = version
 
 
-	def update_config(self, old: any) -> any:
+	def update_config(self, old: Any) -> Any:
 		config = self._update(old)
 		config = self._fill_config(config)
 
 		return config
 
-	def _update(self, raw: any) -> any:
+	def _update(self, raw: Any) -> Any:
 		if not raw:
 			raw = {}
 
@@ -48,7 +49,7 @@ class Updater:
 		return raw
 
 
-	def _update_v1_0_0(self, raw: any):
+	def _update_v1_0_0(self, raw: Any):
 		raw['imports'] = {}
 
 		if 'decks' in raw:
@@ -79,7 +80,7 @@ class Updater:
 
 		return raw
 
-	def _patch_notes_v1_0_0(self, config:Config):
+	def _patch_notes_v1_0_0(self, config:Any):
 		col = self.mw.col
 		mm  = col.media
 		media_dir = mm.dir()
@@ -119,7 +120,7 @@ class Updater:
 
 					col.update_note(note, skip_undo_entry=True)
 
-	def _fill_config(self, raw: any) -> any:
+	def _fill_config(self, raw: Any) -> Any:
 		if raw is None:
 			raw = {}
 

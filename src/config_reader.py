@@ -9,7 +9,7 @@
 
 import sys
 
-from typing import cast
+from typing import Any, cast
 from aqt import mw
 from jsonschema import ValidationError, validate
 
@@ -28,17 +28,17 @@ class ConfigReader:
 
 		raw_config = mw.addonManager.getConfig(__name__)
 
-		updater = Updater(mw, __version__)
-		config = updater.update_config(raw_config)
-		self.config:Config = cast(Config, config)
+		updater = Updater(__version__)
+		raw_config = updater.update_config(raw_config)
 
 		try:
-			validate(self.config, schema=schema)
-			mw.addonManager.writeConfig(__name__, self.config)
+			validate(raw_config, schema=schema)
+			mw.addonManager.writeConfig(__name__, cast(dict[Any, Any], raw_config))
 		except ValidationError as e:
 			showCritical(_('Your add-on configuration is invalid, restoring defaults.'))
-			config = updater.update_config(None)
-			self.config:Config = cast(Config, config)
+			raw_config = updater.update_config(None)
+
+		self.config:Config = cast(Config, raw_config)
 
 
 	def get_config(self):

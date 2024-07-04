@@ -8,7 +8,7 @@
 # http://www.wtfpl.net/ for more details.
 
 import typing
-from typing import Dict, Literal, cast
+from typing import Dict, Literal, Optional, cast
 
 import chess
 from chess import Color, Board
@@ -43,18 +43,20 @@ class PositionVisitor(BaseVisitor):
 	def __init__(self, colour):
 		self.colour: Color = colour
 		self.initial: Board
+		self.has_board = False
 		self.seen: Dict[str, str] = {}
-		self.cards: Dict[str, Page] = {}
+		self.cards: Dict[str, Question] = {}
 		self.last_text = None
 		self.accumulated_comments = []
 		self.my_move = True
 
 	def begin_game(self) -> None:
-		self.initial = None
+		self.has_board = False
 
 	def visit_board(self, board) -> None:
-		if self.initial == None:
+		if not self.has_board:
 			self.initial = board.copy()
+			self.has_board = True
 
 	def visit_move(self, board, move) -> None:
 		if board.turn == self.colour:
@@ -115,12 +117,3 @@ class PositionVisitor(BaseVisitor):
 
 	def result(self) -> Literal[True]:
 		return True
-
-	def print_cards(self) -> None:
-		for page in self.cards.values():
-			question: Question = cast(Question, page)
-			print(f'Q: {question.render()}')
-			print('A: Playable moves:')
-
-			print(question.render_answers())
-			print()

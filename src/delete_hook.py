@@ -1,16 +1,16 @@
 import os
 import re
-from typing import List
+from typing import List, Sequence
 
 from anki import hooks
 from anki.collection import Collection
-from anki.notes import Note, NoteId
+from anki.notes import NoteId
 
 class DeleteHook:
 
 
 	def installHook(self):
-		def on_notes_delete(collection: Collection, int_note_ids: List[NoteId]):
+		def on_notes_delete(collection: Collection, int_note_ids: Sequence[NoteId]):
 			mm = collection.media
 			media_path = mm.dir()
 			image_deletes: List[str] = []

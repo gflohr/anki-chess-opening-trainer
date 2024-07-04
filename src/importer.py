@@ -9,12 +9,12 @@
 
 import os
 import re
-from typing import Dict, List, Sequence, Tuple, cast
+from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
 
 import chess
 from anki.collection import Collection
-from anki.notes import Note, NoteId
-from anki.decks import Deck
+from anki.notes import Note, NoteId, NotetypeId
+from anki.decks import DeckId
 
 from .answer import Answer
 from .question import Question
@@ -31,31 +31,29 @@ class Importer:
 	    filenames: List[str],
 	    collection: Collection,
 	    colour: chess.Color,
-	    notetype_id: int,
-	    deck_id: int,
-	    do_print: bool = False,
+	    notetype_id: NotetypeId,
+	    deck_id: DeckId
 	) -> None:
 		self.collection = collection
 		self.colour = colour
 
-		self.model = self.collection.models.get(notetype_id)
-		if not self.model:
+		model_data = self.collection.models.get(notetype_id)
+		if model_data is None:
 			raise KeyError(_('Selected note type does not exist!'))
+		self.model = model_data
 
-		self.deck = self.collection.decks.get(did=deck_id)
-		if not self.deck:
+		deck_data: Optional[Dict[str, Any]] = self.collection.decks.get(did=deck_id)
+		if deck_data is None:
 			raise KeyError(_('Selected deck does not exist!'))
+		self.deck = deck_data
 
 		self.visitor = PositionVisitor(colour=colour)
 		self.filenames = filenames
 
-		self.do_print = do_print
 
 	def run(self) -> Tuple[int, int, int, int, int]:
 		for filename in self.filenames:
 			self._read_study(filename)
-		if self.do_print:
-			self.visitor.print_cards()
 		current_notes = self._read_notes()
 
 		return self._patch_deck(current_notes)
@@ -84,7 +82,7 @@ class Importer:
 
 		return notes
 
-	def _delete_unused(self,  wanted: Dict[str, Page], got: dict[str, Note]) -> int:
+	def _delete_unused(self,  wanted: Dict[str, Question], got: dict[str, Note]) -> int:
 		deletes: List[NoteId] = []
 		for moves in got:
 			if moves not in wanted:
