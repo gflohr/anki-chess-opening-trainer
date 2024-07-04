@@ -8,14 +8,13 @@
 # http://www.wtfpl.net/ for more details.
 
 import typing
-from typing import Dict, Literal, Optional, cast
+from typing import Dict, Literal, cast
 
 import chess
 from chess import Color, Board
-from chess.pgn import BaseVisitor, SkipType
+from chess.pgn import BaseVisitor
 
 from .answer import Answer
-from .page import Page
 from .question import Question
 
 
@@ -40,6 +39,9 @@ def i18n_piece_symbol(piece_type: chess.PieceType) -> str:
 
 
 class PositionVisitor(BaseVisitor):
+
+
+	# pylint: disable=too-many-instance-attributes
 	def __init__(self, colour):
 		self.colour: Color = colour
 		self.initial: Board
@@ -97,7 +99,7 @@ class PositionVisitor(BaseVisitor):
 						self.accumulated_comments = []
 				question.set_board(board.copy())
 			elif answer.find(self.cards[text].answers):
-				return board
+				return
 
 			self.cards[text].add_answer(answer)
 			self.my_move = True
