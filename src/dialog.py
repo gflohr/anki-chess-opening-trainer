@@ -239,6 +239,7 @@ class ImportDialog(QDialog):
 					filenames=filenames,
 					colour=('white' == colour),
 				)
+
 				return importer.run()
 			except Exception as e: # pylint: disable=broad-except
 				return e
@@ -294,7 +295,7 @@ class ImportDialog(QDialog):
 		help_button = msg_box.addButton(QMessageBox.StandardButton.Help)
 		if help_button is not None:
 			link = _('https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs')
-			help_button.clicked.connect(open_link(link))
+			help_button.clicked.connect(lambda: open_link(link))
 			help_button.setAutoDefault(False)
 
 		return msg_box.exec()
