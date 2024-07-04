@@ -10,14 +10,18 @@
 import os
 import re
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 import semantic_version as sv
 import anki
 from aqt import mw
+from anki.notes import NotetypeId
 
 from .basic_names import basic_names
 
 class Updater:
+
+
+	# pylint: disable=too-few-public-methods
 	def __init__(self, version: sv.Version):
 		if mw is None:
 			raise RuntimeError(_('Cannot run without main window!'))
@@ -72,7 +76,7 @@ class Updater:
 					raw['decks']['black'] = deck_id
 
 		if 'files' in raw:
-			del(raw['files'])
+			del raw['files']
 
 		raw['version'] = '1.0.0'
 
@@ -81,13 +85,13 @@ class Updater:
 		return raw
 
 	def _patch_notes_v1_0_0(self, config:Any):
+		# pylint: disable=too-many-locals
 		col = self.mw.col
 		mm  = col.media
 		media_dir = mm.dir()
 
-		for colour, deck_id in config['decks'].items():
+		for _, deck_id in config['decks'].items():
 			if deck_id is not None:
-				c = colour[0]
 				for cid in col.decks.cids(deck_id):
 					card = col.get_card(cid)
 					note = card.note()
@@ -147,7 +151,7 @@ class Updater:
 
 		return raw
 
-	def _get_basic_notetype(self):
+	def _get_basic_notetype(self) -> NotetypeId | None:
 		names = []
 
 		lang = anki.lang.current_lang
@@ -157,9 +161,8 @@ class Updater:
 		names.extend(list(basic_names.values()))
 
 		for name in names:
-			id = self.mw.col.models.id_for_name(name)
-			if id is not None:
-				return id
+			id_for_name = self.mw.col.models.id_for_name(name)
+			if id_for_name is not None:
+				return id_for_name
 
 		return None
-
