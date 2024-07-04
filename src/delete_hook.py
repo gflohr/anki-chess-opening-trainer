@@ -9,12 +9,12 @@ from anki.notes import NoteId
 class DeleteHook:
 
 
-	def installHook(self):
+	def installHook(self): # pylint: disable=invalid-name
 		def on_notes_delete(collection: Collection, int_note_ids: Sequence[NoteId]):
 			mm = collection.media
 			media_path = mm.dir()
 			image_deletes: List[str] = []
-			note_ids: List[str] = list(map(lambda note_id: str(note_id), int_note_ids))
+			note_ids: List[str] = [str(note_id) for note_id in int_note_ids]
 
 			for path in os.scandir(media_path):
 				if not os.path.isdir(path.path):
