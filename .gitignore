@@ -1,3 +1,4 @@
+.DS_Store
 po/*.gmo
 /.vscode
 config.yaml
@@ -11,3 +12,5 @@ src/basic_names.py
 /build
 /ankidata
 /ankiweb-description.md
+/node_modules
+/dist
