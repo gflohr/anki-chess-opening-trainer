@@ -47,13 +47,17 @@ class ImportDialog(QDialog):
 		layout = QGridLayout()
 		self.setLayout(layout)
 
+		self.dirty = {
+			'colour': False,
+			'deck': False,
+
+		}
 		layout.addWidget(QLabel(_('Color')), 0, 0)
 		self.colour_combo = QComboBox()
 		layout.addWidget(self.colour_combo, 0, 1)
 		self.colour_combo.addItem(_('White'))
 		self.colour_combo.addItem(_('Black'))
 		self.updating = False
-		self.colour_combo.currentIndexChanged.connect(self._colour_changed)
 
 		layout.addWidget(QLabel(_('Deck')), 1, 0)
 		self.deck_combo = QComboBox()
@@ -65,7 +69,6 @@ class ImportDialog(QDialog):
 
 		for deckname in sorted(decknames):
 			self.deck_combo.addItem(deckname)
-		self.deck_combo.currentIndexChanged.connect(self._deck_changed)
 
 		layout.addWidget(QLabel(_('Input Files')), 2, 0)
 		self.file_list = QListWidget()
@@ -102,11 +105,18 @@ class ImportDialog(QDialog):
 		self.button_box.accepted.connect(self.accept)
 		self.button_box.rejected.connect(self.reject)
 		self._fill_dialog()
+		self.colour_combo.currentIndexChanged.connect(self._colour_changed)
+		self.deck_combo.currentIndexChanged.connect(self._deck_changed)
+
 
 	def _colour_changed(self) -> None:
 		if self.updating:
 			return
 		self.updating = True
+
+		self.dirty['colour'] = True
+		if self.dirty['deck']:
+			return
 
 		if self.colour_combo.currentIndex() == 1:
 			colour = 'black'
@@ -143,12 +153,15 @@ class ImportDialog(QDialog):
 		deck_id = self.mw.col.decks.id_for_name(deck_name)
 		if deck_id is not None and str(deck_id) in self.config['imports']:
 			record = self.config['imports'][str(deck_id)]
-			self._set_colour_combo(record['colour'])
+			if not self.dirty['colour']:
+				self._set_colour_combo(record['colour'])
 
 			for filename in record['files']:
 				self.file_list.addItem(filename)
 
 		self.updating = False
+
+		self.dirty['deck'] = True
 
 	def _set_colour_combo(self, colour: Literal['white', 'black']):
 		if 'black' == colour:
@@ -176,12 +189,10 @@ class ImportDialog(QDialog):
 					if deck['name'] == self.deck_combo.itemText(i):
 						self.deck_combo.setCurrentIndex(i)
 
-			self.file_list.clear()
 			if str(deck_id) in config['imports']:
 				record = config['imports'][str(deck_id)]
 				for filename in record['files']:
 					self.file_list.addItem(filename)
-					break
 
 		if config['notetype'] is not None:
 			notetype_id = config['notetype']
@@ -244,7 +255,6 @@ class ImportDialog(QDialog):
 
 				return importer.run()
 			except Exception as e: # pylint: disable=broad-except
-				print('caught exception ...')
 				return e
 
 		if not self.file_list.count():
