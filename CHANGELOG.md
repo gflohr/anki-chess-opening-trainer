@@ -4,7 +4,7 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### 1.0.2 - 2024-07-05
 
-* fix the preselection of the import dialog
+* fix GitHub issue #21 which could make some combinations of colour and deck no longer selectable
 
 ### 1.0.1 - 2024-07-04
 
