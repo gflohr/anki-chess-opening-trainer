@@ -2,9 +2,13 @@
 
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### 1.0.1 - 2024-04-07
+### 1.0.2 - 2024-07-05
 
-* fixed a crash, when decks were deleted (GitHub issue #15)
+* fix the preselection of the import dialog
+
+### 1.0.1 - 2024-07-04
+
+* fix a crash, when decks were deleted (GitHub issue #15)
 * allow custom start position (GitHub issue #16)
 * added Bulgarian translation
 
