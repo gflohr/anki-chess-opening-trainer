@@ -32,7 +32,7 @@ from .config_reader import ConfigReader
 class ImportDialog(QDialog):
 
 
-	# pylint: disable=too-few-public-methods, too-many-instance-attributes
+	# pylint: disable=too-few-public-methods, too-many-instance-attributes, too-many-statements
 	def __init__(self) -> None:
 		if mw is None:
 			raise RuntimeError(_('Cannot run without main window!'))
@@ -209,7 +209,8 @@ class ImportDialog(QDialog):
 		def _on_success(counts: Union[Exception, tuple[int, int, int, int, int]]):
 			if isinstance(counts, Exception):
 				x = counts
-				if (isinstance(x, OSError)):
+				if isinstance(x, OSError):
+					# pylint: disable=consider-using-f-string
 					show_critical(_('There was an error importing a file: {error}'.format(error=x)))
 				else:
 					self._show_exception(counts)
