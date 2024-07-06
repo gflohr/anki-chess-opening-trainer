@@ -2,6 +2,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
+import copy from 'rollup-plugin-copy';
 import * as fs from 'fs';
 
 const pkg = JSON.parse(
@@ -41,6 +42,17 @@ export default [
 			typescript({
 				exclude: 'src/**/*.spec.ts',
 			}),
+			// We only have to copy the files once.
+			copy({
+				targets: [
+					{ src: './html/**/*.{html,css}', dest: 'dist' },
+				],
+				flatten: false,
+			}),
 		],
+		watch: {
+			include: ['./typescript/**/*.ts'],
+			exclude: ['./typescript/**/*.spec.ts'],
+		},
 	},
 ];

@@ -1,13 +1,11 @@
 {
 	"extends": "@tsconfig/recommended",
 	"compilerOptions": {
-		"outDir": "lib",
+		"outDir": "./dist",
 		"baseUrl": ".",
-		"declaration": true,
-		"declarationMap": true,
-		"declarationDir": "./dist",
-		"rootDir": "./src"
+		"rootDir": "./typescript",
+		"allowImportingTsExtensions": true
 	},
 	"exclude": ["node_modules", "dist"],
-	"includes": ["./src"]
+	"includes": ["./typescript"]
 }

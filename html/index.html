@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Anki Chess Opening Trainer</title>
+		<link rel="stylesheet" href="/assets/styles.css"></link>
+	</head>
+	<body>
+		<h1>Anki Chess Opening Trainer</h1>
+		<h2>Questions</h2>
+		<ul>
+			<li><a href="./questions/simple-question.html" target="_blank">Simple Question</a></li>
+		</ul>
+		<h2>Answers .....</h2>
+		<div id="question"></div>
+		<script src="https://cdn.jsdelivr.net/npm/chessground@9.1.1/dist/chessground.js" type="module"></script>
+		<script type="module">
+import { Chessground } from 'https://cdn.jsdelivr.net/npm/chessground@9.1.1/dist/chessground.js';
+
+debugger;
+const div = document.getElementById('question');
+Chessground(div, {});
+		</script>
+	</body>
+</html>
