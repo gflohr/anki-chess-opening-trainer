@@ -54,7 +54,11 @@ test:
 sourcedist:
 	python -m ankiscripts.sourcedist
 
+update-assets:
+	sh ./tools/get-lichess-assets.sh
+
 clean:
 	rm -rf build/ src/version.py src/config.py
 
-.PHONY: all zip ankiweb vendor fix mypy pylint lint test sourcedist clean
+.PHONY: all zip ankiweb vendor fix mypy pylint lint test sourcedist \
+	update-assets clean

@@ -17,7 +17,7 @@ export default [
 			name: 'ankichess',
 			file: pkg.browser,
 			format: 'umd',
-			sourcemap: false,
+			sourcemap: true,
 		},
 		plugins: [
 			resolve(),
@@ -45,7 +45,7 @@ export default [
 			// We only have to copy the files once.
 			copy({
 				targets: [
-					{ src: './html/**/*.{html,css}', dest: 'dist' },
+					{ src: './assets/**/*', dest: 'dist' },
 				],
 				flatten: false,
 			}),

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Simple Question</title>
+		<link rel="stylesheet" "/styles.css"></link>
+	</head>
+	<body>
+		<h1>Simple Question</h1>
+		<div id="board"></div>
+		<script src="/index.js"></script>
+		<script type="module">
+const { Chessground } = ankichess;
+
+const div = document.getElementById('board');
+Chessground(document.body, {});
+		</script>
+	</body>
+</html>
