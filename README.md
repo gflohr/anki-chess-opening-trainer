@@ -130,5 +130,5 @@ perspective.
 
 ## Copyright
 
-This is free software.  Copyright © 2023, Guido Flohr <guido.flohr@cantanea.com>,
-all rights reserved.
+This is free software.  Copyright © 2023-2024, Guido
+Flohr <guido.flohr@cantanea.com>, all rights reserved.
