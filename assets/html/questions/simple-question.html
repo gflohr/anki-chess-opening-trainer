@@ -2,17 +2,21 @@
 <html>
 	<head>
 		<title>Simple Question</title>
-		<link rel="stylesheet" "/styles.css"></link>
+		<link rel="stylesheet" href="/assets/css/pieces/cburnett.css"></link>
+		<link rel="stylesheet" href="/bundle.css"></link>
 	</head>
 	<body>
 		<h1>Simple Question</h1>
-		<div id="board"></div>
+		<section class="is2d blue merida">
+			<div id="board" class="cg-wrap orientation-white manipulable">
+			</div>
+		</section>
 		<script src="/index.js"></script>
 		<script type="module">
-const { Chessground } = ankichess;
+const { Question } = ankichess;
 
 const div = document.getElementById('board');
-Chessground(document.body, {});
+new Question({ element: div });
 		</script>
 	</body>
 </html>

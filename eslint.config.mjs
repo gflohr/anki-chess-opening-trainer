@@ -8,7 +8,6 @@ export default tseslint.config(
 		rules: {
 			'no-irregular-whitespace': 'off',
 			'no-control-regex': 'off',
-		}
-	}
+		},
+	},
 );
-

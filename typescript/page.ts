@@ -1,3 +1,1 @@
-export class Page {
-
-}
+export class Page {}

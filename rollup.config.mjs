@@ -3,6 +3,9 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import copy from 'rollup-plugin-copy';
+import sass from 'rollup-plugin-sass';
+import postcss from 'postcss';
+import cssnano from 'cssnano';
 import * as fs from 'fs';
 
 const pkg = JSON.parse(
@@ -25,6 +28,9 @@ export default [
 			typescript({
 				exclude: 'src/**/*.spec.ts',
 			}),
+			sass({
+				output: 'dist/bundle.css',
+			}),
 			terser(),
 		],
 	},
@@ -42,11 +48,19 @@ export default [
 			typescript({
 				exclude: 'src/**/*.spec.ts',
 			}),
+			sass({
+				output: function (styles) {
+					// Process and minify CSS using postcss and cssnano
+					return postcss([cssnano])
+						.process(styles, { from: undefined })
+						.then(result => {
+							fs.writeFileSync('dist/bundle.min.css', result.css);
+						});
+				},
+			}),
 			// We only have to copy the files once.
 			copy({
-				targets: [
-					{ src: './assets/**/*', dest: 'dist' },
-				],
+				targets: [{ src: './assets/**/*', dest: 'dist' }],
 				flatten: false,
 			}),
 		],
