@@ -4,6 +4,8 @@ all: zip ankiweb
 
 generated: \
 	src/version.py \
+	src/config_schema.py \
+	src/config.py \
 	src/importer_config_schema.py \
 	src/importer_config.py
 
@@ -19,7 +21,14 @@ build/ankiweb-description.md: description.md CHANGELOG.md
 src/version.py: ./package.json
 	python3 ./tools/get-version.py >$@ || (rm $@; exit 1)
 
-src/importer_config.py: ./src/importer_config.schema.json
+src/config.py: ./src/config.schema.json
+	datamodel-codegen \
+		--input=$< \
+		--input-file-type=jsonschema \
+		--output-model-type=typing.TypedDict \
+		| sed -e "s/    /\t/g" >$@ || (rm $@; exit 1)
+
+src/importer_config.py: ./src/config.schema.json
 	datamodel-codegen \
 		--input=$< \
 		--input-file-type=jsonschema \
@@ -28,6 +37,9 @@ src/importer_config.py: ./src/importer_config.schema.json
 
 src/importer_config_schema.py: ./src/importer_config.schema.json
 	python3 ./tools/json2python.py importer_config_schema <$< >$@ || (rm $@; exit 1)
+
+src/config_schema.py: ./src/config.schema.json
+	python3 ./tools/json2python.py config_schema <$< >$@ || (rm $@; exit 1)
 
 src/basic_names.py:
 	sh ./tools/get-basic-notetype-names.sh >$@ || (rm $@; exit 1)
@@ -59,8 +71,10 @@ update-assets:
 	sh ./tools/get-lichess-assets.sh
 
 clean:
-	rm -rf build/ src/version.py \
-	src/importer_config.py src/importer_config_schema.py
+	rm -rf \
+		build/ src/version.py \
+		src/config.py src/config_schema.py \
+		src/importer_config.py src/importer_config_schema.py
 
 .PHONY: all zip ankiweb vendor fix mypy pylint lint test sourcedist \
 	update-assets clean

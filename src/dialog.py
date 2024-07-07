@@ -234,7 +234,6 @@ class ImportDialog(QDialog):
 				msg = ' '.join(msgs)
 
 			mw.reset()
-			# mw.addonManager.writeConfig(__name__, self.config)
 
 			show_info(msg)
 

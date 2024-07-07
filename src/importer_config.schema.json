@@ -10,7 +10,7 @@
 		"version": {
 			"description": "The add-on version that has generated this configuration",
 			"type": "string",
-			"pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$"
+			"minLength": 5
 		},
 		"colour": {
 			"description": "The side (black or white) that this game collection contains good moves for.",
