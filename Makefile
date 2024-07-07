@@ -4,7 +4,10 @@ default: all
 
 all: zip ankiweb
 
-generated: src/version.py src/config.py src/schema.py
+generated: \
+	src/version.py \
+	src/importer_config_schema.py \
+	src/importer_config.py
 
 zip: generated vendor
 	python -m ankiscripts.build --type package --qt all --exclude user_files/**/*
@@ -18,18 +21,18 @@ build/ankiweb-description.md: description.md CHANGELOG.md
 src/version.py: ./VERSION
 	@echo "__version__ = '$(VERSION)'" >$@
 
-src/config.py: ./src/config.schema.json
+src/importer_config.py: ./src/importer_config.schema.json
 	datamodel-codegen \
 		--input=$< \
 		--input-file-type=jsonschema \
 		--output-model-type=typing.TypedDict \
-		| sed -e "s/    /\t/g" >$@
+		| sed -e "s/    /\t/g" >$@ || rm $@
 
-src/schema.py: ./src/config.schema.json
-	python3 ./tools/json2python.py <$< >$@
+src/importer_config_schema.py: ./src/importer_config.schema.json
+	python3 ./tools/json2python.py importer_config_schema <$< >$@ || rm $@
 
 src/basic_names.py:
-	sh ./tools/get-basic-notetype-names.sh >$@
+	sh ./tools/get-basic-notetype-names.sh >$@ || rm $@
 
 vendor:
 	python -m ankiscripts.vendor
@@ -58,7 +61,8 @@ update-assets:
 	sh ./tools/get-lichess-assets.sh
 
 clean:
-	rm -rf build/ src/version.py src/config.py
+	rm -rf build/ src/version.py \
+	src/importer_config.py src/importer_config_schema.py
 
 .PHONY: all zip ankiweb vendor fix mypy pylint lint test sourcedist \
 	update-assets clean

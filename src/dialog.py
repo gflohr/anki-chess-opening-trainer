@@ -40,7 +40,7 @@ class ImportDialog(QDialog):
 		super().__init__()
 
 		self.mw = mw
-		self.config = ConfigReader().get_config()
+		self.importer_config = ConfigReader().get_importer_config()
 
 		self.setWindowTitle(_('Import PGN File'))
 
@@ -122,9 +122,9 @@ class ImportDialog(QDialog):
 			colour = 'black'
 		else:
 			colour = 'white'
-		config = self.config
+		importer_config = self.importer_config
 
-		deck_id = config['decks'][colour]
+		deck_id = importer_config['decks'][colour]
 		deck = self.mw.col.decks.get(deck_id)
 		if deck is not None:
 			name = deck['name']
@@ -135,8 +135,8 @@ class ImportDialog(QDialog):
 
 			self.file_list.clear()
 
-			if str(deck_id) in config['imports']:
-				record = config['imports'][str(deck_id)]
+			if str(deck_id) in importer_config['imports']:
+				record = importer_config['imports'][str(deck_id)]
 				for filename in record['files']:
 					self.file_list.addItem(filename)
 
@@ -151,8 +151,8 @@ class ImportDialog(QDialog):
 
 		deck_name = self.deck_combo.currentText()
 		deck_id = self.mw.col.decks.id_for_name(deck_name)
-		if deck_id is not None and str(deck_id) in self.config['imports']:
-			record = self.config['imports'][str(deck_id)]
+		if deck_id is not None and str(deck_id) in self.importer_config['imports']:
+			record = self.importer_config['imports'][str(deck_id)]
 			if not self.dirty['colour']:
 				self._set_colour_combo(record['colour'])
 
@@ -170,8 +170,8 @@ class ImportDialog(QDialog):
 			self.colour_combo.setCurrentIndex(0)
 
 	def _fill_dialog(self) -> None:
-		config = self.config
-		colour = config['colour']
+		importer_config = self.importer_config
+		colour = importer_config['colour']
 		if colour is None:
 			colour = 'white'
 
@@ -179,8 +179,8 @@ class ImportDialog(QDialog):
 
 		self.file_list.clear()
 
-		if config['decks'][colour] is not None:
-			deck_id = config['decks'][colour]
+		if importer_config['decks'][colour] is not None:
+			deck_id = importer_config['decks'][colour]
 			deck = self.mw.col.decks.get(did=deck_id, default=False)
 
 			# The deck may have been deleted in the meantime.
@@ -189,13 +189,13 @@ class ImportDialog(QDialog):
 					if deck['name'] == self.deck_combo.itemText(i):
 						self.deck_combo.setCurrentIndex(i)
 
-			if str(deck_id) in config['imports']:
-				record = config['imports'][str(deck_id)]
+			if str(deck_id) in importer_config['imports']:
+				record = importer_config['imports'][str(deck_id)]
 				for filename in record['files']:
 					self.file_list.addItem(filename)
 
-		if config['notetype'] is not None:
-			notetype_id = config['notetype']
+		if importer_config['notetype'] is not None:
+			notetype_id = importer_config['notetype']
 			name = self.mw.col.models.get(notetype_id)
 			if name is not None:
 				for i in range(self.model_combo.count()):
@@ -234,7 +234,7 @@ class ImportDialog(QDialog):
 				msg = ' '.join(msgs)
 
 			mw.reset()
-			mw.addonManager.writeConfig(__name__, self.config)
+			# mw.addonManager.writeConfig(__name__, self.config)
 
 			show_info(msg)
 

@@ -9,14 +9,12 @@
 
 import os
 import re
-import json
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 import semantic_version as sv
-import anki
 from aqt import mw
-from anki.notes import NotetypeId
 
+from .utils import fill_importer_config_defaults, write_importer_config
 from .basic_names import basic_names
 
 class Updater:
@@ -52,8 +50,6 @@ class Updater:
 			raw = self._update_v1_0_0(raw)
 
 		if (sv.Version(raw['version']) < sv.Version('2.0.0')):
-			print(sv.Version(raw['version']))
-			print(sv.Version('2.0.0'))
 			raw = self._update_v2_0_0(raw)
 
 		raw['version'] = self.version
@@ -93,13 +89,11 @@ class Updater:
 		return raw
 
 	def _update_v2_0_0(self, raw: Any):
-		import_config = json.dumps(raw)
-		import_config_filename = os.path.join(self.user_files_dir, 'imports.json')
+		# The old configuration is now the importer configuration in
+		# user_files.
+		write_importer_config(fill_importer_config_defaults(raw))
 
-		with open(import_config_filename, 'w') as file:
-			# Writing data to a file
-			file.write(json.dumps(raw))
-
+		return {}
 
 	def _patch_notes_v1_0_0(self, config:Any):
 		# pylint: disable=too-many-locals
@@ -141,6 +135,7 @@ class Updater:
 
 					col.update_note(note, skip_undo_entry=True)
 
+
 	def _fill_config(self, raw: Any) -> Any:
 		if raw is None:
 			raw = {}
@@ -148,38 +143,4 @@ class Updater:
 		if 'version' not in raw:
 			raw['version'] = self.version
 
-		if 'colour' not in raw:
-			raw['colour'] = 'white'
-
-		if 'decks' not in raw:
-			raw['decks'] = {}
-
-		if 'white' not in raw['decks']:
-			raw['decks']['white'] = None
-
-		if 'black' not in raw['decks']:
-			raw['decks']['black'] = None
-
-		if 'imports' not in raw:
-			raw['imports'] = {}
-
-		if 'notetype' not in raw or raw['notetype'] is None or isinstance(raw['notetype'], str):
-			raw['notetype'] = self._get_basic_notetype()
-
 		return raw
-
-	def _get_basic_notetype(self) -> Union[NotetypeId, None]:
-		names = []
-
-		lang = anki.lang.current_lang
-		if lang in basic_names:
-			names.append(basic_names[lang])
-
-		names.extend(list(basic_names.values()))
-
-		for name in names:
-			id_for_name = self.mw.col.models.id_for_name(name)
-			if id_for_name is not None:
-				return id_for_name
-
-		return None

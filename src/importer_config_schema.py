@@ -1,9 +1,10 @@
-schema = {
+importer_config_schema = {
 	'$schema': 'http://json-schema.org/draft-07/schema#',
 	'$id':
-	'https://www.guido-flohr.net/schema/anki-chess-opening-trainer.json',
-	'title': 'Config',
-	'description': 'Configuration for the Anki Chess Opening Trainer Add-On',
+	'https://www.guido-flohr.net/schema/anki-chess-opening-trainer-importer-config.json',
+	'title': 'ImporterConfig',
+	'description':
+	'Importer Configuration for the Anki Chess Opening Trainer Add-On',
 	'type': 'object',
 	'additionalProperties': False,
 	'required': ['version', 'colour', 'decks', 'imports', 'notetype'],
@@ -79,3 +80,4 @@ schema = {
 		}
 	}
 }
+
