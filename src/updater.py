@@ -9,12 +9,17 @@
 
 import os
 import re
-from pathlib import Path
-from typing import Any
+from typing import Any, Dict, List, cast
 import semantic_version as sv
+
 from aqt import mw
+from anki.decks import DeckId
+from anki.cards import CardId
+
+from importer_config import ImporterConfig
 
 from .utils import fill_importer_config_defaults, write_importer_config
+from .get_chess_model import get_chess_model
 
 class Updater:
 
@@ -26,8 +31,6 @@ class Updater:
 		self.mw = mw
 		self.version = version
 		self.addon_dir = os.path.dirname(__file__)
-		self.user_files_dir = os.path.join(self.addon_dir, 'user_files')
-
 
 	def update_config(self, old: Any) -> Any:
 		config = self._update(old)
@@ -56,7 +59,7 @@ class Updater:
 		return raw
 
 
-	def _update_v1_0_0(self, raw: Any):
+	def _update_v1_0_0(self, raw: Any) -> Dict[str, Any]:
 		raw['imports'] = {}
 
 		if 'decks' in raw:
@@ -83,11 +86,9 @@ class Updater:
 
 		raw['version'] = '1.0.0'
 
-		self._patch_notes_v1_0_0(raw)
-
 		return raw
 
-	def _update_v2_0_0(self, raw: Any):
+	def _update_v2_0_0(self, raw: Any) -> Dict[str, Any]:
 		if 'notetype' in raw:
 			del raw['notetype']
 
@@ -95,48 +96,39 @@ class Updater:
 		# user_files.
 		write_importer_config(fill_importer_config_defaults(raw))
 
+		importer_config = cast(ImporterConfig, raw)
+		self._patch_notes_v2_0_0(importer_config)
+
+		# FIXME! Only prune the old media files that are no longer needed.
+		# If we cannot fully migrate an import, then the files should stay.
+		#self._prune_old_media_files()
+
 		return {}
 
-	def _patch_notes_v1_0_0(self, config:Any):
-		# pylint: disable=too-many-locals
-		col = self.mw.col
-		mm  = col.media
-		media_dir = mm.dir()
+	def _patch_notes_v2_0_0(self, importer_config: ImporterConfig):
+		for deck_id in importer_config['imports']:
+			self._migrate_deck_v2_0_0(deck_id, importer_config)
 
-		for _, deck_id in config['decks'].items():
-			if deck_id is not None:
-				for cid in col.decks.cids(deck_id):
-					card = col.get_card(cid)
-					note = card.note()
+	def _migrate_deck_v2_0_0(self, deck_id: DeckId, importer_config: ImporterConfig):
+		pass
 
-					pattern = r'<img src="(chess-opening-trainer-[wb]-([0-9a-f]{40})\.svg)">'
-					text = note.fields[0] + note.fields[1]
-					for match in re.finditer(pattern, text):
-						old_name = match.group(1)
-						digest = match.group(2)
-						new_name = f'chess-opening-trainer-{note.id}-{digest}.svg'
+	def _prune_old_media_files(self):
+		filenames: List[str] = []
 
-						old_path = os.path.join(media_dir, old_name)
-						if not Path(old_path).exists():
-							continue
+		mm = self.mw.col.media
+		media_path = mm.dir()
 
-						with open(old_path, 'r', encoding='cp1252') as old_file:
-							data = old_file.read()
-							new_path = os.path.join(media_dir, new_name)
-							with open(new_path, 'w', encoding='cp1252') as new_file:
-								new_file.write(data)
+		for path in os.scandir(media_path):
+			if not os.path.isdir(path.path):
+				filename = os.path.basename(path)
+				regex = r'^chess-opening-trainer-.*\.svg$'
+				match = re.match(regex, filename)
+				if not match:
+					continue
+				filenames.append(filename)
 
-						Path.unlink(Path(old_path), missing_ok=True)
-
-						# We avoid col.find_and_replace() here because it goes
-						# over all fields which is too unspecific for our needs.
-						search = f'<img src="{old_name}">'
-						replace = f'<img src="{new_name}">'
-						note.fields[0] = note.fields[0].replace(search, replace)
-						note.fields[1] = note.fields[1].replace(search, replace)
-
-					col.update_note(note, skip_undo_entry=True)
-
+		if (len(filenames)):
+			mm.trash_files(filenames)
 
 	def _fill_config(self, raw: Any) -> Any:
 		if raw is None:

@@ -10,6 +10,7 @@ from aqt import mw
 from .importer_config import ImporterConfig
 from .version import __version__
 
+# FIXME! No longer needed!
 def find_media_files(media_path: str, note_ids: list[str]):
 	filenames: List[str] = []
 
