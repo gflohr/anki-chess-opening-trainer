@@ -13,4 +13,4 @@ src/basic_names.py
 /ankidata
 /ankiweb-description.md
 /node_modules
-/dist
+/src/assets

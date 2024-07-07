@@ -1,0 +1,16 @@
+body {
+	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+#board {
+	width: 400px;
+	height: 400px;
+	position: relative;
+}
+
+.cg-wrap {
+	background-image: url('/assets/images/2d/board/blue3.jpg');
+	background-size: contain;
+	margin: 1em;
+	box-sizing: border-box;
+}

@@ -43,6 +43,12 @@ def init_i18n() -> None:
 	t.install(names=['_', 'ngettext'])
 
 
+def init_web() -> None:
+	mw.addonManager.setWebExports(__name__, r'assets/.*(css|js|jpg|svg|png)')
+	addon_package = mw.addonManager.addonFromModule(__name__)
+	print(f'addon package: {addon_package}')
+
+
 def add_menu_item():
 	action = QAction(_('Chess Opening Trainer'), mw)
 	# set it to call testFunction when it's clicked
@@ -54,5 +60,6 @@ def add_menu_item():
 
 
 init_i18n()
+init_web()
 DeleteHook().installHook()
 add_menu_item()

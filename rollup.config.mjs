@@ -29,9 +29,8 @@ export default [
 				exclude: 'src/**/*.spec.ts',
 			}),
 			sass({
-				output: 'dist/bundle.css',
+				output: 'src/assets/bundle.css',
 			}),
-			terser(),
 		],
 	},
 	{
@@ -54,15 +53,16 @@ export default [
 					return postcss([cssnano])
 						.process(styles, { from: undefined })
 						.then(result => {
-							fs.writeFileSync('dist/bundle.min.css', result.css);
+							fs.writeFileSync('src/assets/bundle.min.css', result.css);
 						});
 				},
 			}),
 			// We only have to copy the files once.
 			copy({
-				targets: [{ src: './assets/**/*', dest: 'dist' }],
+				targets: [{ src: './assets/**/*', dest: 'src' }],
 				flatten: false,
 			}),
+			terser(),
 		],
 		watch: {
 			include: ['./typescript/**/*.ts'],

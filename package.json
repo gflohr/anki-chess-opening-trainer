@@ -3,16 +3,16 @@
 	"version": "2.0.0-0.1.0",
 	"description": "This is the source code repository for the [Anki](https://apps.ankiweb.net/)-add-on \"[Chess Opening Trainer](https://ankiweb.net/shared/info/705507113)\". Anki is a popular, open-source flashcard application.  The add-on takes a collection of chess games and creates flashcards from it, helping you in building up an opening repertoire.",
 	"main": "typescript/index.ts",
-	"browser": "dist/index.js",
+	"browser": "src/assets/index.js",
 	"directories": {
 		"test": "tests"
 	},
 	"scripts": {
 		"build": "rollup --config=rollup.config.mjs",
-		"prebuild": "bun install && rimraf dist",
+		"prebuild": "bun install && rimraf src/assets",
 		"build:watch": "rollup --config=rollup.config.mjs --watch",
 		"prebuild:watch": "bun install",
-		"serve": "browser-sync start --server=dist --watch --files='dist/**/*' --startPath /assets/html/",
+		"serve": "browser-sync start --server=src/assets --watch --files='src/assets/**/*' --startPath /assets/html/",
 		"start": "npm-run-all --parallel build:watch serve",
 		"format": "prettier --write 'typescript/**/*.ts' *.json *.mjs *.md",
 		"watch": "tsc --watch",
