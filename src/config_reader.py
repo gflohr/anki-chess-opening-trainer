@@ -50,3 +50,7 @@ class ConfigReader:
 
 	def get_importer_config(self):
 		return self.importer_config
+
+
+	def get_config(self):
+		return self.config
