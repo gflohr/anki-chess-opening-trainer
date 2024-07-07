@@ -45,8 +45,6 @@ def init_i18n() -> None:
 
 def init_web() -> None:
 	mw.addonManager.setWebExports(__name__, r'assets/.*(css|js|jpg|svg|png)')
-	addon_package = mw.addonManager.addonFromModule(__name__)
-	print(f'addon package: {addon_package}')
 
 
 def add_menu_item():
