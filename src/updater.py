@@ -108,6 +108,7 @@ class Updater:
 	def _patch_notes_v2_0_0(self, importer_config: ImporterConfig):
 		for deck_id in importer_config['imports']:
 			self._migrate_deck_v2_0_0(deck_id, importer_config)
+		print('FIXME! Notes not migrated!')
 
 	def _migrate_deck_v2_0_0(self, deck_id: DeckId, importer_config: ImporterConfig):
 		pass
