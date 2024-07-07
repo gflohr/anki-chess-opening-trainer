@@ -94,13 +94,6 @@ class Importer:
 
 		return len(deletes_sequence)
 
-	def _images_in_deck(self, got: dict[str, Note]) -> List[str]:
-		# Initialize image_deletes with all images we find for this deck.
-		media_path = self.collection.media.dir()
-		note_ids = [str(got[moves].id) for moves in got]
-
-		return find_media_files(media_path, note_ids)
-
 	def _update_note(self, note: Note, question: Question) -> bool:
 		rendered_question = question.render(note.id)
 		answer: Answer = cast(Answer, question.render_answers(note.id))
@@ -125,24 +118,12 @@ class Importer:
 
 		return note
 
-	def _insert_images(self, image_inserts: Dict[str, Page]):
-		media_path = self.collection.media.dir()
-		for image_path, page in image_inserts.items():
-			path = os.path.join(media_path, image_path)
-			page.render_svg(path)
-
 	def _patch_deck(self, got: dict[str, Note]) -> Tuple[int, int, int, int, int]:
 		# These are the cards that we want to have from the current studies
 		# that were read.
 		wanted = self.visitor.cards
 
-		# Initialize the images to delete with a list of all images for the
-		# current notes.
-		image_deletes = self._images_in_deck(got)
-
 		num_deletes = self._delete_unused(wanted, got)
-
-		image_inserts: Dict[str, Page] = {}
 
 		num_updates = 0
 		num_inserts = 0
@@ -158,24 +139,5 @@ class Importer:
 				note = self._create_note(question)
 				num_inserts = num_inserts + 1
 
-			# Questions always get a board image.
-			image_path = question.image_path(note.id)
-			if image_path in image_deletes:
-				image_deletes.remove(image_path)
-			else:
-				image_inserts[image_path] = question
-
-			for answer in question.answers:
-				image_path = answer.image_path(note.id)
-				if image_path in image_deletes:
-					image_deletes.remove(image_path)
-				elif image_path:
-					image_inserts[image_path] = answer
-
-		self._insert_images(image_inserts)
-		self.collection.media.trash_files(image_deletes)
-
-		num_image_deletes = len(image_deletes)
-		num_image_inserts = len(image_inserts)
-
-		return num_inserts, num_updates, num_deletes, num_image_inserts, num_image_deletes
+		# FIXME! Also return the inserted, updated, and deleted note ids.
+		return num_inserts, num_updates, num_deletes
