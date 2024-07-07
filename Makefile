@@ -1,5 +1,3 @@
-include ./VERSION
-
 default: all
 
 all: zip ankiweb
@@ -16,23 +14,23 @@ ankiweb: generated vendor build/ankiweb-description.md
 	python -m ankiscripts.build --type ankiweb --qt all --exclude user_files/**/*
 
 build/ankiweb-description.md: description.md CHANGELOG.md
-	cat description.md CHANGELOG.md >$@
+	cat description.md CHANGELOG.md >$@ || (rm $@; exit 1)
 
-src/version.py: ./VERSION
-	@echo "__version__ = '$(VERSION)'" >$@
+src/version.py: ./package.json
+	python3 ./tools/get-version.py >$@ || (rm $@; exit 1)
 
 src/importer_config.py: ./src/importer_config.schema.json
 	datamodel-codegen \
 		--input=$< \
 		--input-file-type=jsonschema \
 		--output-model-type=typing.TypedDict \
-		| sed -e "s/    /\t/g" >$@ || rm $@
+		| sed -e "s/    /\t/g" >$@ || (rm $@; exit 1)
 
 src/importer_config_schema.py: ./src/importer_config.schema.json
-	python3 ./tools/json2python.py importer_config_schema <$< >$@ || rm $@
+	python3 ./tools/json2python.py importer_config_schema <$< >$@ || (rm $@; exit 1)
 
 src/basic_names.py:
-	sh ./tools/get-basic-notetype-names.sh >$@ || rm $@
+	sh ./tools/get-basic-notetype-names.sh >$@ || (rm $@; exit 1)
 
 vendor:
 	python -m ankiscripts.vendor
