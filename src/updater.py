@@ -9,6 +9,7 @@
 
 import os
 import re
+import json
 from pathlib import Path
 from typing import Any, Union
 import semantic_version as sv
@@ -27,6 +28,8 @@ class Updater:
 			raise RuntimeError(_('Cannot run without main window!'))
 		self.mw = mw
 		self.version = version
+		self.addon_dir = os.path.dirname(__file__)
+		self.user_files_dir = os.path.join(self.addon_dir, 'user_files')
 
 
 	def update_config(self, old: Any) -> Any:
@@ -47,6 +50,11 @@ class Updater:
 
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			raw = self._update_v1_0_0(raw)
+
+		if (sv.Version(raw['version']) < sv.Version('2.0.0')):
+			print(sv.Version(raw['version']))
+			print(sv.Version('2.0.0'))
+			raw = self._update_v2_0_0(raw)
 
 		raw['version'] = self.version
 
@@ -83,6 +91,15 @@ class Updater:
 		self._patch_notes_v1_0_0(raw)
 
 		return raw
+
+	def _update_v2_0_0(self, raw: Any):
+		import_config = json.dumps(raw)
+		import_config_filename = os.path.join(self.user_files_dir, 'imports.json')
+
+		with open(import_config_filename, 'w') as file:
+			# Writing data to a file
+			file.write(json.dumps(raw))
+
 
 	def _patch_notes_v1_0_0(self, config:Any):
 		# pylint: disable=too-many-locals
