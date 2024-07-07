@@ -33,7 +33,8 @@ class ConfigReader:
 
 		importer_filename = get_importer_config_file()
 		if (os.path.exists(importer_filename)):
-			raw_importer_config = json.load(importer_filename)
+			with open(importer_filename, 'r') as file:
+				raw_importer_config = json.load(file)
 		else:
 			raw_importer_config = fill_importer_config_defaults(None)
 
