@@ -41,9 +41,6 @@ src/importer_config_schema.py: ./src/importer_config.schema.json
 src/config_schema.py: ./src/config.schema.json
 	python3 ./tools/json2python.py config_schema <$< >$@ || (rm $@; exit 1)
 
-src/basic_names.py:
-	sh ./tools/get-basic-notetype-names.sh >$@ || (rm $@; exit 1)
-
 vendor:
 	python -m ankiscripts.vendor
 

@@ -5,7 +5,7 @@
 	"description": "Importer Configuration for the Anki Chess Opening Trainer Add-On",
 	"type": "object",
 	"additionalProperties": false,
-	"required": ["version", "colour", "decks", "imports", "notetype"],
+	"required": ["version", "colour", "decks", "imports"],
 	"properties": {
 		"version": {
 			"description": "The add-on version that has generated this configuration",
@@ -64,12 +64,6 @@
 					"required": ["colour", "files"]
 				}
 			}
-		},
-		"notetype": {
-			"description": "The notetype to use for card generation.",
-			"type": ["integer", "null"],
-			"default": null,
-			"minimum": 1
 		}
 	}
 }

@@ -19,7 +19,7 @@ from .importer_config import ImporterConfig
 from .version import __version__
 from .importer_config_schema import importer_config_schema
 from .updater import Updater
-from .utils import fill_importer_config_defaults, get_importer_config_file
+from .utils import fill_importer_config_defaults, get_importer_config_file, write_importer_config
 
 class ConfigReader:
 	# pylint: disable=too-few-public-methods
@@ -42,7 +42,8 @@ class ConfigReader:
 			validate(raw_importer_config, schema=importer_config_schema)
 		except ValidationError as e:
 			showCritical(_('Your imports configuration is invalid, restoring defaults.'))
-			raw_importer_config = {}
+			raw_importer_config = fill_importer_config_defaults(None)
+			write_importer_config(raw_importer_config)
 			print(e)
 
 		self.importer_config:ImporterConfig = cast(ImporterConfig, raw_importer_config)

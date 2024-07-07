@@ -7,8 +7,6 @@ import anki
 from anki.notes import NotetypeId
 from aqt import mw
 
-from .basic_names import basic_names
-
 from .importer_config import ImporterConfig
 from .version import __version__
 
@@ -43,23 +41,6 @@ def write_importer_config(importer_config: ImporterConfig):
 		file.write(json.dumps(importer_config))
 
 
-def get_basic_notetype() -> Union[NotetypeId, None]:
-	names = []
-
-	lang = anki.lang.current_lang
-	if lang in basic_names:
-		names.append(basic_names[lang])
-
-	names.extend(list(basic_names.values()))
-
-	for name in names:
-		id_for_name = mw.col.models.id_for_name(name)
-		if id_for_name is not None:
-			return id_for_name
-
-	return None
-
-
 def fill_importer_config_defaults(raw: Any) -> Any:
 	if raw is None:
 		raw = {}
@@ -81,9 +62,5 @@ def fill_importer_config_defaults(raw: Any) -> Any:
 
 	if 'imports' not in raw:
 		raw['imports'] = {}
-
-	# FIXME! This has to be removed!
-	if 'notetype' not in raw or raw['notetype'] is None or isinstance(raw['notetype'], str):
-		raw['notetype'] = get_basic_notetype()
 
 	return raw

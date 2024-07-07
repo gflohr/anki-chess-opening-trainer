@@ -15,7 +15,6 @@ import semantic_version as sv
 from aqt import mw
 
 from .utils import fill_importer_config_defaults, write_importer_config
-from .basic_names import basic_names
 
 class Updater:
 
@@ -89,6 +88,9 @@ class Updater:
 		return raw
 
 	def _update_v2_0_0(self, raw: Any):
+		if 'notetype' in raw:
+			del raw['notetype']
+
 		# The old configuration is now the importer configuration in
 		# user_files.
 		write_importer_config(fill_importer_config_defaults(raw))

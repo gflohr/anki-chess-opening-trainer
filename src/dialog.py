@@ -27,6 +27,7 @@ from anki.utils import no_bundled_libs
 
 from .importer import Importer
 from .config_reader import ConfigReader
+from .get_chess_model import get_chess_model
 
 
 class ImportDialog(QDialog):
@@ -76,23 +77,6 @@ class ImportDialog(QDialog):
 		self.select_file_button = QPushButton(_('Select files'))
 		self.select_file_button.clicked.connect(self._select_input_file)
 		layout.addWidget(self.select_file_button, 2, 2)
-
-		layout.addWidget(QLabel(_('Note type')), 3, 0)
-		self.model_combo = QComboBox()
-		layout.addWidget(self.model_combo, 3, 1)
-		modelnames: List[str] = []
-		if mw is not None:
-			for model in mw.col.models.all():
-				modelnames.append(model['name'])
-		index = -1
-		current_index = -1
-		for modelname in sorted(modelnames):
-			self.model_combo.addItem(modelname)
-			index += 1
-			if modelname == _('Basic'):
-				current_index = index
-		if current_index >= 0:
-			self.model_combo.setCurrentIndex(current_index)
 
 		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
 		self.button_box = QDialogButtonBox(btn)
@@ -194,15 +178,6 @@ class ImportDialog(QDialog):
 				for filename in record['files']:
 					self.file_list.addItem(filename)
 
-		if importer_config['notetype'] is not None:
-			notetype_id = importer_config['notetype']
-			name = self.mw.col.models.get(notetype_id)
-			if name is not None:
-				for i in range(self.model_combo.count()):
-					if name == self.model_combo.itemText(i):
-						self.model_combo.setCurrentIndex(i)
-						break
-
 	def accept(self) -> None:
 		assert isinstance(mw, AnkiQt)
 
@@ -239,11 +214,11 @@ class ImportDialog(QDialog):
 
 		def _do_import(_) -> Union[Exception, tuple[int, int, int, int, int]]:
 			try:
-				colour = self.config['colour']
-				deck_id = self.config['decks'][colour]
-				record = self.config['imports'][str(deck_id)]
+				notetype_id = get_chess_model(mw)
+				colour = self.importer_config['colour']
+				deck_id = self.importer_config['decks'][colour]
+				record = self.importer_config['imports'][str(deck_id)]
 				filenames = record['files']
-				notetype_id = self.config['notetype']
 
 				importer = Importer(
 					collection=mw.col,
@@ -259,11 +234,7 @@ class ImportDialog(QDialog):
 
 		if not self.file_list.count():
 			show_critical(_('No input files specified!'))
-			self.reject()
-
-		if not self._save_config():
-			self.reject()
-		else:
+		elif self._save_config():
 			assert isinstance(mw, AnkiQt)
 			op = QueryOp(
 				parent=mw,
@@ -347,27 +318,18 @@ class ImportDialog(QDialog):
 			show_warning(_('The selected deck does not exist! Try again!'))
 			return False
 
-		notetype_name = self.model_combo.currentText()
-
-		notetype_id = col.models.id_for_name(notetype_name)
-		if notetype_id is None:
-			show_warning(_('The selected note type does not exist! Try again!'))
-			return False
-
 		files: List[str] = []
 		for i in range(self.file_list.count()):
 			item = self.file_list.item(i)
 			if item is not None:
 				files.append(item.text())
 
-		self.config['colour'] = colour
-		self.config['decks'][colour] = deck_id
+		self.importer_config['colour'] = colour
+		self.importer_config['decks'][colour] = deck_id
 
-		self.config['imports'][str(deck_id)] = {
+		self.importer_config['imports'][str(deck_id)] = {
 			'colour': colour,
 			'files': files,
 		}
-
-		self.config['notetype'] = notetype_id
 
 		return True
