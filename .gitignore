@@ -15,3 +15,8 @@ src/basic_names.py
 /node_modules
 /src/assets
 /src/user_files/page.html
+/src/config.py
+/src/config_schema.py
+/src/importer_config.py
+/src/importer_config_schema.py
+/src/user_files/imports.json
