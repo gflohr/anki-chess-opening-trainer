@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Anki Chess Opening Trainer</title>
-		<link rel="stylesheet" href="/assets/styles.css"></link>
+		<title>Simple Question</title>
+		<link rel="stylesheet" href="/assets/css/pieces/cburnett.css"></link>
+		<link rel="stylesheet" href="/bundle.css"></link>
 	</head>
 	<body>
-		<h1>Anki Chess Opening Trainer</h1>
-		<h2>Questions</h2>
-		<ul>
-			<li><a href="./questions/simple-question.html" target="_blank">Simple Question</a></li>
-		</ul>
-		<h2>Answers .....</h2>
+		<h1>Simple Question</h1>
+		<!-- BEGIN_PAGE -->
+		<section class="is2d blue merida">
+			<div id="board" class="cg-wrap orientation-white manipulable">
+			</div>
+		</section>
+		<script src="/assets/index.js"></script>
+		<script type="module">
+const { Question } = ankichess;
+
+const div = document.getElementById('board');
+new Question({ element: div });
+		</script>
+		<!-- END_PAGE -->
 	</body>
 </html>

@@ -62,6 +62,15 @@ export default [
 				targets: [{ src: './assets/**/*', dest: 'src' }],
 				flatten: false,
 			}),
+			copy({
+				targets: [
+					{
+						src: './assets/html/index.html',
+						dest: 'src/user_files',
+						rename: 'page.html',
+						transform: patchPage,
+					}]
+			}),
 			terser(),
 		],
 		watch: {
@@ -70,3 +79,11 @@ export default [
 		},
 	},
 ];
+
+function patchPage(contents) {
+	return contents.toString()
+	.replace(/.*<!-- BEGIN_PAGE -->/s, '')
+	.replace(/<!-- END_PAGE -->.*/s, '')
+	.replace(/^\t\t/gm, '')
+	.replace(/"\/assets\/index\.js"/, '"/_addons/{{addon}}/assets/index.js"');
+}
