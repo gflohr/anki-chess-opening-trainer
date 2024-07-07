@@ -28,7 +28,7 @@ src/config.py: ./src/config.schema.json
 		--output-model-type=typing.TypedDict \
 		| sed -e "s/    /\t/g" >$@ || (rm $@; exit 1)
 
-src/importer_config.py: ./src/config.schema.json
+src/importer_config.py: ./src/importer_config.schema.json
 	datamodel-codegen \
 		--input=$< \
 		--input-file-type=jsonschema \
