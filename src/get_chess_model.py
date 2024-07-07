@@ -23,7 +23,7 @@ def get_chess_model(mw: AnkiQt) -> NotetypeId:
 	dirty = False
 
 	for field_name in wanted:
-		if not name in got:
+		if not field_name in got:
 			field = models.new_field(field_name)
 			models.add_field(model, field)
 			dirty = True
