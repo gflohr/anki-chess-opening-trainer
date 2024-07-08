@@ -1,16 +1,30 @@
 from __future__ import annotations
 from typing import List
 
+import chess
 from chess import Color, Board, Move
 
 
 class GameNode:
-	def __init__(self, initial: str, board: Board, move: Move):
-		self.initial_fen = initial
+	def __init__(self, initial_fen: str, board: Board, move: Move):
+		self.initial_fen = initial_fen
+		position = Board(fen=initial_fen)
+		self.moves: List[str] = []
+		for i, prev_move in enumerate(board.move_stack.copy()):
+			san = position.san(prev_move)
 
-		self.moves = board.move_stack.copy()
+			if i == 0 and position.turn == chess.BLACK:
+				prefix = str(position.fullmove_number) + '...'
+			elif position.turn == chess.WHITE:
+				prefix = str(position.fullmove_number) + '. '
+			else:
+				prefix = ''
+
+			self.moves.append(prefix + san)
+			position.push(prev_move)
+
 		self.colour = board.turn
-		self.responses = [move]
+		self.responses = [position.san(move)]
 		self.comments: List[str] = []
 		self.nags: List[int] = []
 
