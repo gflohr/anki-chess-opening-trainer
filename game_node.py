@@ -1,11 +1,10 @@
 from __future__ import annotations
-from typing import Dict, List, Literal, Optional, cast
+from typing import List
 
 from chess import Color, Board, Move
-from chess.pgn import BaseVisitor, SkipType
 
 
-class Node:
+class GameNode:
 	def __init__(self, initial: str, board: Board, move: Move):
 		self.initial_fen = initial
 
@@ -40,7 +39,7 @@ class Node:
 	def get_responses(self) -> List[Move]:
 		return self.responses
 
-	def merge(self, other: Node):
+	def merge(self, other: GameNode):
 		# We assume that the move stack is equal.
 		for response in other.responses:
 			if response not in self.responses:
@@ -62,38 +61,3 @@ class Node:
 
 	def get_colour(self) -> Color:
 		return self.colour
-
-class PositionVisitor(BaseVisitor):
-
-
-	def __init__(self):
-		self.nodes: List[Node] = []
-		self.fen = Optional[str]
-		self.node = Optional[Node]
-
-	def begin_game(self) -> None:
-		self.node = None
-		self.fen = None
-
-	def visit_move(self, board: Board, move: Move) -> None:
-		if self.fen is None:
-			self.fen = board.fen()
-
-		self.node = Node(self.fen, board, move)
-		self.nodes.append(self.node)
-
-	def visit_comment(self, comment: str) -> None:
-		# Comments at the beginning of the game are currently discarded.
-		# This is not strictly necessary but requires some modifications.
-		# FIXME!
-		if self.node is not None:
-			self.node.add_comment(comment)
-
-	def visit_nag(self, nag: int):
-		self.node.add_nag(nag)
-
-	def result(self) -> Literal[True]:
-		return True
-
-	def get_nodes(self) -> List[Node]:
-		return self.nodes
