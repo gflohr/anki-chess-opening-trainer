@@ -84,7 +84,7 @@ class Updater:
 		if 'files' in raw:
 			del raw['files']
 
-		raw['version'] = '1.0.0'
+		self._patch_notes_v1_0_0(raw)
 
 		return raw
 
@@ -97,18 +97,54 @@ class Updater:
 		write_importer_config(fill_importer_config_defaults(raw))
 
 		importer_config = cast(ImporterConfig, raw)
+
 		self._patch_notes_v2_0_0(importer_config)
 
-		# FIXME! Only prune the old media files that are no longer needed.
-		# If we cannot fully migrate an import, then the files should stay.
-		#self._prune_old_media_files()
-
 		return {}
+
+	def _patch_notes_v1_0_0(self, config:Any):
+		# pylint: disable=too-many-locals
+		col = self.mw.col
+		mm  = col.media
+		media_dir = mm.dir()
+
+		for _, deck_id in config['decks'].items():
+			if deck_id is not None:
+				for cid in col.decks.cids(deck_id):
+					card = col.get_card(cid)
+					note = card.note()
+
+					pattern = r'<img src="(chess-opening-trainer-[wb]-([0-9a-f]{40})\.svg)">'
+					text = note.fields[0] + note.fields[1]
+					for match in re.finditer(pattern, text):
+						old_name = match.group(1)
+						digest = match.group(2)
+						new_name = f'chess-opening-trainer-{note.id}-{digest}.svg'
+
+						old_path = os.path.join(media_dir, old_name)
+						if not Path(old_path).exists():
+							continue
+
+						with open(old_path, 'r', encoding='cp1252') as old_file:
+							data = old_file.read()
+							new_path = os.path.join(media_dir, new_name)
+							with open(new_path, 'w', encoding='cp1252') as new_file:
+								new_file.write(data)
+
+						Path.unlink(Path(old_path), missing_ok=True)
+
+						# We avoid col.find_and_replace() here because it goes
+						# over all fields which is too unspecific for our needs.
+						search = f'<img src="{old_name}">'
+						replace = f'<img src="{new_name}">'
+						note.fields[0] = note.fields[0].replace(search, replace)
+						note.fields[1] = note.fields[1].replace(search, replace)
+
+					col.update_note(note, skip_undo_entry=True)
 
 	def _patch_notes_v2_0_0(self, importer_config: ImporterConfig):
 		for deck_id in importer_config['imports']:
 			self._migrate_deck_v2_0_0(deck_id, importer_config)
-		print('FIXME! Notes not migrated!')
 
 	def _migrate_deck_v2_0_0(self, deck_id: DeckId, importer_config: ImporterConfig):
 		pass

@@ -27,7 +27,7 @@ def get_chess_model(collection: Collection) -> NotetypeId:
 			models.add_field(model, field)
 			dirty = True
 
-	page_template = _get_page_template(mw)
+	page_template = _get_page_template()
 
 	template_exists = [t for t in model['tmpls'] if t.get('name') == template_name]
 	if template_exists:
@@ -50,7 +50,7 @@ def get_chess_model(collection: Collection) -> NotetypeId:
 
 	return model['id']
 
-def _get_page_template(mw: AnkiQt) -> TemplateDict:
+def _get_page_template() -> TemplateDict:
 	addon_dir = get_addon_dir()
 	filename = os.path.join(addon_dir, 'user_files', 'page.html')
 	with open(filename, 'r') as file:
