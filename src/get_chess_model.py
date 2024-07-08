@@ -1,6 +1,6 @@
 import os
 
-from aqt import AnkiQt
+from anki.collection import Collection
 from anki.notes import NotetypeId
 from anki.models import TemplateDict
 
@@ -10,8 +10,7 @@ name = 'Chess Opening Trainer'
 template_name = 'Chess Opening Trainer Card'
 
 
-def get_chess_model(mw: AnkiQt) -> NotetypeId:
-	collection = mw.col
+def get_chess_model(collection: Collection) -> NotetypeId:
 	models = collection.models
 	model = models.by_name(name)
 	if model is None:
@@ -60,7 +59,7 @@ def _get_page_template(mw: AnkiQt) -> TemplateDict:
 	# Always replace the addon URL.
 	html = html.replace(
 		'{{addon}}',
-		mw.addonManager.addonFromModule(__name__)
+		__name__.split('.')[0]
 	)
 
 	template = mw.col.models.new_template(template_name)

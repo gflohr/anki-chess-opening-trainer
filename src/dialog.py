@@ -214,7 +214,7 @@ class ImportDialog(QDialog):
 
 		def _do_import(_) -> Union[Exception, tuple[int, int, int, int, int]]:
 			try:
-				notetype_id = get_chess_model(mw)
+				notetype_id = get_chess_model(mw.col)
 				colour = self.importer_config['colour']
 				deck_id = self.importer_config['decks'][colour]
 				record = self.importer_config['imports'][str(deck_id)]

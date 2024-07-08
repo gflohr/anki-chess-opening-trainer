@@ -19,7 +19,7 @@ from anki.cards import CardId
 from importer_config import ImporterConfig
 
 from .utils import fill_importer_config_defaults, write_importer_config
-from .get_chess_model import get_chess_model
+
 
 class Updater:
 
