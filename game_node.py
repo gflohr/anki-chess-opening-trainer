@@ -35,8 +35,10 @@ class GameNode:
 		self.nags.append(nag)
 
 	def get_signature(self) -> str:
-		moves_signature = ':'.join(map(str, self.moves))
-		return self.initial_fen + ':' + moves_signature
+		return self.initial_fen + ' ' + self.get_signature_v1()
+
+	def get_signature_v1(self) -> str:
+		return ' '.join(map(str, self.moves))
 
 	def get_previous_signatures(self) -> List[str]:
 		signatures: List[str] = []
@@ -44,7 +46,7 @@ class GameNode:
 		while len(moves) > 1:
 			moves = moves[:-2]
 			tokens = [self.initial_fen] + list(map(str, moves))
-			signatures.append(':'.join(tokens))
+			signatures.append(' '.join(tokens))
 
 		signatures.reverse()
 
