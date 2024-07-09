@@ -28,11 +28,11 @@ class GameNode:
 		self._colour = board.turn
 		self._response = [move]
 		self._san_responses = [position.san(move)]
-		self.comments: List[str] = []
+		self._comments: List[str] = []
 		self._nags: List[int] = []
 
 	def add_comment(self, comment: str):
-		self.comments.append(comment)
+		self._comments.append(comment)
 
 	def add_nag(self, nag: int):
 		self._nags.append(nag)
@@ -68,9 +68,9 @@ class GameNode:
 			if response not in self._san_responses:
 				self._san_responses.append(response)
 
-		for comment in other.comments:
-			if comment not in self.comments:
-				self.comments.append(comment)
+		for comment in other._comments:
+			if comment not in self._comments:
+				self._comments.append(comment)
 
 		for nag in other._nags:
 			if nag not in self._nags:
@@ -91,3 +91,15 @@ class GameNode:
 	@property
 	def fen(self) -> str:
 		return self._fen
+
+	@property
+	def moves(self) -> str:
+		return self._moves
+
+	@property
+	def san_moves(self) -> str:
+		return self._san_moves
+
+	@property
+	def comments(self) -> str:
+		return self._comments
