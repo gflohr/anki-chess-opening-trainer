@@ -9,16 +9,16 @@
 
 import os
 import re
-from typing import Any, Dict, List, cast
+from typing import Any, Dict, List, Optional, cast
 import semantic_version as sv
 
 from aqt import mw
-from anki.decks import DeckId
-from anki.cards import CardId
+from anki.decks import Deck, DeckId
 
-from importer_config import ImporterConfig
-
+from .importer_config import ImporterConfig
+from .pgn_importer import PGNImporter
 from .utils import fill_importer_config_defaults, write_importer_config
+from .get_chess_model import get_chess_model
 
 
 class Updater:
@@ -51,7 +51,7 @@ class Updater:
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			raw = self._update_v1_0_0(raw)
 
-		if (sv.Version(raw['version']) < sv.Version('2.0.0')):
+		if (sv.Version(raw['version']) < sv.Version('999.0.0')):
 			raw = self._update_v2_0_0(raw)
 
 		raw['version'] = self.version
@@ -147,7 +147,28 @@ class Updater:
 			self._migrate_deck_v2_0_0(deck_id, importer_config)
 
 	def _migrate_deck_v2_0_0(self, deck_id: DeckId, importer_config: ImporterConfig):
-		pass
+		deck_data: Optional[Deck] = self.mw.col.decks.get(did=deck_id)
+		if deck_data is None:
+			return # No deck, no migration.
+		deck = cast(Deck, deck_data)
+
+		colour = importer_config['imports'][deck_id]['colour']
+		model = get_chess_model(self.mw.col)
+
+		importer = PGNImporter(colour=colour, model=model, deck=deck)
+		files = importer_config['imports'][deck_id]['files']
+
+		self._import_files(importer, files)
+
+
+	def _import_files(self, importer: PGNImporter, files: List[str]):
+		for filename in files:
+			try:
+				with open(filename, 'r') as file:
+					importer.collect(file)
+			except:
+				# File was deleted, corrupt, whatever.
+				pass
 
 	def _prune_old_media_files(self):
 		filenames: List[str] = []
