@@ -166,6 +166,9 @@ class Updater:
 		lines = importer.get_lines()
 		for line in lines:
 			print(f'FEN: {line.fen}')
+			for node in line.nodes:
+				if len(node.san_moves):
+					print(f'\tmove: {node.san_moves[-1]}')
 
 
 	def _import_files(self, importer: PGNImporter, files: List[str]):

@@ -89,17 +89,17 @@ class GameNode:
 		return self._colour
 
 	@property
-	def fen(self) -> str:
+	def fen(self):
 		return self._fen
 
 	@property
-	def moves(self) -> str:
+	def moves(self):
 		return self._moves
 
 	@property
-	def san_moves(self) -> str:
+	def san_moves(self):
 		return self._san_moves
 
 	@property
-	def comments(self) -> str:
+	def comments(self):
 		return self._comments
