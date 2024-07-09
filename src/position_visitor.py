@@ -12,7 +12,7 @@ class PositionVisitor(BaseVisitor):
 		self.nodes: List[GameNode] = []
 		self.fen = Optional[str]
 		self.node = Optional[GameNode]
-		self._game_comments = List[str] = []
+		self._game_comments: List[str] = []
 
 	def begin_game(self) -> None:
 		self.node = None
