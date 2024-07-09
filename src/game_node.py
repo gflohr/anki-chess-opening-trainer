@@ -37,16 +37,16 @@ class GameNode:
 	def add_nag(self, nag: int):
 		self._nags.append(nag)
 
-	def get_signature(self) -> str:
+	def signature(self) -> str:
 		if len(self._san_moves):
-			return self._fen + ' ' + self.get_signature_v1()
+			return self._fen + ' ' + self.signature_v1()
 		else:
 			return self._fen
 
-	def get_signature_v1(self) -> str:
+	def signature_v1(self) -> str:
 		return ' '.join(map(str, self._san_moves))
 
-	def get_previous_signatures(self) -> List[str]:
+	def previous_signatures(self) -> List[str]:
 		signatures: List[str] = []
 		_san_moves = self._san_moves
 		while len(_san_moves) > 1:
