@@ -12,6 +12,7 @@ class PositionVisitor(BaseVisitor):
 		self.nodes: List[GameNode] = []
 		self.fen = Optional[str]
 		self.node = Optional[GameNode]
+		self._game_comments = List[str] = []
 
 	def begin_game(self) -> None:
 		self.node = None
@@ -25,10 +26,9 @@ class PositionVisitor(BaseVisitor):
 		self.nodes.append(self.node)
 
 	def visit_comment(self, comment: str) -> None:
-		# Comments at the beginning of the game are currently discarded.
-		# This is not strictly necessary but requires some modifications.
-		# FIXME!
-		if self.node is not None:
+		if self.node is None:
+			self._game_comments.append(comment)
+		else:
 			self.node.add_comment(comment)
 
 	def visit_nag(self, nag: int):
@@ -39,3 +39,7 @@ class PositionVisitor(BaseVisitor):
 
 	def get_nodes(self) -> List[GameNode]:
 		return self.nodes
+
+	@property
+	def game_comments(self):
+		return self._game_comments
