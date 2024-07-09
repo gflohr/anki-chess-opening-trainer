@@ -8,6 +8,7 @@
 # http://www.wtfpl.net/ for more details.
 
 import os
+from pathlib import Path
 import re
 from typing import Any, Dict, List, Optional, cast
 import semantic_version as sv
@@ -45,8 +46,8 @@ class Updater:
 		if 'version' not in raw or not raw['version']:
 			raw['version'] = '0.0.0'
 
-		if raw['version'] == self.version:
-			return raw
+		#if raw['version'] == self.version:
+		#	return raw
 
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			raw = self._update_v1_0_0(raw)
@@ -99,6 +100,8 @@ class Updater:
 		importer_config = cast(ImporterConfig, raw)
 
 		self._patch_notes_v2_0_0(importer_config)
+
+		raise Exception('boum')
 
 		return {}
 
@@ -159,6 +162,10 @@ class Updater:
 		files = importer_config['imports'][deck_id]['files']
 
 		self._import_files(importer, files)
+
+		lines = importer.get_lines()
+		for line in lines:
+			print(f'FEN: {line.fen}')
 
 
 	def _import_files(self, importer: PGNImporter, files: List[str]):

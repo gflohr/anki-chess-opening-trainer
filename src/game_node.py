@@ -35,7 +35,10 @@ class GameNode:
 		self.nags.append(nag)
 
 	def get_signature(self) -> str:
-		return self.initial_fen + ' ' + self.get_signature_v1()
+		if len(self.moves):
+			return self.initial_fen + ' ' + self.get_signature_v1()
+		else:
+			return self.initial_fen
 
 	def get_signature_v1(self) -> str:
 		return ' '.join(map(str, self.moves))
@@ -77,3 +80,6 @@ class GameNode:
 
 	def get_colour(self) -> Color:
 		return self.colour
+
+	def get_fen(self) -> str:
+		return self.initial_fen
