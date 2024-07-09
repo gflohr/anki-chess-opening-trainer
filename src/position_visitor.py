@@ -8,7 +8,6 @@ from game_node import GameNode
 
 class PositionVisitor(BaseVisitor):
 
-
 	def __init__(self):
 		self.nodes: List[GameNode] = []
 		self.fen = Optional[str]

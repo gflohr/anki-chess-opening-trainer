@@ -6,9 +6,13 @@ from chess import Color, Board, Move
 
 
 class GameNode:
-	def __init__(self, initial_fen: str, board: Board, move: Move):
-		self.initial_fen = initial_fen
-		position = Board(fen=initial_fen)
+	def __init__(self, fen: str, board: Board, move: Move):
+		self._fen = fen
+		position = Board(fen=self.fen)
+
+		# FIXME! We also need the original moves! Rename moves and responses
+		# to san_moves and san_responses, and then introduce new properties
+		# for the raw versions.
 		self.moves: List[str] = []
 		for i, prev_move in enumerate(board.move_stack.copy()):
 			san = position.san(prev_move)
@@ -23,22 +27,22 @@ class GameNode:
 			self.moves.append(prefix + san)
 			position.push(prev_move)
 
-		self.colour = board.turn
+		self._colour = board.turn
 		self.responses = [position.san(move)]
 		self.comments: List[str] = []
-		self.nags: List[int] = []
+		self._nags: List[int] = []
 
 	def add_comment(self, comment: str):
 		self.comments.append(comment)
 
 	def add_nag(self, nag: int):
-		self.nags.append(nag)
+		self._nags.append(nag)
 
 	def get_signature(self) -> str:
 		if len(self.moves):
-			return self.initial_fen + ' ' + self.get_signature_v1()
+			return self._fen + ' ' + self.get_signature_v1()
 		else:
-			return self.initial_fen
+			return self._fen
 
 	def get_signature_v1(self) -> str:
 		return ' '.join(map(str, self.moves))
@@ -48,7 +52,7 @@ class GameNode:
 		moves = self.moves
 		while len(moves) > 1:
 			moves = moves[:-2]
-			tokens = [self.initial_fen] + list(map(str, moves))
+			tokens = [self._fen] + list(map(str, moves))
 			signatures.append(' '.join(tokens))
 
 		signatures.reverse()
@@ -68,18 +72,22 @@ class GameNode:
 			if comment not in self.comments:
 				self.comments.append(comment)
 
-		for nag in other.nags:
-			if nag not in self.nags:
-				self.nags.append(nag)
+		for nag in other._nags:
+			if nag not in self._nags:
+				self._nags.append(nag)
 
-	def get_nags(self) -> List[int]:
-		return self.nags
+	@property
+	def nags(self) -> List[int]:
+		return self._nags
 
-	def set_nags(self, nags: List[int]):
-		self.nags = nags
+	@nags.setter
+	def nags(self, nags: List[int]):
+		self._nags = nags
 
-	def get_colour(self) -> Color:
-		return self.colour
+	@property
+	def colour(self):
+		return self._colour
 
-	def get_fen(self) -> str:
-		return self.initial_fen
+	@property
+	def fen(self) -> str:
+		return self._fen

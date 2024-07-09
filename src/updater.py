@@ -170,11 +170,13 @@ class Updater:
 
 	def _import_files(self, importer: PGNImporter, files: List[str]):
 		for filename in files:
+			print(f'import {filename}')
 			try:
 				with open(filename, 'r') as file:
 					importer.collect(file)
-			except:
+			except Exception as e:
 				# File was deleted, corrupt, whatever.
+				print(f"error importing from file '{filename}': {e}")
 				pass
 
 	def _prune_old_media_files(self):

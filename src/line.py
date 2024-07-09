@@ -19,4 +19,4 @@ class Line:
 
 	@property
 	def fen(self) -> str:
-		return self._nodes[0].get_fen()
+		return self._nodes[0].fen
