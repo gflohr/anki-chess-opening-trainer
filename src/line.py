@@ -10,8 +10,8 @@ class Line:
 		self._nodes = nodes
 
 	@property
-	def responses(self) -> List[Move]:
-		return self._nodes[-1].get_responses()
+	def san_responses(self) -> List[Move]:
+		return self._nodes[-1].san_responses
 
 	@property
 	def nodes(self) -> List[GameNode]:
