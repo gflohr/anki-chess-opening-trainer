@@ -48,8 +48,8 @@ class Updater:
 		if 'version' not in raw or not raw['version']:
 			raw['version'] = '0.0.0'
 
-		#if raw['version'] == self.version:
-		#	return raw
+		if raw['version'] == self.version:
+			return raw
 
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			raw = self._update_v1_0_0(raw)
@@ -58,6 +58,8 @@ class Updater:
 			raw = self._update_v2_0_0(raw)
 
 		raw['version'] = self.version
+
+		self.mw.addonManager.writeConfig(__name__, raw)
 
 		return raw
 
