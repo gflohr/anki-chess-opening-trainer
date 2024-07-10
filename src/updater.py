@@ -10,11 +10,13 @@
 import os
 from pathlib import Path
 import re
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, Tuple, cast
 import semantic_version as sv
 
 from aqt import mw
 from anki.decks import Deck, DeckId
+from anki.models import NotetypeId
+from anki.cards import CardId
 
 from .importer_config import ImporterConfig
 from .pgn_importer import PGNImporter
@@ -155,6 +157,7 @@ class Updater:
 			return # No deck, no migration.
 		deck = cast(Deck, deck_data)
 
+		print(f'Deck: {deck["name"]}')
 		colour = importer_config['imports'][deck_id]['colour']
 		model = get_chess_model(self.mw.col)
 
@@ -164,12 +167,28 @@ class Updater:
 		self._import_files(importer, files)
 
 		lines = importer.get_lines()
-		for line in lines:
-			print(f'FEN: {line.fen}')
-			for node in line.nodes:
-				if len(node.san_moves):
-					print(f'\tmove: {node.san_moves[-1]}')
+		empty = _('Moves from starting position?')
+		signatures: List[str] = map(lambda line: line.nodes[-1].signature_v1(), lines)
+		signatures = [s if s != '' else empty for s in signatures]
 
+		card_signatures = self._get_card_signatures(deck_id, model)
+
+		print(signatures)
+		print(card_signatures)
+
+	def _get_card_signatures(self, deck_id: DeckId, notetype_id: NotetypeId) -> List[Tuple[str, CardId]]:
+		col = self.mw.col
+
+		cards: List[Tuple[str, CardId]] = []
+		for cid in col.decks.cids(deck_id):
+			card = col.get_card(cid)
+			note = card.note()
+			if note.note_type() is not None and not note.note_type()['id'] == notetype_id:
+				# Remove all the markup from the end.
+				card_signature = re.sub('[ \t\r\n]*<.*', '', note.fields[0])
+				cards.append((card_signature, cid))
+
+		return cards
 
 	def _import_files(self, importer: PGNImporter, files: List[str]):
 		for filename in files:
