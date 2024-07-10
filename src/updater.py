@@ -54,7 +54,7 @@ class Updater:
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			raw = self._update_v1_0_0(raw)
 
-		if (sv.Version(raw['version']) < sv.Version('999.0.0')):
+		if (sv.Version(raw['version']) < sv.Version('2.0.0')):
 			raw = self._update_v2_0_0(raw)
 
 		raw['version'] = self.version
@@ -155,7 +155,6 @@ class Updater:
 			return # No deck, no migration.
 		deck = cast(Deck, deck_data)
 
-		print(f'Deck: {deck["name"]}')
 		colour = importer_config['imports'][deck_id]['colour']
 		model = get_chess_model(self.mw.col)
 
@@ -183,12 +182,9 @@ class Updater:
 		for signature in signatures:
 			for idx, (card_signature, card_id) in enumerate(card_signatures):
 				if signature == card_signature:
-					print(signature)
 					del card_signatures[idx]
 					self._upgrade_card(card_id, card_signature, notetype_id)
 					break
-
-		print(f'cards not migrated: {card_signatures}')
 
 	def _upgrade_card(
 		self,
@@ -200,13 +196,8 @@ class Updater:
 		note = card.note()
 		note.fields[0] = signature
 		old_notetype = note.note_type()
-		if old_notetype is not None:
-			old_notetype_id = old_notetype['id']
-			retval = self.mw.col.models.change_notetype_info(
-				old_notetype_id=old_notetype_id,
-				new_notetype_id=notetype_id,
-			)
-			print(retval)
+		# Remove all markup.
+		note.fields[1] = re.sub('[ \t\r\n]*<.*', '', note.fields[1])
 
 	def _get_card_signatures(self,
 	                         deck_id: DeckId,
@@ -227,13 +218,11 @@ class Updater:
 
 	def _import_files(self, importer: PGNImporter, files: List[str]):
 		for filename in files:
-			print(f'import {filename}')
 			try:
 				with open(filename, 'r') as file:
 					importer.collect(file)
 			except Exception as e:
 				# File was deleted, corrupt, whatever.
-				print(f"error importing from file '{filename}': {e}")
 				pass
 
 	def _prune_old_media_files(self):
