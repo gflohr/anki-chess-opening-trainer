@@ -103,8 +103,6 @@ class Updater:
 
 		self._patch_notes_v2_0_0(importer_config)
 
-		raise Exception('boum')
-
 		return {}
 
 	def _patch_notes_v1_0_0(self, config:Any):
@@ -172,11 +170,48 @@ class Updater:
 		signatures = [s if s != '' else empty for s in signatures]
 
 		card_signatures = self._get_card_signatures(deck_id, model)
+		self._upgrade_cards(card_signatures, signatures, model)
 
-		print(signatures)
-		print(card_signatures)
+		# FIXME! We must run the rest of the importer so that the other fields
+		# are filled as well.
 
-	def _get_card_signatures(self, deck_id: DeckId, notetype_id: NotetypeId) -> List[Tuple[str, CardId]]:
+	def _upgrade_cards(self,
+	                   card_signatures: List[Tuple[str, CardId]],
+	                   signatures: List[str],
+	                   notetype_id: NotetypeId):
+
+		for signature in signatures:
+			for idx, (card_signature, card_id) in enumerate(card_signatures):
+				if signature == card_signature:
+					print(signature)
+					del card_signatures[idx]
+					self._upgrade_card(card_id, card_signature, notetype_id)
+					break
+
+		print(f'cards not migrated: {card_signatures}')
+
+	def _upgrade_card(
+		self,
+		cid: CardId,
+		signature: str,
+		notetype_id: NotetypeId
+	):
+		card = self.mw.col.get_card(cid)
+		note = card.note()
+		note.fields[0] = signature
+		old_notetype = note.note_type()
+		if old_notetype is not None:
+			old_notetype_id = old_notetype['id']
+			retval = self.mw.col.models.change_notetype_info(
+				old_notetype_id=old_notetype_id,
+				new_notetype_id=notetype_id,
+			)
+			print(retval)
+
+	def _get_card_signatures(self,
+	                         deck_id: DeckId,
+	                         notetype_id: NotetypeId,
+	) -> List[Tuple[str, CardId]]:
 		col = self.mw.col
 
 		cards: List[Tuple[str, CardId]] = []
