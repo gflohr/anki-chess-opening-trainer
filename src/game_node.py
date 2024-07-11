@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List
+from typing import Dict, List
 
 import chess
 from chess import Color, Board, Move
@@ -26,13 +26,13 @@ class GameNode:
 			position.push(prev_move)
 
 		self._colour = board.turn
-		self._response = [move]
+		self._responses = [move]
 		self._san_responses = [position.san(move)]
-		self._comments: List[str] = []
+		self._comments: Dict[Move, List[str]] = { move: [] }
 		self._nags: List[int] = []
 
 	def add_comment(self, comment: str):
-		self._comments.append(comment)
+		self._comments[self._move].append(comment)
 
 	def add_nag(self, nag: int):
 		self._nags.append(nag)
@@ -64,13 +64,15 @@ class GameNode:
 
 	def merge(self, other: GameNode):
 		# We assume that the move stack is equal.
+		for response in other._responses:
+			if response not in self._responses:
+				self._responses.append(response)
 		for response in other._san_responses:
 			if response not in self._san_responses:
 				self._san_responses.append(response)
 
-		for comment in other._comments:
-			if comment not in self._comments:
-				self._comments.append(comment)
+		for move, comments in other._comments.items():
+			self._comments[move] = comments
 
 		for nag in other._nags:
 			if nag not in self._nags:
