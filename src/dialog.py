@@ -11,7 +11,7 @@ import os
 import html
 from pathlib import Path
 import traceback
-from typing import List, Literal, Union
+from typing import List, Literal, Union, cast
 
 from aqt import mw, AnkiQt
 from aqt.operations import QueryOp
@@ -24,8 +24,10 @@ from aqt.qt import (QComboBox, QDialog, # type: ignore[attr-defined]
 					QDesktopServices, QUrl) # type: ignore[attr-defined]
 from aqt.utils import show_critical, show_info, show_warning
 from anki.utils import no_bundled_libs
+from anki.models import NotetypeDict
 
-from .importer import Importer
+from .utils import write_importer_config
+from .pgn_importer import PGNImporter
 from .config_reader import ConfigReader
 from .get_chess_model import get_chess_model
 
@@ -210,25 +212,31 @@ class ImportDialog(QDialog):
 
 			mw.reset()
 
+			write_importer_config(self.importer_config)
+
 			show_info(msg)
 
 		def _do_import(_) -> Union[Exception, tuple[int, int, int, int, int]]:
 			try:
-				notetype_id = get_chess_model(mw.col)
 				colour = self.importer_config['colour']
+				notetype_id = get_chess_model(mw.col)
+				model = cast(NotetypeDict, mw.col.models.get(notetype_id))
 				deck_id = self.importer_config['decks'][colour]
+				deck = mw.col.decks.get(deck_id)
+				if deck == None:
+					raise KeyError(_('Selected deck does not exist!'))
+
 				record = self.importer_config['imports'][str(deck_id)]
 				filenames = record['files']
 
-				importer = Importer(
-					collection=mw.col,
-					deck_id=deck_id,
-					notetype_id=notetype_id,
-					filenames=filenames,
-					colour=('white' == colour),
+				importer = PGNImporter(
+					colour=('white' == self.importer_config['colour']),
+					model=model,
+					deck=deck,
 				)
 
-				return importer.run()
+				return importer.run(filenames)
+
 			except Exception as e: # pylint: disable=broad-except
 				return e
 

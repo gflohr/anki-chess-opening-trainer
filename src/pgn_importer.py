@@ -8,11 +8,15 @@
 # http://www.wtfpl.net/ for more details.
 
 from io import TextIOWrapper
-from typing import Dict, List
+from typing import Dict, List, Tuple, cast
 
 import chess
+
+from aqt import mw
 from anki.decks import Deck
-from anki.notes import NotetypeDict
+from anki.notes import Note, NotetypeDict, NoteId
+from anki.cards import CardId
+from anki.models import FieldDict
 
 from .position_visitor import PositionVisitor
 from .line import Line
@@ -32,6 +36,20 @@ class PGNImporter:
 		self.deck = deck
 		self.visitor = PositionVisitor()
 
+	def run(self, filenames: List[str]) -> Tuple[int, int, int, int, int]:
+		for filename in filenames:
+			try:
+				with open(filename, 'r') as file:
+					self.collect(file)
+			except Exception as e:
+				# File was deleted, corrupt, whatever.
+				pass
+
+		lines = self.get_lines()
+
+		self.import_lines(lines)
+
+		return 1, 2, 3, 4, 5
 
 	def collect(self, file: TextIOWrapper):
 		def get_visitor() -> PositionVisitor:
@@ -59,6 +77,38 @@ class PGNImporter:
 
 		return lines
 
+	def import_lines(self, lines: List[Line]) -> Tuple[List[NoteId], List[NoteId]]:
+		new_lines = lines.copy()
+
+		inserted = self._insert_lines(new_lines)
+
+	def _insert_lines(self, lines: List[Line]) -> List[NoteId]:
+		inserted: List[NoteId] = []
+
+		for line in lines:
+			inserted.append(self._insert_line(line))
+			self._insert_line(line)
+
+		return inserted
+
+	def _insert_line(self, line: Line) -> NoteId:
+		note = Note(mw.col, self.model)
+		self.fill_note(note, line)
+
+		print(note)
+
+		return note.id
+
+	def get_cards(self) -> Dict[str, CardId]:
+		collection = mw.col
+
+		cards: Dict[str, CardId] = []
+		for cid in collection.decks.cids():
+			card = collection.get_card(cid)
+			note = card.note()
+			cards[cid] = note.fields[0]
+		return cards
+
 	def _merge(self, nodes: List[GameNode]) -> List[GameNode]:
 		merged: Dict[str, GameNode] = {}
 		for node in nodes:
@@ -84,3 +134,22 @@ class PGNImporter:
 				node.nags = [nags[0]]
 			else:
 				node.nags = []
+
+	def fill_note(self, note: Note, line: Line):
+		model = cast(NotetypeDict, note.note_type())
+		moves_index = self._field_index('Moves', model)
+		print(f'moves index: {moves_index}')
+
+	def _field_index(
+			self,
+			name: str,
+			model: NotetypeDict,
+		) -> int:
+
+		field_map = mw.col.models.field_map(model)
+		if not name in field_map:
+			raise KeyError(_("Note type '{type}' lacks field '{name}'!").format(
+				type=model['name'], name=name
+			))
+		return field_map[name][0]
+

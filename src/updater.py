@@ -35,6 +35,9 @@ class Updater:
 		self.version = version
 		self.addon_dir = os.path.dirname(__file__)
 
+		model = get_chess_model(mw.col)
+
+
 	def update_config(self, old: Any) -> Any:
 		config = self._update(old)
 		config = self._fill_config(config)
