@@ -17,7 +17,7 @@ def get_chess_model(collection: Collection) -> NotetypeId:
 		model = models.new(name)
 
 	got = models.field_names(model)
-	wanted = ['Moves', 'Responses']
+	wanted = ['Moves', 'Responses', 'FEN', 'Line']
 
 	dirty = False
 

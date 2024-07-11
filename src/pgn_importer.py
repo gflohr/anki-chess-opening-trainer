@@ -95,8 +95,6 @@ class PGNImporter:
 		note = Note(mw.col, self.model)
 		self.fill_note(note, line)
 
-		print(note)
-
 		return note.id
 
 	def get_cards(self) -> Dict[str, CardId]:
@@ -140,6 +138,8 @@ class PGNImporter:
 		moves_index = self._field_index('Moves', model)
 		fields = note.fields
 		fields[moves_index] = line.nodes[-1].signature_v1()
+		fen_index = self._field_index('FEN', model)
+		fields[fen_index] = line.nodes[-1].fen
 
 		print(f'fields: {fields}')
 
