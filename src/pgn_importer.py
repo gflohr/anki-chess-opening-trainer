@@ -138,7 +138,10 @@ class PGNImporter:
 	def fill_note(self, note: Note, line: Line):
 		model = cast(NotetypeDict, note.note_type())
 		moves_index = self._field_index('Moves', model)
-		print(f'moves index: {moves_index}')
+		fields = note.fields
+		fields[moves_index] = line.nodes[-1].signature_v1()
+
+		print(f'fields: {fields}')
 
 	def _field_index(
 			self,
