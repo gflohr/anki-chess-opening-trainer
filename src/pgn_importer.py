@@ -60,6 +60,8 @@ class PGNImporter:
 
 	def get_lines(self) -> List[Line]:
 		nodes = self._merge(self.visitor.get_nodes())
+		game_comments = self.visitor.game_comments
+
 		self._clean_nags(nodes)
 
 		nodes_by_signature = {node.signature(): node for node in nodes}
@@ -73,7 +75,7 @@ class PGNImporter:
 			for signature in previous_signatures:
 				line_nodes.append(nodes_by_signature[signature])
 			line_nodes.append(node)
-			lines.append(Line(line_nodes))
+			lines.append(Line(line_nodes, game_comments))
 
 		return lines
 
@@ -135,13 +137,43 @@ class PGNImporter:
 
 	def fill_note(self, note: Note, line: Line):
 		model = cast(NotetypeDict, note.note_type())
-		moves_index = self._field_index('Moves', model)
+
 		fields = note.fields
+
+		moves_index = self._field_index('Moves', model)
 		fields[moves_index] = line.nodes[-1].signature_v1()
+
+		moves_index = self._field_index('Moves', model)
+		fields[moves_index] = line.nodes[-1].signature_v1()
+
+		responses_index = self._field_index('Responses', model)
+		fields[responses_index] = self._render_response(line)
+
 		fen_index = self._field_index('FEN', model)
 		fields[fen_index] = line.nodes[-1].fen
 
 		print(f'fields: {fields}')
+
+	def _render_response(self, line: Line) -> str:
+		node = line.nodes[-1]
+		board = chess.Board(line.fen)
+		prefix = str(board.fullmove_number) + '.'
+
+		if board.turn == chess.BLACK:
+			prefix += '..'
+
+		responses: List[str] = []
+		for i, response in enumerate(node.responses):
+			san_response = node.san_responses[i]
+			rendered = prefix + ' ' + san_response
+			comments = node.comments[response]
+			if len(comments):
+				rendered += ' '
+
+			rendered += ' '.join(comments)
+			responses.append(rendered)
+
+		return '\n'.join(responses)
 
 	def _field_index(
 			self,

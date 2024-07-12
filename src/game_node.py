@@ -32,7 +32,7 @@ class GameNode:
 		self._nags: List[int] = []
 
 	def add_comment(self, comment: str):
-		self._comments[self._move].append(comment)
+		self._comments[self._responses[0]].append(comment)
 
 	def add_nag(self, nag: int):
 		self._nags.append(nag)
@@ -57,6 +57,10 @@ class GameNode:
 		signatures.reverse()
 
 		return signatures
+
+	@property
+	def responses(self):
+		return self._responses
 
 	@property
 	def san_responses(self):
