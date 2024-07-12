@@ -37,6 +37,7 @@ class PositionVisitor(BaseVisitor):
 	def result(self) -> Literal[True]:
 		return True
 
+	# FIXME! Make this a property!
 	def get_nodes(self) -> List[GameNode]:
 		return self.nodes
 
