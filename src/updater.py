@@ -170,11 +170,13 @@ class Updater:
 
 		lines = importer.get_lines()
 		empty = _('Moves from starting position?')
-		signatures: List[str] = map(lambda line: line.nodes[-1].signature_v1(), lines)
-		signatures = [s if s != '' else empty for s in signatures]
+		# FIXME! This no longer works with the new ChessLine class.
 
-		card_signatures = self._get_card_signatures(deck_id, model)
-		self._upgrade_cards(card_signatures, signatures, model)
+		#signatures: List[str] = map(lambda line: line.nodes[-1].signature_v1(), lines)
+		#signatures = [s if s != '' else empty for s in signatures]
+
+		#card_signatures = self._get_card_signatures(deck_id, model)
+		#self._upgrade_cards(card_signatures, signatures, model)
 
 		# FIXME! We must run the rest of the importer so that the other fields
 		# are filled as well.

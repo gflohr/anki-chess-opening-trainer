@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Dict, List
 
 import chess
-from chess import Color, Board, Move
+from chess import Board, Move
 
 
 class GameNode:
@@ -50,7 +50,7 @@ class GameNode:
 		signatures: List[str] = []
 		_san_moves = self._san_moves
 		while len(_san_moves) > 1:
-			_san_moves = _san_moves[:-2]
+			_san_moves.pop()
 			tokens = [self._fen] + list(map(str, _san_moves))
 			signatures.append(' '.join(tokens))
 

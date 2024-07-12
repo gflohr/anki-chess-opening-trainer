@@ -19,7 +19,7 @@ from anki.cards import CardId
 from anki.models import FieldDict
 
 from .position_visitor import PositionVisitor
-from .line import Line
+from .chess_line import ChessLine
 from .game_node import GameNode
 
 
@@ -58,7 +58,7 @@ class PGNImporter:
 		while chess.pgn.read_game(file, Visitor=get_visitor):
 			pass
 
-	def get_lines(self) -> List[Line]:
+	def get_lines(self) -> List[ChessLine]:
 		nodes = self._merge(self.visitor.get_nodes())
 		game_comments = self.visitor.game_comments
 
@@ -68,32 +68,36 @@ class PGNImporter:
 
 		colour = chess.BLACK if self.colour == 'black' else chess.WHITE
 
-		lines: List[Line] = []
-		for node in [x for x in nodes if x.colour == colour]:
+		if len(nodes) > 0 and nodes[0].colour != colour:
+				nodes.pop(0)
+
+		lines: List[ChessLine] = []
+		for node in nodes:
 			line_nodes: List[GameNode] = []
 			previous_signatures = node.previous_signatures()
 			for signature in previous_signatures:
 				line_nodes.append(nodes_by_signature[signature])
 			line_nodes.append(node)
-			lines.append(Line(line_nodes, game_comments))
+			lines.append(ChessLine(line_nodes, game_comments))
 
 		return lines
 
-	def import_lines(self, lines: List[Line]) -> Tuple[List[NoteId], List[NoteId]]:
+	def import_lines(self, lines: List[ChessLine]) -> Tuple[List[NoteId], List[NoteId]]:
 		new_lines = lines.copy()
 
 		inserted = self._insert_lines(new_lines)
 
-	def _insert_lines(self, lines: List[Line]) -> List[NoteId]:
+	def _insert_lines(self, lines: List[ChessLine]) -> List[NoteId]:
 		inserted: List[NoteId] = []
 
 		for line in lines:
-			inserted.append(self._insert_line(line))
-			self._insert_line(line)
+			if line.turn == self.colour:
+				inserted.append(self._insert_line(line))
+				self._insert_line(line)
 
 		return inserted
 
-	def _insert_line(self, line: Line) -> NoteId:
+	def _insert_line(self, line: ChessLine) -> NoteId:
 		note = Note(mw.col, self.model)
 		self.fill_note(note, line)
 
@@ -119,7 +123,7 @@ class PGNImporter:
 			else:
 				merged[signature] = node
 
-		return merged.values()
+		return list(merged.values())
 
 	def _clean_nags(self, nodes: List[GameNode]):
 		# Unfortunately, Python chess only supports the six basic NAGs.
@@ -135,45 +139,19 @@ class PGNImporter:
 			else:
 				node.nags = []
 
-	def fill_note(self, note: Note, line: Line):
+	def fill_note(self, note: Note, line: ChessLine):
 		model = cast(NotetypeDict, note.note_type())
 
 		fields = note.fields
 
 		moves_index = self._field_index('Moves', model)
-		fields[moves_index] = line.nodes[-1].signature_v1()
-
-		moves_index = self._field_index('Moves', model)
-		fields[moves_index] = line.nodes[-1].signature_v1()
+		fields[moves_index] = line.render_question()
 
 		responses_index = self._field_index('Responses', model)
-		fields[responses_index] = self._render_response(line)
+		fields[responses_index] = line.render_answer()
 
-		fen_index = self._field_index('FEN', model)
-		fields[fen_index] = line.nodes[-1].fen
-
-		print(f'fields: {fields}')
-
-	def _render_response(self, line: Line) -> str:
-		node = line.nodes[-1]
-		board = chess.Board(line.fen)
-		prefix = str(board.fullmove_number) + '.'
-
-		if board.turn == chess.BLACK:
-			prefix += '..'
-
-		responses: List[str] = []
-		for i, response in enumerate(node.responses):
-			san_response = node.san_responses[i]
-			rendered = prefix + ' ' + san_response
-			comments = node.comments[response]
-			if len(comments):
-				rendered += ' '
-
-			rendered += ' '.join(comments)
-			responses.append(rendered)
-
-		return '\n'.join(responses)
+		line_index = self._field_index('Line', model)
+		fields[line_index] = line.to_json()
 
 	def _field_index(
 			self,
