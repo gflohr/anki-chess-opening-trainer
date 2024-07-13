@@ -45,6 +45,8 @@ class PGNImporter:
 				# File was deleted, corrupt, whatever.
 				pass
 
+		cards = self.get_cards()
+		print(cards)
 		lines = self.get_lines()
 
 		self.import_lines(lines)
@@ -107,10 +109,11 @@ class PGNImporter:
 		collection = mw.col
 
 		cards: Dict[str, CardId] = []
-		for cid in collection.decks.cids():
+		for cid in collection.decks.cids(self.deck['id']):
 			card = collection.get_card(cid)
 			note = card.note()
-			cards[cid] = note.fields[0]
+			if note.note_type['id'] == self.model['id']:
+				cards[cid] = note.fields[0]
 		return cards
 
 	def _merge(self, nodes: List[GameNode]) -> List[GameNode]:
