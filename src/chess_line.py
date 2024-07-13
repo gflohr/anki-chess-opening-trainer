@@ -63,9 +63,8 @@ class ChessLine:
 	def turn(self):
 		return self._turn
 
-
 	@classmethod
-	def digest_from_json(cls, json_str: str) -> Union[str, None]:
+	def signature_from_json(cls, json_str: str) -> Union[str, None]:
 		try:
 			data: Dict[str, Any] = json.loads(json_str)
 			tokens: List[str] = [data['fen']]

@@ -63,7 +63,7 @@ class PGNImporter:
 		for line in lines:
 			json_data = line.to_json()
 			print(json_data)
-			print(ChessLine.digest_from_json(json_data))
+			print(ChessLine.signature_from_json(json_data))
 
 		inserts, updates, deletes = self._analyze_deck(cards, lines)
 		self.import_lines(lines)
@@ -136,9 +136,9 @@ class PGNImporter:
 			card = collection.get_card(cid)
 			note = card.note()
 			if note.note_type['id'] == self.model['id']:
-				digest = ChessLine.digest_from_json(note.fields[line_index])
-				if digest is not None:
-					cards[cid] = digest
+				signature = ChessLine.signature_from_json(note.fields[line_index])
+				if signature is not None:
+					cards[cid] = signature
 
 		return cards
 
