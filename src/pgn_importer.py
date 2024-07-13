@@ -59,7 +59,7 @@ class PGNImporter:
 			pass
 
 	def get_lines(self) -> List[ChessLine]:
-		nodes = self._merge(self.visitor.get_nodes())
+		nodes = self._merge(self.visitor.nodes)
 		game_comments = self.visitor.game_comments
 
 		self._clean_nags(nodes)
