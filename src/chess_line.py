@@ -1,6 +1,6 @@
 import json
 import html
-from typing import List
+from typing import Any, Dict, List, Union
 
 import chess
 
@@ -41,6 +41,8 @@ class ChessLine:
 			for comment in comments[move]:
 				chess_move.add_comment(comment)
 
+			self._responses.append(chess_move)
+
 	@property
 	def moves(self):
 		return self._moves
@@ -61,11 +63,32 @@ class ChessLine:
 	def turn(self):
 		return self._turn
 
+
+	@classmethod
+	def digest_from_json(cls, json_str: str) -> Union[str, None]:
+		try:
+			data: Dict[str, Any] = json.loads(json_str)
+			tokens: List[str] = [data['fen']]
+			tokens.extend(list(map(lambda cm: cm['move'], data['moves'])))
+			tokens.extend(list(map(lambda cm: cm['move'], data['responses'])))
+
+			return ' '.join(tokens)
+		except (
+			json.decoder.JSONDecodeError,
+			KeyError,
+			TypeError,
+			AttributeError,
+		):
+			return None
+
 	def to_json(self) -> str:
+		responses = list(map(lambda move: move.dump(), self._responses))
+		responses = sorted(responses, key=lambda res: res['move'])
 		chess_line = {
 			'fen': self.fen,
 			'game_comments': self.game_comments,
 			'moves': list(map(lambda move: move.dump(), self._moves)),
+			'responses': responses,
 		}
 
 		return json.dumps(chess_line)

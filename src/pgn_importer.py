@@ -8,7 +8,7 @@
 # http://www.wtfpl.net/ for more details.
 
 from io import TextIOWrapper
-from typing import Dict, List, Tuple, cast
+from typing import Dict, List, Tuple, Union, cast
 
 import chess
 
@@ -23,8 +23,21 @@ from .chess_line import ChessLine
 from .game_node import GameNode
 
 
-class PGNImporter:
+class ChangeRecord:
+	def __init__(self, card_id: Union[CardId , None], line: ChessLine):
+		self._card_id = card_id
+		self._line = line
 
+	@property
+	def card_id(self):
+		return self._card_id
+
+	@property
+	def line(self):
+		return self._line
+
+
+class PGNImporter:
 	def __init__(
 	    self,
 	    colour: chess.Color,
@@ -42,16 +55,27 @@ class PGNImporter:
 				with open(filename, 'r') as file:
 					self.collect(file)
 			except Exception as e:
-				# File was deleted, corrupt, whatever.
 				pass
 
 		cards = self.get_cards()
-		print(cards)
 		lines = self.get_lines()
 
+		for line in lines:
+			json_data = line.to_json()
+			print(json_data)
+			print(ChessLine.digest_from_json(json_data))
+
+		inserts, updates, deletes = self._analyze_deck(cards, lines)
 		self.import_lines(lines)
 
 		return 1, 2, 3, 4, 5
+
+	def _analyze_deck(self, cards: Dict[str, CardId], lines: List[ChessLine]) -> Tuple[List[ChangeRecord], List[ChangeRecord], List[ChangeRecord]]:
+		inserts: List[ChangeRecord] = []
+		updates: List[ChangeRecord] = []
+		deletes: List[ChangeRecord] = []
+
+		return inserts, updates, deletes
 
 	def collect(self, file: TextIOWrapper):
 		def get_visitor() -> PositionVisitor:
@@ -70,17 +94,15 @@ class PGNImporter:
 
 		colour = chess.BLACK if self.colour == 'black' else chess.WHITE
 
-		if len(nodes) > 0 and nodes[0].colour != colour:
-				nodes.pop(0)
-
 		lines: List[ChessLine] = []
 		for node in nodes:
-			line_nodes: List[GameNode] = []
-			previous_signatures = node.previous_signatures()
-			for signature in previous_signatures:
-				line_nodes.append(nodes_by_signature[signature])
-			line_nodes.append(node)
-			lines.append(ChessLine(line_nodes, game_comments))
+			if node.colour != colour:
+				line_nodes: List[GameNode] = []
+				previous_signatures = node.previous_signatures()
+				for signature in previous_signatures:
+					line_nodes.append(nodes_by_signature[signature])
+				line_nodes.append(node)
+				lines.append(ChessLine(line_nodes, game_comments))
 
 		return lines
 
@@ -107,13 +129,17 @@ class PGNImporter:
 
 	def get_cards(self) -> Dict[str, CardId]:
 		collection = mw.col
+		line_index = self._field_index('Line')
 
 		cards: Dict[str, CardId] = []
 		for cid in collection.decks.cids(self.deck['id']):
 			card = collection.get_card(cid)
 			note = card.note()
 			if note.note_type['id'] == self.model['id']:
-				cards[cid] = note.fields[0]
+				digest = ChessLine.digest_from_json(note.fields[line_index])
+				if digest is not None:
+					cards[cid] = digest
+
 		return cards
 
 	def _merge(self, nodes: List[GameNode]) -> List[GameNode]:
@@ -143,25 +169,22 @@ class PGNImporter:
 				node.nags = []
 
 	def fill_note(self, note: Note, line: ChessLine):
-		model = cast(NotetypeDict, note.note_type())
-
 		fields = note.fields
 
-		moves_index = self._field_index('Moves', model)
+		moves_index = self._field_index('Moves')
 		fields[moves_index] = line.render_question()
 
-		responses_index = self._field_index('Responses', model)
+		responses_index = self._field_index('Responses')
 		fields[responses_index] = line.render_answer()
 
-		line_index = self._field_index('Line', model)
+		line_index = self._field_index('Line')
 		fields[line_index] = line.to_json()
 
 	def _field_index(
 			self,
 			name: str,
-			model: NotetypeDict,
 		) -> int:
-
+		model = self.model
 		field_map = mw.col.models.field_map(model)
 		if not name in field_map:
 			raise KeyError(_("Note type '{type}' lacks field '{name}'!").format(

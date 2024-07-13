@@ -22,8 +22,8 @@ class PositionVisitor(BaseVisitor):
 		if self._fen is None:
 			self._fen = board.fen()
 
-		self._node = GameNode(self.fen, board, move)
-		self._nodes.append(self.node)
+		self._node = GameNode(self._fen, board, move)
+		self._nodes.append(self._node)
 
 	def visit_comment(self, comment: str) -> None:
 		if self._node is None:
