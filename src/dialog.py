@@ -183,7 +183,7 @@ class ImportDialog(QDialog):
 	def accept(self) -> None:
 		assert isinstance(mw, AnkiQt)
 
-		def _on_success(counts: Union[Exception, tuple[int, int, int, int, int]]):
+		def _on_success(counts: Union[Exception, tuple[int, int, int]]):
 			if isinstance(counts, Exception):
 				x = counts
 				if isinstance(x, OSError):
@@ -203,10 +203,6 @@ class ImportDialog(QDialog):
 					(counts[1]),
 					ngettext('%d note deleted.', '%d notes deleted.', counts[2]) %
 					(counts[2]),
-					ngettext('%d image created.', '%d images created.',
-							counts[3]) % (counts[3]),
-					ngettext('%d image deleted.', '%d images deleted.',
-							counts[4]) % (counts[4]),
 				)
 				msg = ' '.join(msgs)
 

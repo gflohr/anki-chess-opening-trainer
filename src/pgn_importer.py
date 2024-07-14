@@ -8,15 +8,14 @@
 # http://www.wtfpl.net/ for more details.
 
 from io import TextIOWrapper
-from typing import Dict, List, Tuple, Union, cast
+from typing import Dict, List, Tuple, Union
 
 import chess
 
 from aqt import mw
 from anki.decks import Deck
 from anki.notes import Note, NotetypeDict, NoteId
-from anki.cards import CardId
-from anki.models import FieldDict
+from anki.cards import Card, CardId
 
 from .position_visitor import PositionVisitor
 from .chess_line import ChessLine
@@ -24,13 +23,13 @@ from .game_node import GameNode
 
 
 class ChangeRecord:
-	def __init__(self, card_id: Union[CardId , None], line: ChessLine):
-		self._card_id = card_id
+	def __init__(self, card: Union[Card, None], line: Union[ChessLine, None]):
+		self._card = card
 		self._line = line
 
 	@property
-	def card_id(self):
-		return self._card_id
+	def card(self):
+		return self._card
 
 	@property
 	def line(self):
@@ -61,14 +60,31 @@ class PGNImporter:
 		lines = self.get_lines()
 
 		inserts, updates, deletes = self._analyze_deck(cards, lines)
-		self.import_lines(lines)
 
-		return 1, 2, 3, 4, 5
+		self.import_records(inserts)
 
-	def _analyze_deck(self, cards: Dict[str, CardId], lines: List[ChessLine]) -> Tuple[List[ChangeRecord], List[ChangeRecord], List[ChangeRecord]]:
-		inserts: List[ChangeRecord] = []
+		return len(inserts), len(updates), len(deletes)
+
+	def _analyze_deck(self, cards: Dict[str, Card], lines: List[ChessLine]) -> Tuple[List[ChangeRecord], List[ChangeRecord], List[ChangeRecord]]:
 		updates: List[ChangeRecord] = []
 		deletes: List[ChangeRecord] = []
+
+		lines_by_signature = { line.signature() : line for line in lines }
+
+		line_index = self._field_index('Line')
+		for csignature, card in cards.items():
+			if csignature in lines_by_signature:
+				line = lines_by_signature[csignature]
+				pgn_line_json = lines_by_signature[csignature].to_json()
+				del lines_by_signature[csignature]
+				note = card.note()
+				card_line_json = note.fields[line_index]
+				if pgn_line_json != card_line_json:
+					updates.append(ChangeRecord(card, line))
+			else:
+				deletes.append(ChangeRecord(card, None))
+
+		inserts = [ChangeRecord(None, line) for line in lines_by_signature.values()]
 
 		return inserts, updates, deletes
 
@@ -101,39 +117,29 @@ class PGNImporter:
 
 		return lines
 
-	def import_lines(self, lines: List[ChessLine]) -> Tuple[List[NoteId], List[NoteId]]:
-		new_lines = lines.copy()
-
-		inserted = self._insert_lines(new_lines)
-
-	def _insert_lines(self, lines: List[ChessLine]) -> List[NoteId]:
-		inserted: List[NoteId] = []
-
-		for line in lines:
+	def import_records(self, records: List[ChangeRecord]) -> List[NoteId]:
+		for record in records:
+			line = record.line
 			if line.turn == self.colour:
-				inserted.append(self._insert_line(line))
 				self._insert_line(line)
 
-		return inserted
-
-	def _insert_line(self, line: ChessLine) -> NoteId:
+	def _insert_line(self, line: ChessLine):
 		note = Note(mw.col, self.model)
 		self.fill_note(note, line)
+		#mw.col.add_note(note, deck_id=self.deck['id'])
 
-		return note.id
-
-	def get_cards(self) -> Dict[str, CardId]:
+	def get_cards(self) -> Dict[str, Card]:
 		collection = mw.col
 		line_index = self._field_index('Line')
 
-		cards: Dict[str, CardId] = []
+		cards: Dict[str, Card] = {}
 		for cid in collection.decks.cids(self.deck['id']):
 			card = collection.get_card(cid)
 			note = card.note()
 			if note.note_type['id'] == self.model['id']:
 				signature = ChessLine.signature_from_json(note.fields[line_index])
 				if signature is not None:
-					cards[cid] = signature
+					cards[signature] = card
 
 		return cards
 

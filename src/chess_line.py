@@ -79,6 +79,13 @@ class ChessLine:
 		):
 			return None
 
+	def signature(self) -> str:
+		tokens: List[str] = [self._fen]
+		tokens.extend(list(map(lambda cm: str(cm.move), self.moves)))
+		tokens.extend(list(map(lambda cm: str(cm.move), self.responses)))
+		return ' '.join(tokens)
+
+
 	def to_json(self) -> str:
 		responses = list(map(lambda move: move.dump(), self._responses))
 		responses = sorted(responses, key=lambda res: res['move'])
