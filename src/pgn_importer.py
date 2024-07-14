@@ -60,11 +60,6 @@ class PGNImporter:
 		cards = self.get_cards()
 		lines = self.get_lines()
 
-		for line in lines:
-			json_data = line.to_json()
-			print(json_data)
-			print(ChessLine.signature_from_json(json_data))
-
 		inserts, updates, deletes = self._analyze_deck(cards, lines)
 		self.import_lines(lines)
 
