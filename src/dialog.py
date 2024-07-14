@@ -26,9 +26,8 @@ from aqt.utils import show_critical, show_info, show_warning
 from anki.utils import no_bundled_libs
 from anki.models import NotetypeDict
 
-from .utils import write_importer_config
+from .utils import load_importer_config, write_importer_config
 from .pgn_importer import PGNImporter
-from .config_reader import ConfigReader
 from .get_chess_model import get_chess_model
 
 
@@ -43,7 +42,7 @@ class ImportDialog(QDialog):
 		super().__init__()
 
 		self.mw = mw
-		self.importer_config = ConfigReader().get_importer_config()
+		self.importer_config = load_importer_config()
 
 		self.setWindowTitle(_('Import PGN File'))
 

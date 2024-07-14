@@ -21,7 +21,7 @@ from anki.notes import NoteId
 
 from .importer_config import ImporterConfig
 from .pgn_importer import PGNImporter
-from .utils import fill_importer_config_defaults, get_importer_config_file, normalize_move, write_importer_config
+from .utils import normalize_move, write_importer_config
 from .get_chess_model import get_chess_model
 
 
@@ -103,7 +103,7 @@ class Updater:
 
 		# The old configuration is now the importer configuration in
 		# user_files.
-		write_importer_config(fill_importer_config_defaults(raw))
+		write_importer_config(raw)
 
 		importer_config = cast(ImporterConfig, raw)
 

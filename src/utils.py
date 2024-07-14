@@ -1,11 +1,16 @@
 import os
 import re
 import json
-from typing import Any, Dict, List, Union
+from typing import Any, List, cast
+from jsonschema import ValidationError, validate
 
 import anki
 from anki.notes import NotetypeId
 from aqt import mw
+from aqt.utils import show_critical
+
+
+import importer_config_schema
 
 from .importer_config import ImporterConfig
 from .version import __version__
@@ -32,17 +37,37 @@ def get_addon_dir() -> str:
 	return os.path.join(os.path.dirname(__file__))
 
 
-def get_importer_config_file() -> str:
+def _get_importer_config_filename() -> str:
 	return os.path.join(get_addon_dir(), 'user_files', 'imports.json')
 
 
+def load_importer_config() -> ImporterConfig:
+		importer_filename = _get_importer_config_filename()
+		if (os.path.exists(importer_filename)):
+			with open(importer_filename, 'r') as file:
+				raw_importer_config = json.load(file)
+		else:
+			raw_importer_config = _fill_importer_config_defaults(None)
+
+		try:
+			validate(raw_importer_config, schema=importer_config_schema)
+		except ValidationError as e:
+			show_critical(_('Your imports configuration is invalid, restoring defaults.'))
+			raw_importer_config = _fill_importer_config_defaults(None)
+			write_importer_config(raw_importer_config)
+			print(e)
+
+		return cast(ImporterConfig, raw_importer_config)
+
+
 def write_importer_config(importer_config: ImporterConfig):
-	filename = get_importer_config_file()
+	importer_config = _fill_importer_config_defaults(importer_config)
+	filename = _get_importer_config_filename()
 	with open(filename, 'w') as file:
 		file.write(json.dumps(importer_config))
 
 
-def fill_importer_config_defaults(raw: Any) -> Any:
+def _fill_importer_config_defaults(raw: Any) -> Any:
 	if raw is None:
 		raw = {}
 
