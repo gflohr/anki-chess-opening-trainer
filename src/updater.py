@@ -8,19 +8,20 @@
 # http://www.wtfpl.net/ for more details.
 
 import os
-from pathlib import Path
 import re
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, cast
 import semantic_version as sv
 
 from aqt import mw
 from anki.decks import Deck, DeckId
 from anki.models import NotetypeId
-from anki.cards import CardId
+from anki.cards import Card, CardId
+from anki.notes import NoteId
 
 from .importer_config import ImporterConfig
 from .pgn_importer import PGNImporter
-from .utils import fill_importer_config_defaults, write_importer_config
+from .utils import fill_importer_config_defaults, get_importer_config_file, normalize_move, write_importer_config
 from .get_chess_model import get_chess_model
 
 
@@ -57,7 +58,7 @@ class Updater:
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			raw = self._update_v1_0_0(raw)
 
-		if (sv.Version(raw['version']) < sv.Version('2.0.0')):
+		if (True or sv.Version(raw['version']) < sv.Version('2.0.0')):
 			raw = self._update_v2_0_0(raw)
 
 		raw['version'] = self.version
@@ -155,31 +156,22 @@ class Updater:
 			self._migrate_deck_v2_0_0(deck_id, importer_config)
 
 	def _migrate_deck_v2_0_0(self, deck_id: DeckId, importer_config: ImporterConfig):
+		print(f'migrate deck {deck_id}')
 		deck_data: Optional[Deck] = self.mw.col.decks.get(did=deck_id)
 		if deck_data is None:
 			return # No deck, no migration.
 		deck = cast(Deck, deck_data)
 
+		print('have deck')
 		colour = importer_config['imports'][deck_id]['colour']
 		model = get_chess_model(self.mw.col)
+		print('got model')
 
 		importer = PGNImporter(colour=colour, model=model, deck=deck)
 		files = importer_config['imports'][deck_id]['files']
+		print(f'files: {files}')
 
-		self._import_files(importer, files)
-
-		lines = importer.get_lines()
-		empty = _('Moves from starting position?')
-		# FIXME! This no longer works with the new ChessLine class.
-
-		#signatures: List[str] = map(lambda line: line.nodes[-1].signature_v1(), lines)
-		#signatures = [s if s != '' else empty for s in signatures]
-
-		#card_signatures = self._get_card_signatures(deck_id, model)
-		#self._upgrade_cards(card_signatures, signatures, model)
-
-		# FIXME! We must run the rest of the importer so that the other fields
-		# are filled as well.
+		self._import_files(deck_id, importer, files)
 
 	def _upgrade_cards(self,
 	                   card_signatures: List[Tuple[str, CardId]],
@@ -223,7 +215,7 @@ class Updater:
 
 		return cards
 
-	def _import_files(self, importer: PGNImporter, files: List[str]):
+	def _import_files(self, deck_id: DeckId, importer: PGNImporter, files: List[str]):
 		for filename in files:
 			try:
 				with open(filename, 'r') as file:
@@ -231,6 +223,31 @@ class Updater:
 			except Exception as e:
 				# File was deleted, corrupt, whatever.
 				pass
+
+		cards = self._get_cards(deck_id)
+		print(cards)
+
+	def _get_cards(self, deck_id: DeckId) -> Dict[NotetypeId, Dict[str, Card]]:
+		cards: Dict[NotetypeId, Dict[str, Card]] = {}
+		for cid in mw.col.decks.cids(deck_id):
+			card = mw.col.get_card(cid)
+			note = card.note()
+			if len(note.fields) < 2:
+				continue
+			question = normalize_move(re.sub('<.*', '', note.fields[0]))
+
+			notetype_id = note.note_type()['id']
+			if not notetype_id in cards:
+				cards[notetype_id] = {}
+
+			cards[notetype_id][question] = note.id
+
+	def _parse_v1_answer(self, answer: str):
+		answer = re.sub('<br><img.*?>', '', answer)
+
+		responses = re.split('<br>(?=[1-9][0-9]*\.(?:\.\.)?)', answer)
+
+		return responses
 
 	def _prune_old_media_files(self):
 		filenames: List[str] = []

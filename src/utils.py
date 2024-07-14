@@ -65,3 +65,23 @@ def fill_importer_config_defaults(raw: Any) -> Any:
 		raw['imports'] = {}
 
 	return raw
+
+piece_translations = {
+	'D': 'Q',
+	'T': 'R',
+	'L': 'B',
+	'S': 'N',
+	# All these keys are cyrillic letters!
+	'Д': 'Q',
+	'Т': 'R',
+	'О': 'B',
+	'К': 'N',
+}
+
+piece_pattern = re.compile('|'.join(re.escape(p) for p in piece_translations.keys()))
+
+def normalize_move(moves: str):
+	def replace_match(match: re.Match):
+		return piece_translations[match.group()]
+
+	return piece_pattern.sub(replace_match, moves)
