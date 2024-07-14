@@ -36,7 +36,6 @@ class ChessLine:
 
 		for move in nodes[-1].responses:
 			chess_move = ChessMove(move)
-			self._responses.append(chess_move)
 
 			for comment in comments[move]:
 				chess_move.add_comment(comment)
