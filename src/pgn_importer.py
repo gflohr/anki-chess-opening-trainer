@@ -107,7 +107,7 @@ class PGNImporter:
 
 		lines: List[ChessLine] = []
 		for node in nodes:
-			if node.colour != colour:
+			if node.colour == colour:
 				line_nodes: List[GameNode] = []
 				previous_signatures = node.previous_signatures()
 				for signature in previous_signatures:
