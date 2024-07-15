@@ -158,15 +158,6 @@ class Updater:
 			self._migrate_deck_v2_0_0(deck_id, importer_config)
 
 	def _migrate_deck_v2_0_0(self, deck_id: DeckId, importer_config: ImporterConfig):
-		def new_names_to_indices(new_names: List[str], old_names: List[str]) -> List[int]:
-			indices = []
-			for name in new_names:
-				try:
-					indices.append(old_names.index(name))
-				except ValueError:
-					indices.append(-1)
-			return indices
-
 		deck_data: Optional[Deck] = self.mw.col.decks.get(did=deck_id, default=False)
 		if deck_data is None:
 			return # No deck, no migration.
@@ -206,24 +197,7 @@ class Updater:
 				new_notetype_id=self.model
 			)
 
-			req = ChangeNotetypeRequest()
-			req.new_fields.extend(
-				new_names_to_indices(
-					list(info.new_field_names),
-					list(info.old_field_names))
-			)
-			req.new_templates.extend(
-				new_names_to_indices(
-					list(info.new_template_names),
-					list(info.old_template_names))
-			)
-
-			req.old_notetype_id = notetype_id
-			req.new_notetype_id = self.model
-			req.current_schema = mw.col.db.scalar('select scm from col')
-			req.old_notetype_name = old_type['name']
-			req.is_cloze = old_type['type'] == 1 or new_type['type'] == 1
-
+			req = info.input
 			req.note_ids.extend(note_ids)
 
 			mw.col.models.change_notetype_of_notes(req)
