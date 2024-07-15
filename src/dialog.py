@@ -110,7 +110,7 @@ class ImportDialog(QDialog):
 		importer_config = self.importer_config
 
 		deck_id = importer_config['decks'][colour]
-		deck = self.mw.col.decks.get(deck_id)
+		deck = self.mw.col.decks.get(deck_id, False)
 		if deck is not None:
 			name = deck['name']
 			for i in range(self.deck_combo.count()):
@@ -217,7 +217,7 @@ class ImportDialog(QDialog):
 				notetype_id = get_chess_model(mw.col)
 				model = cast(NotetypeDict, mw.col.models.get(notetype_id))
 				deck_id = self.importer_config['decks'][colour]
-				deck = mw.col.decks.get(deck_id)
+				deck = mw.col.decks.get(deck_id, False)
 				if deck == None:
 					raise KeyError(_('Selected deck does not exist!'))
 
