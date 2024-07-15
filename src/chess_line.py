@@ -99,6 +99,9 @@ class ChessLine:
 		return json.dumps(chess_line)
 
 	def render_question(self) -> str:
+		if not len(self._moves):
+			return ''
+
 		board = chess.Board(self._fen)
 		tokens: List[str] = []
 

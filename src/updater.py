@@ -16,7 +16,7 @@ import semantic_version as sv
 
 from aqt import mw
 from anki.decks import Deck, DeckId
-from anki.models import NotetypeId, ChangeNotetypeRequest
+from anki.models import NotetypeId
 from anki.cards import Card, CardId
 from anki.notes import Note, NoteId
 
@@ -38,7 +38,7 @@ class Updater:
 		self.version = version
 		self.addon_dir = os.path.dirname(__file__)
 
-		self.model = get_chess_model(mw.col)
+		self.notetype_id = get_chess_model(mw.col)
 
 
 	def update_config(self, old: Any) -> Any:
@@ -164,8 +164,7 @@ class Updater:
 		deck = cast(Deck, deck_data)
 
 		colour = chess.BLACK if importer_config['imports'][deck_id]['colour'] == 'black' else chess.WHITE
-		model = get_chess_model(self.mw.col)
-
+		model = mw.col.models.get(self.notetype_id)
 		importer = PGNImporter(colour=colour, model=model, deck=deck)
 		files = importer_config['imports'][deck_id]['files']
 
@@ -181,26 +180,31 @@ class Updater:
 
 		for notetype_id, notetype_notes in notes.items():
 			note_ids: Sequence[NoteId] = []
+			lines_by_note_id: Dict[NoteId, ChessLine] = {}
 			for question, note in notetype_notes.items():
-				if question.replace(' ', '') in lines_by_question:
-					print(f'FOUND: *{question}* (note id: {note.id})')
+				question = question.replace(' ', '')
+				if question in lines_by_question:
 					note_ids.append(note.id)
-				else:
-					print(f'NOT FOUND: *{question}* (note id: {note.id})')
+					lines_by_note_id[note.id] = lines_by_question[question]
+
 			if not len(note_ids):
 				continue
 
-			old_type = mw.col.models.get(notetype_id)
-			new_type = mw.col.models.get(self.model)
 			info = mw.col.models.change_notetype_info(
 				old_notetype_id=notetype_id,
-				new_notetype_id=self.model
+				new_notetype_id=self.notetype_id
 			)
 
 			req = info.input
 			req.note_ids.extend(note_ids)
 
 			mw.col.models.change_notetype_of_notes(req)
+
+			for id in note_ids:
+				note = Note(col=mw.col, id=id)
+				line = lines_by_note_id[id]
+				importer.fill_note(note, line)
+				mw.col.update_note(note, skip_undo_entry=True)
 
 	def _upgrade_cards(self,
 	                   card_signatures: List[Tuple[str, CardId]],
