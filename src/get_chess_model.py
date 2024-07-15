@@ -45,6 +45,7 @@ def get_chess_model(collection: Collection) -> NotetypeId:
 	# New model?
 	if model['id'] == 0:
 		models.add_dict(model)
+		model = models.by_name(name)
 	elif dirty:
 		models.update_dict(model)
 
