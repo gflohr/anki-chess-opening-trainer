@@ -1,4 +1,5 @@
 import os
+import re
 
 from anki.collection import Collection
 from anki.notes import NotetypeId
@@ -55,18 +56,18 @@ def _get_page_template(collection: Collection) -> TemplateDict:
 	addon_dir = get_addon_dir()
 	filename = os.path.join(addon_dir, 'assets', 'html', 'page.html')
 	with open(filename, 'r') as file:
-		html = file.read()
+		markup = file.read()
 
 	# Always replace the addon URL.
-	html = html.replace(
-		'{{addon}}',
-		__name__.split('.')[0]
-	)
+	pkg = __name__.split('.')[0]
+	prefix = f'/_addons/{pkg}/assets'
+	markup = re.sub('\nconst line = .*?\n', '\nline = {{ Line }};\n', markup)
+	markup = re.sub('\nconst prefix = .*?\n', f"\nprefix = '{ prefix }';\n", markup)
 
 	template = collection.models.new_template(template_name)
 
-	template['qfmt'] = '{{Moves}}'
+	template['qfmt'] = f'{markup}'
 
-	template['afmt'] = '{{Responses}}'
+	template['afmt'] = f'{markup}'
 
 	return template

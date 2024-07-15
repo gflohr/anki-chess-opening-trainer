@@ -63,6 +63,7 @@ def add_menu_item():
 		mw.form.menuTools.addAction(action)
 
 def load_config():
+	print('loading config')
 	pkg = mw.addonManager.addonFromModule(__name__)
 	config_reader_module = importlib.import_module(f'{pkg}.config_reader')
 	ConfigReader = getattr(config_reader_module, 'ConfigReader')

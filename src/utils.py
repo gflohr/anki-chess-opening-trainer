@@ -38,7 +38,8 @@ def get_addon_dir() -> str:
 
 
 def _get_importer_config_filename() -> str:
-	return os.path.join(get_addon_dir(), 'user_files', 'imports.json')
+	media_path = mw.col.media.dir()
+	return os.path.join(media_path, 'chess-opening-trainer-imports.json')
 
 
 def load_importer_config() -> ImporterConfig:

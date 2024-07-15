@@ -74,8 +74,8 @@ export default [
 			terser(),
 		],
 		watch: {
-			include: ['./typescript/**/*.ts'],
-			exclude: ['./typescript/**/*.spec.ts'],
+			include: ['./typescript/**/*.ts', './assets/**/*'],
+			exclude: ['./typescript/**/*.spec.ts', './assets/html/page.html'],
 		},
 	},
 ];
