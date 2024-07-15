@@ -25,7 +25,13 @@ export class Page {
 	private insertStylesheets() {
 		const head = document.getElementsByTagName('head')[0];
 
+		const bundleStylesheet = document.createElement('link');
+		bundleStylesheet.setAttribute('rel', 'stylesheet');
+		bundleStylesheet.setAttribute('href', `${this.prefix}/bundle.min.css`);
+		head.appendChild(bundleStylesheet);
+
 		const piecesStylesheet = document.createElement('link');
+		piecesStylesheet.setAttribute('id', 'chess-opening-trainer-pieces-styles');
 		piecesStylesheet.setAttribute('rel', 'stylesheet');
 		piecesStylesheet.setAttribute('href', `${this.prefix}/css/pieces/cburnett.css`);
 		head.appendChild(piecesStylesheet);

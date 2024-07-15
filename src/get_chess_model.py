@@ -61,13 +61,16 @@ def _get_page_template(collection: Collection) -> TemplateDict:
 	# Always replace the addon URL.
 	pkg = __name__.split('.')[0]
 	prefix = f'/_addons/{pkg}/assets'
-	markup = re.sub('\nconst line = .*?\n', '\nline = {{ Line }};\n', markup)
-	markup = re.sub('\nconst prefix = .*?\n', f"\nprefix = '{ prefix }';\n", markup)
+	markup = markup.replace('{{addon}}', pkg)
+	markup = re.sub('\nconst line = .*?\n', '\nconst line = {{ Line }};\n', markup)
+	markup = re.sub('\nconst prefix = .*?\n', f"\nconst prefix = '{ prefix }';\n", markup)
 
 	template = collection.models.new_template(template_name)
 
 	template['qfmt'] = f'{markup}'
 
 	template['afmt'] = f'{markup}'
+
+	print(markup)
 
 	return template
