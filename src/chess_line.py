@@ -100,18 +100,18 @@ class ChessLine:
 
 	def render_question(self) -> str:
 		board = chess.Board(self._fen)
-		rendered = ''
+		tokens: List[str] = []
 
 		if board.turn == chess.BLACK:
-			rendered += f'{board.fullmove_number}...'
+			tokens.append(f'{board.fullmove_number}...')
 
 		for chess_move in self._moves:
 			if board.turn == chess.WHITE:
-				rendered += f'{board.fullmove_number}.'
+				tokens.append(f'{board.fullmove_number}.')
 
-			rendered += ' ' + board.san_and_push(chess_move.move)
+			tokens.append(board.san_and_push(chess_move.move))
 
-		return rendered
+		return ' '.join(tokens)
 
 	def render_answer(self) -> str:
 		board = chess.Board(self.fen)
