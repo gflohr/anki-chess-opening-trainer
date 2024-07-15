@@ -10,19 +10,21 @@
 import os
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
+import chess
 import semantic_version as sv
 
 from aqt import mw
 from anki.decks import Deck, DeckId
-from anki.models import NotetypeId
+from anki.models import NotetypeId, ChangeNotetypeRequest
 from anki.cards import Card, CardId
-from anki.notes import NoteId
+from anki.notes import Note, NoteId
 
 from .importer_config import ImporterConfig
 from .pgn_importer import PGNImporter
 from .utils import normalize_move, write_importer_config
 from .get_chess_model import get_chess_model
+from .chess_line import ChessLine
 
 
 class Updater:
@@ -36,7 +38,7 @@ class Updater:
 		self.version = version
 		self.addon_dir = os.path.dirname(__file__)
 
-		model = get_chess_model(mw.col)
+		self.model = get_chess_model(mw.col)
 
 
 	def update_config(self, old: Any) -> Any:
@@ -156,22 +158,75 @@ class Updater:
 			self._migrate_deck_v2_0_0(deck_id, importer_config)
 
 	def _migrate_deck_v2_0_0(self, deck_id: DeckId, importer_config: ImporterConfig):
-		print(f'migrate deck {deck_id}')
-		deck_data: Optional[Deck] = self.mw.col.decks.get(did=deck_id)
+		def new_names_to_indices(new_names: List[str], old_names: List[str]) -> List[int]:
+			indices = []
+			for name in new_names:
+				try:
+					indices.append(old_names.index(name))
+				except ValueError:
+					indices.append(-1)
+			return indices
+
+		deck_data: Optional[Deck] = self.mw.col.decks.get(did=deck_id, default=False)
 		if deck_data is None:
 			return # No deck, no migration.
 		deck = cast(Deck, deck_data)
 
-		print('have deck')
-		colour = importer_config['imports'][deck_id]['colour']
+		colour = chess.BLACK if importer_config['imports'][deck_id]['colour'] == 'black' else chess.WHITE
 		model = get_chess_model(self.mw.col)
-		print('got model')
 
 		importer = PGNImporter(colour=colour, model=model, deck=deck)
 		files = importer_config['imports'][deck_id]['files']
-		print(f'files: {files}')
 
 		self._import_files(deck_id, importer, files)
+
+		notes = self._get_notes(deck_id)
+		lines = importer.get_lines()
+		lines_by_question: Dict[str, ChessLine] = {}
+		for line in lines:
+			# The way questions are rendered has slightly changed.  Therefore,
+			# remove all spaces, so that they are comparable.
+			lines_by_question[line.render_question().replace(' ', '')] = line
+
+		for notetype_id, notetype_notes in notes.items():
+			note_ids: Sequence[NoteId] = []
+			for question, note in notetype_notes.items():
+				if question.replace(' ', '') in lines_by_question:
+					print(f'FOUND: *{question}* (note id: {note.id})')
+					note_ids.append(note.id)
+				else:
+					print(f'NOT FOUND: *{question}* (note id: {note.id})')
+			if not len(note_ids):
+				continue
+
+			old_type = mw.col.models.get(notetype_id)
+			new_type = mw.col.models.get(self.model)
+			info = mw.col.models.change_notetype_info(
+				old_notetype_id=notetype_id,
+				new_notetype_id=self.model
+			)
+
+			req = ChangeNotetypeRequest()
+			req.new_fields.extend(
+				new_names_to_indices(
+					list(info.new_field_names),
+					list(info.old_field_names))
+			)
+			req.new_templates.extend(
+				new_names_to_indices(
+					list(info.new_template_names),
+					list(info.old_template_names))
+			)
+
+			req.old_notetype_id = notetype_id
+			req.new_notetype_id = self.model
+			req.current_schema = mw.col.db.scalar('select scm from col')
+			req.old_notetype_name = old_type['name']
+			req.is_cloze = old_type['type'] == 1 or new_type['type'] == 1
+
+			req.note_ids.extend(note_ids)
+
+			mw.col.models.change_notetype_of_notes(req)
 
 	def _upgrade_cards(self,
 	                   card_signatures: List[Tuple[str, CardId]],
@@ -224,23 +279,23 @@ class Updater:
 				# File was deleted, corrupt, whatever.
 				pass
 
-		cards = self._get_cards(deck_id)
-		print(cards)
-
-	def _get_cards(self, deck_id: DeckId) -> Dict[NotetypeId, Dict[str, Card]]:
-		cards: Dict[NotetypeId, Dict[str, Card]] = {}
+	def _get_notes(self, deck_id: DeckId) -> Dict[NotetypeId, Dict[str, Note]]:
+		notes: Dict[NotetypeId, Dict[str, Note]] = {}
 		for cid in mw.col.decks.cids(deck_id):
 			card = mw.col.get_card(cid)
 			note = card.note()
 			if len(note.fields) < 2:
 				continue
-			question = normalize_move(re.sub('<.*', '', note.fields[0]))
+			# Remove trailing HTML and possibly leading 'Moves from ...'.
+			question = re.sub('^[^1-9]*', '', normalize_move(re.sub('<.*', '', note.fields[0])))
 
 			notetype_id = note.note_type()['id']
-			if not notetype_id in cards:
-				cards[notetype_id] = {}
+			if not notetype_id in notes:
+				notes[notetype_id] = {}
 
-			cards[notetype_id][question] = note.id
+			notes[notetype_id][question] = note
+
+		return notes
 
 	def _parse_v1_answer(self, answer: str):
 		answer = re.sub('<br><img.*?>', '', answer)

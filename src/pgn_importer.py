@@ -103,11 +103,9 @@ class PGNImporter:
 
 		nodes_by_signature = {node.signature(): node for node in nodes}
 
-		colour = chess.BLACK if self.colour == 'black' else chess.WHITE
-
 		lines: List[ChessLine] = []
 		for node in nodes:
-			if node.colour == colour:
+			if node.colour == self.colour:
 				line_nodes: List[GameNode] = []
 				previous_signatures = node.previous_signatures()
 				for signature in previous_signatures:
@@ -126,7 +124,7 @@ class PGNImporter:
 	def _insert_line(self, line: ChessLine):
 		note = Note(mw.col, self.model)
 		self.fill_note(note, line)
-		#mw.col.add_note(note, deck_id=self.deck['id'])
+		mw.col.add_note(note, deck_id=self.deck['id'])
 
 	def get_cards(self) -> Dict[str, Card]:
 		collection = mw.col
