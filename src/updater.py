@@ -173,19 +173,26 @@ class Updater:
 		notes = self._get_notes(deck_id)
 		lines = importer.get_lines()
 		lines_by_question: Dict[str, ChessLine] = {}
+
+		def normalize_question(question: str) -> str:
+				question =re.sub('FEN: .*', '', question)
+				return question.replace(' ', '')
+
 		for line in lines:
 			# The way questions are rendered has slightly changed.  Therefore,
 			# remove all spaces, so that they are comparable.
-			lines_by_question[line.render_question().replace(' ', '')] = line
+			lines_by_question[normalize_question(line.render_question())] = line
 
 		for notetype_id, notetype_notes in notes.items():
 			note_ids: Sequence[NoteId] = []
 			lines_by_note_id: Dict[NoteId, ChessLine] = {}
 			for question, note in notetype_notes.items():
-				question = question.replace(' ', '')
+				question = normalize_question(question)
 				if question in lines_by_question:
 					note_ids.append(note.id)
 					lines_by_note_id[note.id] = lines_by_question[question]
+				else:
+					print(f'NOT FOUND: *{question}*')
 
 			if not len(note_ids):
 				continue

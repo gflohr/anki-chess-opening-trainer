@@ -114,6 +114,9 @@ class ChessLine:
 
 			tokens.append(board.san_and_push(chess_move.move))
 
+		# This is important to make the cards unique.
+		tokens.append(f'FEN: {self._fen}')
+
 		return ' '.join(tokens)
 
 	def render_answer(self) -> str:
