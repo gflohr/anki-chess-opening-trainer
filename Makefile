@@ -9,11 +9,14 @@ generated: \
 	src/importer_config_schema.py \
 	src/importer_config.py
 
-zip: generated vendor
-	python -m ankiscripts.build --type package --qt all --exclude user_files/**/*
+assets:
+	bun run build
 
-ankiweb: generated vendor build/ankiweb-description.md
-	python -m ankiscripts.build --type ankiweb --qt all --exclude user_files/**/*
+zip: generated vendor assets
+	python -m ankiscripts.build --type package --qt all --exclude assets/html/index.html
+
+ankiweb: generated vendor build/ankiweb-description.md assets
+	python -m ankiscripts.build --type ankiweb --qt all --exclude assets/html/index.html
 
 build/ankiweb-description.md: description.md CHANGELOG.md
 	cat description.md CHANGELOG.md >$@ || (rm $@; exit 1)
@@ -73,5 +76,5 @@ clean:
 		src/config.py src/config_schema.py \
 		src/importer_config.py src/importer_config_schema.py
 
-.PHONY: all zip ankiweb vendor fix mypy pylint lint test sourcedist \
+.PHONY: all assets zip ankiweb vendor fix mypy pylint lint test sourcedist \
 	update-assets clean

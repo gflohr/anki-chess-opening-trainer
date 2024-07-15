@@ -53,7 +53,7 @@ def get_chess_model(collection: Collection) -> NotetypeId:
 
 def _get_page_template(collection: Collection) -> TemplateDict:
 	addon_dir = get_addon_dir()
-	filename = os.path.join(addon_dir, 'user_files', 'page.html')
+	filename = os.path.join(addon_dir, 'assets', 'html', 'page.html')
 	with open(filename, 'r') as file:
 		html = file.read()
 

@@ -66,7 +66,7 @@ export default [
 				targets: [
 					{
 						src: './assets/html/index.html',
-						dest: 'src/user_files',
+						dest: './assets/html',
 						rename: 'page.html',
 						transform: patchPage,
 					}]
