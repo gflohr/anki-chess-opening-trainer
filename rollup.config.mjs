@@ -69,7 +69,8 @@ export default [
 						dest: './assets/html',
 						rename: 'page.html',
 						transform: patchPage,
-					}]
+					},
+				],
 			}),
 			terser(),
 		],
@@ -81,9 +82,10 @@ export default [
 ];
 
 function patchPage(contents) {
-	return contents.toString()
-	.replace(/.*<!-- BEGIN_PAGE -->/s, '')
-	.replace(/<!-- END_PAGE -->.*/s, '')
-	.replace(/^\t\t/gm, '')
-	.replace(/"\/assets\/index\.js"/, '"/_addons/{{addon}}/assets/index.js"');
+	return contents
+		.toString()
+		.replace(/.*<!-- BEGIN_PAGE -->/s, '')
+		.replace(/<!-- END_PAGE -->.*/s, '')
+		.replace(/^\t\t/gm, '')
+		.replace(/"\/assets\/index\.js"/, '"/_addons/{{addon}}/assets/index.js"');
 }

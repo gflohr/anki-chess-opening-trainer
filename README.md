@@ -106,7 +106,7 @@ You can explore all possibilities at https://lichess.org/study/ZRtfG7rP/gT2yFeb2
 
 You can add more chapters to your study but in the end you have to get it into
 Anki. In the toolbar under the board, click on the "share" symbol. Select
-"study pgn" and you will find a file "lichess*study***\***.pgn" in your
+"study pgn" and you will find a file "lichess\*study**\*\***.pgn" in your
 download directory.
 
 ## Import into Anki
