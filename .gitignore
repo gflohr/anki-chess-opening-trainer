@@ -16,8 +16,11 @@ src/basic_names.py
 /src/assets
 /src/user_files/page.html
 /src/config.py
+/src/config.json
+/src/config.schema.json
 /src/config_schema.py
 /src/importer_config.py
 /src/importer_config_schema.py
 /src/user_files/imports.json
 /assets/html/page.html
+/typescript/config.ts

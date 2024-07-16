@@ -1,10 +1,14 @@
 import { init, attributesModule, classModule, h, VNode } from 'snabbdom';
-import { Config, Meta } from './config';
+import { Config } from './config';
 import { ChessBoard } from './chess-board';
 
 type Options = {
 	prefix: string;
 	id: string;
+};
+
+export type AnkiMeta = {
+	config: Config;
 };
 
 const defaultConfig: Config = {
@@ -31,7 +35,7 @@ export class Trainer {
 
 		try {
 			const response = await fetch(path);
-			const meta: Meta = (await response.json()) as Meta;
+			const meta: AnkiMeta = (await response.json()) as Meta;
 			this.config = meta.config;
 		} catch (_) {
 			/* empty */

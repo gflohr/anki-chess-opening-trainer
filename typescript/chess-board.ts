@@ -24,8 +24,8 @@ export class ChessBoard {
 			{
 				class: {
 					is2d: true,
-					blue: true,
-					merida: true,
+					//blue: true,
+					//merida: true,
 				},
 			},
 			[boardNode],

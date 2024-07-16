@@ -2,12 +2,17 @@ default: all
 
 all: zip ankiweb
 
-generated: \
+GENERATED = $(ENUMS) \
 	src/version.py \
 	src/config_schema.py \
 	src/config.py \
 	src/importer_config_schema.py \
-	src/importer_config.py
+	src/importer_config.py \
+	src/config.schema.json \
+	src/config.json \
+	typescript/config.ts
+
+generated: $(GENERATED)
 
 assets:
 	bun run build
@@ -23,6 +28,9 @@ build/ankiweb-description.md: description.md CHANGELOG.md
 
 src/version.py: ./package.json
 	python3 ./tools/get-version.py >$@ || (rm $@; exit 1)
+
+src/config.schema.json: tools/config-schema.py
+	python $< >$@ || (rm $@; exit 1)
 
 src/config.py: ./src/config.schema.json
 	datamodel-codegen \
@@ -43,6 +51,9 @@ src/importer_config_schema.py: ./src/importer_config.schema.json
 
 src/config_schema.py: ./src/config.schema.json
 	python3 ./tools/json2python.py config_schema <$< >$@ || (rm $@; exit 1)
+
+src/config.json: ./src/config.schema.json
+	node ./tools/default-config.mjs >$@
 
 vendor:
 	python -m ankiscripts.vendor
@@ -71,10 +82,7 @@ update-assets:
 	sh ./tools/get-lichess-assets.sh
 
 clean:
-	rm -rf \
-		build/ src/version.py \
-		src/config.py src/config_schema.py \
-		src/importer_config.py src/importer_config_schema.py
+	rm -rf build/ $(GENERATED)
 
 .PHONY: all assets zip ankiweb vendor fix mypy pylint lint test sourcedist \
 	update-assets clean
