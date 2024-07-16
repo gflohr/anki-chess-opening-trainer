@@ -1,22 +1,28 @@
-import { Config, Meta } from "./config";
-import { Page } from "./page";
+import { init, attributesModule, h, VNode } from 'snabbdom';
+import { Config, Meta } from './config';
+import { Page } from './page';
 
 type Options = {
 	element: HTMLElement;
 	prefix: string;
 };
 
-const defaultConfig: Config = {}
+const defaultConfig: Config = {};
 
 export class Trainer {
 	private readonly prefix: string;
 	private readonly page: Page;
 	private config: Config = defaultConfig;
+	private patch: (
+		oldVnode: VNode | Element | DocumentFragment,
+		vnode: VNode,
+	) => VNode;
 
 	constructor(options: Options) {
 		this.prefix = options.prefix;
-		this.page = new Page({ element: options.element, prefix: options.prefix });
+		this.patch = init([attributesModule]);
 		this.insertStylesheets();
+		this.page = new Page(options.element);
 	}
 
 	async render(line: unknown) {
@@ -24,25 +30,28 @@ export class Trainer {
 
 		try {
 			const response = await fetch(path);
-			const meta: Meta = await response.json() as Meta;
+			const meta: Meta = (await response.json()) as Meta;
 			this.config = meta.config;
-		} catch(_) { /* empty */ }
+		} catch (_) {
+			/* empty */
+		}
 
 		this.page.render(line);
 	}
 
 	private insertStylesheets() {
-		const head = document.getElementsByTagName('head')[0];
+		const bundle = `${this.prefix}/assets/bundle.min.css`;
+		const bundleNode = h('link', {
+			attrs: { rel: 'stylesheet', href: bundle },
+		});
+		const pieces = `${this.prefix}/assets/css/pieces/cburnett.css`;
+		const piecesNode = h('link', {
+			attrs: { rel: 'stylesheet', href: pieces },
+		});
 
-		const bundleStylesheet = document.createElement('link');
-		bundleStylesheet.setAttribute('rel', 'stylesheet');
-		bundleStylesheet.setAttribute('href', `${this.prefix}/assets/bundle.min.css`);
-		head.appendChild(bundleStylesheet);
+		const headNode = h('head', {}, [bundleNode, piecesNode]);
 
-		const piecesStylesheet = document.createElement('link');
-		piecesStylesheet.setAttribute('id', 'chess-opening-trainer-pieces-styles');
-		piecesStylesheet.setAttribute('rel', 'stylesheet');
-		piecesStylesheet.setAttribute('href', `${this.prefix}/assets/css/pieces/cburnett.css`);
-		head.appendChild(piecesStylesheet);
+		const headElement = document.getElementsByTagName('head');
+		this.patch(headElement[0], headNode);
 	}
 }
