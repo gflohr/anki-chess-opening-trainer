@@ -1,31 +1,32 @@
-import { init, attributesModule, h, VNode } from 'snabbdom';
+import { init, attributesModule, classModule, h, VNode } from 'snabbdom';
 import { Config, Meta } from './config';
-import { Page } from './page';
+import { ChessBoard } from './chess-board';
 
 type Options = {
-	element: HTMLElement;
 	prefix: string;
+	id: string;
 };
 
-const defaultConfig: Config = {};
+const defaultConfig: Config = {
+	version: '0.0.0',
+};
 
 export class Trainer {
 	private readonly prefix: string;
-	private readonly page: Page;
 	private config: Config = defaultConfig;
 	private patch: (
 		oldVnode: VNode | Element | DocumentFragment,
 		vnode: VNode,
 	) => VNode;
+	private readonly id: string;
 
 	constructor(options: Options) {
 		this.prefix = options.prefix;
-		this.patch = init([attributesModule]);
-		this.insertStylesheets();
-		this.page = new Page(options.element);
+		this.patch = init([attributesModule, classModule]);
+		this.id = options.id;
 	}
 
-	async render(line: unknown) {
+	async render() {
 		const path = `${this.prefix}/meta.json`;
 
 		try {
@@ -36,7 +37,30 @@ export class Trainer {
 			/* empty */
 		}
 
-		this.page.render(line);
+		this.insertStylesheets();
+
+		const board = new ChessBoard();
+		const boardNode = board.node();
+		const sidebarNode = h('chess-sidebar');
+		const containerNode = h(
+			'chess-opening-trainer',
+			{
+				attrs: {
+					id: this.id,
+				},
+			},
+			[boardNode, sidebarNode],
+		);
+
+		const bodyNode = h('body', {}, [containerNode]);
+
+		const bodyElement = document.querySelector('body') as HTMLElement;
+		this.patch(bodyElement, bodyNode);
+
+		const container = document.getElementById(this.id);
+		if (container) {
+			board.render(container);
+		}
 	}
 
 	private insertStylesheets() {
@@ -51,7 +75,7 @@ export class Trainer {
 
 		const headNode = h('head', {}, [bundleNode, piecesNode]);
 
-		const headElement = document.getElementsByTagName('head');
-		this.patch(headElement[0], headNode);
+		const headElement = document.querySelector('head') as HTMLElement;
+		this.patch(headElement, headNode);
 	}
 }
