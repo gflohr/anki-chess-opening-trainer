@@ -1,85 +1,85 @@
 {
-  "name": "anki-chess-opening-trainer",
-  "version": "2.0.0-alpha.0.1.0",
-  "description": "This is the source code repository for the [Anki](https://apps.ankiweb.net/)-add-on \"[Chess Opening Trainer](https://ankiweb.net/shared/info/705507113)\". Anki is a popular, open-source flashcard application.  The add-on takes a collection of chess games and creates flashcards from it, helping you in building up an opening repertoire.",
-  "main": "typescript/index.ts",
-  "browser": "src/assets/index.js",
-  "directories": {
-    "test": "tests"
-  },
-  "scripts": {
-    "build": "rollup --config=rollup.config.mjs",
-    "prebuild": "bun install && rimraf src/assets",
-    "build:watch": "rollup --config=rollup.config.mjs --watch",
-    "prebuild:watch": "bun install",
-    "serve": "browser-sync start --server=src --watch --files='src/assets/**/*' --startPath /assets/html/",
-    "start": "npm-run-all --parallel build:watch serve",
-    "format": "prettier --write 'typescript/**/*.ts' *.json *.mjs *.md",
-    "watch": "tsc --watch",
-    "lint": "eslint './typescript/**/*.ts'",
-    "lint:fix": "eslint --fix './typescript/**/*.ts'",
-    "lint:fix-dry-run": "eslint --fix-dry-run './src/**/*.ts'",
-    "lint:staged": "lint-staged",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "GPL-3.0-only",
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "typescript",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
-  },
-  "lint-staged": {
-    "*.{js,ts,json,scss,css,md}": [
-      "prettier --write"
-    ],
-    "src/**/*.ts": [
-      "eslint"
-    ]
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^26.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "@tsconfig/recommended": "^1.0.7",
-    "ajv": "^8.17.1",
-    "browser-sync": "^3.0.2",
-    "cssnano": "^7.0.4",
-    "eslint": "^9.6.0",
-    "jest": "^29.7.0",
-    "json-schema-to-typescript": "^14.1.0",
-    "lint-staged": "^15.2.7",
-    "npm-run-all": "^4.1.5",
-    "postcss": "^8.4.39",
-    "prettier": "^3.3.2",
-    "rimraf": "^5.0.7",
-    "rollup": "^4.18.0",
-    "rollup-plugin-copy": "^3.5.0",
-    "rollup-plugin-sass": "^1.13.1",
-    "ts-jest": "^29.1.5",
-    "ts-loader": "^9.5.1",
-    "tslib": "^2.6.3",
-    "typescript": "^5.5.3",
-    "typescript-eslint": "^7.15.0"
-  },
-  "dependencies": {
-    "chessground": "^9.1.1",
-    "snabbdom": "^3.6.2"
-  }
+	"name": "anki-chess-opening-trainer",
+	"version": "2.0.0-alpha.0.1.0",
+	"description": "This is the source code repository for the [Anki](https://apps.ankiweb.net/)-add-on \"[Chess Opening Trainer](https://ankiweb.net/shared/info/705507113)\". Anki is a popular, open-source flashcard application.  The add-on takes a collection of chess games and creates flashcards from it, helping you in building up an opening repertoire.",
+	"main": "typescript/index.ts",
+	"browser": "src/assets/index.js",
+	"directories": {
+		"test": "tests"
+	},
+	"scripts": {
+		"build": "rollup --config=rollup.config.mjs",
+		"prebuild": "bun install && rimraf src/assets",
+		"build:watch": "rollup --config=rollup.config.mjs --watch",
+		"prebuild:watch": "bun install",
+		"serve": "browser-sync start --server=src --watch --files='src/assets/**/*' --startPath /assets/html/",
+		"start": "npm-run-all --parallel build:watch serve",
+		"format": "prettier --write 'typescript/**/*.ts' *.json *.mjs *.md",
+		"watch": "tsc --watch",
+		"lint": "eslint './typescript/**/*.ts'",
+		"lint:fix": "eslint --fix './typescript/**/*.ts'",
+		"lint:fix-dry-run": "eslint --fix-dry-run './src/**/*.ts'",
+		"lint:staged": "lint-staged",
+		"test": "jest",
+		"test:watch": "jest --watch",
+		"test:cov": "jest --coverage"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "GPL-3.0-only",
+	"jest": {
+		"moduleFileExtensions": [
+			"js",
+			"json",
+			"ts"
+		],
+		"rootDir": "typescript",
+		"testRegex": ".*\\.spec\\.ts$",
+		"transform": {
+			"^.+\\.(t|j)s$": "ts-jest"
+		},
+		"collectCoverageFrom": [
+			"**/*.(t|j)s"
+		],
+		"coverageDirectory": "../coverage",
+		"testEnvironment": "node"
+	},
+	"lint-staged": {
+		"*.{js,ts,json,scss,css,md}": [
+			"prettier --write"
+		],
+		"src/**/*.ts": [
+			"eslint"
+		]
+	},
+	"devDependencies": {
+		"@rollup/plugin-commonjs": "^26.0.1",
+		"@rollup/plugin-node-resolve": "^15.2.3",
+		"@rollup/plugin-terser": "^0.4.4",
+		"@rollup/plugin-typescript": "^11.1.6",
+		"@tsconfig/recommended": "^1.0.7",
+		"ajv": "^8.17.1",
+		"browser-sync": "^3.0.2",
+		"cssnano": "^7.0.4",
+		"eslint": "^9.6.0",
+		"jest": "^29.7.0",
+		"json-schema-to-typescript": "^14.1.0",
+		"lint-staged": "^15.2.7",
+		"npm-run-all": "^4.1.5",
+		"postcss": "^8.4.39",
+		"prettier": "^3.3.2",
+		"rimraf": "^5.0.7",
+		"rollup": "^4.18.0",
+		"rollup-plugin-copy": "^3.5.0",
+		"rollup-plugin-sass": "^1.13.1",
+		"ts-jest": "^29.1.5",
+		"ts-loader": "^9.5.1",
+		"tslib": "^2.6.3",
+		"typescript": "^5.5.3",
+		"typescript-eslint": "^7.15.0"
+	},
+	"dependencies": {
+		"chessground": "^9.1.1",
+		"snabbdom": "^3.6.2"
+	}
 }

@@ -20,46 +20,99 @@ export interface Config {
 		/**
 		 * Whether to use a 3D board.
 		 */
-		"3D": boolean;
+		'3D': boolean;
 		/**
 		 * Style for 2D pieces
 		 */
-		"2D-pieces":
-			| "alpha"
-			| "anarcandy"
-			| "caliente"
-			| "california"
-			| "cardinal"
-			| "cburnett"
-			| "celtic"
-			| "chess7"
-			| "chessnut"
-			| "companion"
-			| "cooke"
-			| "disguised"
-			| "dubrovny"
-			| "fantasy"
-			| "fresca"
-			| "gioco"
-			| "governor"
-			| "horsey"
-			| "icpieces"
-			| "kiwen-suwi"
-			| "kosal"
-			| "leipzig"
-			| "letter"
-			| "libra"
-			| "maestro"
-			| "merida"
-			| "monarchy"
-			| "mpchess"
-			| "pirouetti"
-			| "pixel"
-			| "reillycraig"
-			| "riohacha"
-			| "shapes"
-			| "spatial"
-			| "staunty"
-			| "tatiana";
+		'2Dpieces':
+			| 'alpha'
+			| 'anarcandy'
+			| 'caliente'
+			| 'california'
+			| 'cardinal'
+			| 'cburnett'
+			| 'celtic'
+			| 'chess7'
+			| 'chessnut'
+			| 'companion'
+			| 'cooke'
+			| 'disguised'
+			| 'dubrovny'
+			| 'fantasy'
+			| 'fresca'
+			| 'gioco'
+			| 'governor'
+			| 'horsey'
+			| 'icpieces'
+			| 'kiwen-suwi'
+			| 'kosal'
+			| 'leipzig'
+			| 'letter'
+			| 'libra'
+			| 'maestro'
+			| 'merida'
+			| 'monarchy'
+			| 'mpchess'
+			| 'pirouetti'
+			| 'pixel'
+			| 'reillycraig'
+			| 'riohacha'
+			| 'shapes'
+			| 'spatial'
+			| 'staunty'
+			| 'tatiana';
+		/**
+		 * Style for 2D pieces
+		 */
+		'2Dboard'?:
+			| 'blue-marble'
+			| 'blue-marble.thumbnail'
+			| 'blue2'
+			| 'blue2.thumbnail'
+			| 'blue3'
+			| 'blue3.thumbnail'
+			| 'canvas2'
+			| 'canvas2.thumbnail'
+			| 'green-plastic'
+			| 'green-plastic.thumbnail'
+			| 'grey'
+			| 'grey.thumbnail'
+			| 'horsey'
+			| 'horsey.current-premove'
+			| 'horsey.last-move'
+			| 'horsey.move-dest'
+			| 'horsey.selected'
+			| 'horsey.thumbnail'
+			| 'leather'
+			| 'leather.thumbnail'
+			| 'maple'
+			| 'maple.thumbnail'
+			| 'maple2'
+			| 'maple2.thumbnail'
+			| 'marble'
+			| 'marble.thumbnail'
+			| 'metal'
+			| 'metal.thumbnail'
+			| 'ncf-board'
+			| 'olive'
+			| 'olive.thumbnail'
+			| 'pink-pyramid'
+			| 'pink-pyramid.thumbnail'
+			| 'purple-diag'
+			| 'purple-diag.thumbnail'
+			| 'svg/blue'
+			| 'svg/brown'
+			| 'svg/green'
+			| 'svg/ic'
+			| 'svg/newspaper'
+			| 'svg/purple'
+			| 'wood'
+			| 'wood.thumbnail'
+			| 'wood2'
+			| 'wood2.thumbnail'
+			| 'wood3'
+			| 'wood3.thumbnail'
+			| 'wood4'
+			| 'wood4.thumbnail';
 	};
 }

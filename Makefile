@@ -11,6 +11,7 @@ GENERATED = $(ENUMS) \
 	src/config.schema.json \
 	src/config.json \
 	typescript/config.ts \
+	typescript/default-config.ts \
 	assets/scss/_chessground.scss
 
 generated: $(GENERATED)
@@ -53,8 +54,15 @@ src/importer_config_schema.py: ./src/importer_config.schema.json
 src/config_schema.py: ./src/config.schema.json
 	python3 ./tools/json2python.py config_schema <$< >$@ || (rm $@; exit 1)
 
-src/config.json: ./src/config.schema.json
-	node ./tools/default-config.mjs >$@
+src/config.json: ./src/config.schema.json ./tools/default-config.mjs
+	node ./tools/default-config.mjs >$@ || (rm $@; exit 1)
+
+typescript/config.ts: ./src/config.schema.json
+	(npx json2ts $< >$@ && npx prettier --write $@) || (rm $@; exit 1)
+
+typescript/default-config.ts: ./src/config.schema.json ./tools/default-config.mjs
+	(node ./tools/default-config.mjs --typescript >$@ && npx prettier --write $@) \
+		|| (rm $@; exit 1)
 
 assets/scss/_chessground.scss: ./tools/gen-stylesheets.pl
 	perl ./tools/gen-stylesheets.pl >$@

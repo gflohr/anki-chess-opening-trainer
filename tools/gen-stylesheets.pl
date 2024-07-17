@@ -28,30 +28,6 @@ EOF
 	$snippets_images_2d{$style} = $snippet;
 }
 
+print "// This file is generated! Do NOT edit!\n\n";
+
 print join "\n", map { $snippets_images_2d{$_} } sort keys %snippets_images_2d;
-
-__END__
-
-board_image_2d = glob('assets/images/2d/board/*.*')
-board_image_thumbnails = glob('assets/images/2d/board/*.thumbnail.*')
-board_image_2d = [img for img in board_image_2d if img not in board_image_thumbnails]
-board_image_2d.extend(glob('assets/images/2d/board/svg/*.svg'))
-board_image_2d = sorted(board_image_2d)
-
-board_snippets: List[str] = []
-
-for img in board_image_2d:
-	if re.match('.*\\..*\\.', img):
-		continue
-
-
-	path = re.sub('^assets', '.', img)
-	style = re.sub('.*/', '', img)
-	style = re.sub('\..*?$', '', style)
-	snippet = f'''chess-wrapper.{style} {{
-	background-image: url({path});
-}}
-'''
-	board_snippets.append(snippet)
-
-print('\n'.join(snippets))

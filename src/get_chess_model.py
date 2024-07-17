@@ -71,6 +71,4 @@ def _get_page_template(collection: Collection) -> TemplateDict:
 
 	template['afmt'] = f'{markup}'
 
-	print(markup)
-
 	return template

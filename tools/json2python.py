@@ -9,4 +9,5 @@ variable = sys.argv[1]
 raw = f'{variable} = {eval(sys.stdin.read())}'
 code, _ = FormatCode(raw, style_config='style.yapf')
 code = code.replace('    ', '\t')
+print('# This file is generated! Do NOT edit!\n')
 print(code)

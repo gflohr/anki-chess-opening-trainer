@@ -1,5 +1,6 @@
 import { init, attributesModule, classModule, h, VNode } from 'snabbdom';
 import { Config } from './config';
+import { defaultConfig } from './default-config';
 import { ChessBoard } from './chess-board';
 
 type Options = {
@@ -9,10 +10,6 @@ type Options = {
 
 export type AnkiMeta = {
 	config: Config;
-};
-
-const defaultConfig: Config = {
-	version: '0.0.0',
 };
 
 export class Trainer {
@@ -35,7 +32,7 @@ export class Trainer {
 
 		try {
 			const response = await fetch(path);
-			const meta: AnkiMeta = (await response.json()) as Meta;
+			const meta: AnkiMeta = (await response.json()) as AnkiMeta;
 			this.config = meta.config;
 		} catch (_) {
 			/* empty */
@@ -72,7 +69,8 @@ export class Trainer {
 		const bundleNode = h('link', {
 			attrs: { rel: 'stylesheet', href: bundle },
 		});
-		const pieces = `${this.prefix}/assets/css/pieces/cburnett.css`;
+		const pieces2D = this.config.board['2Dpieces'];
+		const pieces = `${this.prefix}/assets/css/pieces/${pieces2D}.css`;
 		const piecesNode = h('link', {
 			attrs: { rel: 'stylesheet', href: pieces },
 		});
