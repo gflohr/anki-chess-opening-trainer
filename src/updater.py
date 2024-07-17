@@ -42,27 +42,35 @@ class Updater:
 
 
 	def update_config(self, old: Any) -> Any:
+		print('updating configuration')
 		config = self._update(old)
 		config = self._fill_config(config)
 
 		return config
 
 	def _update(self, raw: Any) -> Any:
+		print(raw)
 		if not raw:
 			raw = {}
 
+		print(raw)
 		if 'version' not in raw or not raw['version']:
 			raw['version'] = '0.0.0'
 
+		print(raw)
 		if raw['version'] == self.version:
 			return raw
 
+		print(raw)
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			raw = self._update_v1_0_0(raw)
 
+		print(raw)
 		if (True or sv.Version(raw['version']) < sv.Version('2.0.0')):
 			raw = self._update_v2_0_0(raw)
 
+		print('v2 updater is the culprit')
+		print(raw)
 		raw['version'] = self.version
 
 		self.mw.addonManager.writeConfig(__name__, raw)
@@ -92,10 +100,13 @@ class Updater:
 					}
 					raw['decks']['black'] = deck_id
 
+			self._patch_notes_v1_0_0(raw)
+
+		if 'imports' in raw:
+			del raw['imports']
+
 		if 'files' in raw:
 			del raw['files']
-
-		self._patch_notes_v1_0_0(raw)
 
 		return raw
 
@@ -103,15 +114,16 @@ class Updater:
 		if 'notetype' in raw:
 			del raw['notetype']
 
-		# The old configuration is now the importer configuration in
-		# user_files.
-		write_importer_config(raw)
+		if 'decks' in raw:
+			# The old configuration is now the importer configuration in
+			# user_files.
+			write_importer_config(raw)
 
-		importer_config = cast(ImporterConfig, raw)
+			importer_config = cast(ImporterConfig, raw)
 
-		self._patch_notes_v2_0_0(importer_config)
+			self._patch_notes_v2_0_0(importer_config)
 
-		return {}
+		return raw
 
 	def _patch_notes_v1_0_0(self, config:Any):
 		# pylint: disable=too-many-locals
