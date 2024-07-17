@@ -41,7 +41,7 @@ export class Trainer {
 		this.insertStylesheets();
 
 		const board = new ChessBoard();
-		const boardNode = board.node();
+		const boardNode = board.node(this.config);
 		const sidebarNode = h('chess-sidebar');
 		const containerNode = h(
 			'chess-opening-trainer',

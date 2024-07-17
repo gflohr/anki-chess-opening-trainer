@@ -20,7 +20,7 @@ foreach my $img (keys %board_images_2d) {
 	$path =~ s/^assets/./;
 
 	my $snippet = <<"EOF";
-chess-wrapper.$style cg-wrap {
+.is2d.cot-board-$style .cg-wrap {
 	background-image: url('$path');
 }
 EOF
