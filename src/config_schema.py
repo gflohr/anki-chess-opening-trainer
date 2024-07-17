@@ -44,7 +44,7 @@ config_schema = {
 						'shapes', 'spatial', 'staunty', 'tatiana'
 					],
 					'default':
-					'cburnett'
+					'merida'
 				},
 				'2Dboard': {
 					'description':
