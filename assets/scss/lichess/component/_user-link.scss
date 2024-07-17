@@ -1,0 +1,75 @@
+.user-link {
+  @extend %nowrap-hidden;
+
+  color: $c-font;
+
+  &.online .line {
+    &::before {
+      content: $licon-Disc;
+    }
+
+    color: $c-good;
+    opacity: 0.9;
+
+    &.patron {
+      opacity: 1;
+    }
+  }
+
+  .line {
+    @extend %data-icon;
+
+    color: $c-font;
+    opacity: 0.5;
+    display: inline-block;
+    width: 1.5em;
+    text-align: center;
+    vertical-align: text-top;
+
+    /* not sure about that */
+    &.patron {
+      opacity: 0.8;
+
+      @include if-rtl {
+        transform: scaleX(-1);
+      }
+    }
+
+    &::before {
+      content: $licon-DiscOutline;
+    }
+
+    &.patron::before {
+      content: $licon-Wings !important;
+    }
+
+    &.moderator::before {
+      content: $licon-Agent;
+    }
+  }
+}
+
+a.user-link:hover {
+  color: $c-link;
+}
+
+.utitle {
+  color: $c-brag;
+  font-weight: bold;
+
+  &[data-bot] {
+    color: $c-bot;
+  }
+}
+
+.uflair {
+  height: 1.1em;
+  vertical-align: middle;
+  margin-left: 0.5ch;
+  transform: translateY(-0.1em);
+  // keeps the username easily selectable
+  user-select: none;
+  body.no-flair & {
+    display: none;
+  }
+}

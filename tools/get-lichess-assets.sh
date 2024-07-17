@@ -21,4 +21,6 @@ rm -rf assets/images/3d/*
 test -e assets/imagse/3d || mkdir -p assets/images/3d
 cp -r lila/public/images/staunton/* assets/images/3d
 
+cp -r lila/ui/common/css assets/scss/lichess
+
 rm -rf lila

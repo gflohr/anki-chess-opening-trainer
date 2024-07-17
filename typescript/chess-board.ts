@@ -16,7 +16,7 @@ export class ChessBoard {
 		const classes: { [klass: string]: boolean } = {};
 		classes['is2d'] = !config.board['3D'];
 		classes['is3d'] = config.board['3D'];
-		const boardClass2D = 'cot-board-' + config.board['2Dboard'] as string;
+		const boardClass2D = ('cot-board-' + config.board['2Dboard']) as string;
 		classes[boardClass2D] = true;
 
 		const boardNode = h('chess-board', {
@@ -29,7 +29,7 @@ export class ChessBoard {
 		return h(
 			'chess-wrapper',
 			{
-				'class': classes,
+				class: classes,
 			},
 			[boardNode],
 		);
