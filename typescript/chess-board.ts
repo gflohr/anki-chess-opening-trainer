@@ -20,12 +20,10 @@ export class ChessBoard {
 			},
 		});
 		return h(
-			'section',
+			'chess-wrapper',
 			{
 				class: {
 					is2d: true,
-					//blue: true,
-					//merida: true,
 				},
 			},
 			[boardNode],

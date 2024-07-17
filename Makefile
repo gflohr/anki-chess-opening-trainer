@@ -10,7 +10,8 @@ GENERATED = $(ENUMS) \
 	src/importer_config.py \
 	src/config.schema.json \
 	src/config.json \
-	typescript/config.ts
+	typescript/config.ts \
+	assets/scss/_chessground.scss
 
 generated: $(GENERATED)
 
@@ -54,6 +55,9 @@ src/config_schema.py: ./src/config.schema.json
 
 src/config.json: ./src/config.schema.json
 	node ./tools/default-config.mjs >$@
+
+assets/scss/_chessground.scss: ./tools/gen-stylesheets.pl
+	perl ./tools/gen-stylesheets.pl >$@
 
 vendor:
 	python -m ankiscripts.vendor
