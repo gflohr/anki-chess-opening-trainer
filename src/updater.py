@@ -42,36 +42,26 @@ class Updater:
 
 
 	def update_config(self, old: Any) -> Any:
-		print('updating configuration')
 		config = self._update(old)
 		config = self._fill_config(config)
 
 		return config
 
 	def _update(self, raw: Any) -> Any:
-		print(raw)
 		if not raw:
 			raw = {}
 
-		print(raw)
 		if 'version' not in raw or not raw['version']:
 			raw['version'] = '0.0.0'
 
-		print(raw)
 		if raw['version'] == self.version:
 			return raw
 
-		print(raw)
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			raw = self._update_v1_0_0(raw)
 
-		print(raw)
 		if (True or sv.Version(raw['version']) < sv.Version('2.0.0')):
 			raw = self._update_v2_0_0(raw)
-
-		print('v2 updater is the culprit')
-		print(raw)
-		raw['version'] = self.version
 
 		self.mw.addonManager.writeConfig(__name__, raw)
 
@@ -203,8 +193,6 @@ class Updater:
 				if question in lines_by_question:
 					note_ids.append(note.id)
 					lines_by_note_id[note.id] = lines_by_question[question]
-				else:
-					print(f'NOT FOUND: *{question}*')
 
 			if not len(note_ids):
 				continue
