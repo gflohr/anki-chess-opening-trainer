@@ -1,6 +1,12 @@
 {
-	"extends": "@tsconfig/recommended",
+	"extends": "@tsconfig/svelte",
 	"compilerOptions": {
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"target": "es2017",
+		"verbatimModuleSyntax": true,
+		"sourceMap": true,
+
 		"outDir": "./src/assets",
 		"baseUrl": ".",
 		"rootDir": "./typescript",

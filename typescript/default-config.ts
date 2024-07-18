@@ -1,6 +1,6 @@
 // This file is generated! Do NOT edit!
 
-import { Config } from './config';
+import { type Config } from './config';
 
 export const defaultConfig: Config = {
 	version: '0.0.0',

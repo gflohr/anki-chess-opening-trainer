@@ -24,6 +24,6 @@ if (format == 'json') {
 	console.log(formatted);
 } else {
 	console.log('// This file is generated! Do NOT edit!\n')
-	console.log("import { Config } from './config';\n");
+	console.log("import { type Config } from './config';\n");
 	console.log(`export const defaultConfig: Config = ${formatted};`);
 }

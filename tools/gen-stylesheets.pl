@@ -17,7 +17,7 @@ foreach my $img (keys %board_images_2d) {
 	$style =~ s{\..*$}{};
 
 	my $path = $img;
-	$path =~ s/^assets/./;
+	$path =~ s/^assets/../;
 
 	my $snippet = <<"EOF";
 .is2d.cot-board-$style .cg-wrap {

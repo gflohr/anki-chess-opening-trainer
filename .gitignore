@@ -4,6 +4,8 @@ po/*.gmo
 config.yaml
 __pycache__
 /meta.json
+src/assets
+src/images
 src/vendor
 src/manifest.json
 src/meta.json
