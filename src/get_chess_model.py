@@ -64,11 +64,12 @@ def _get_page_template(collection: Collection) -> TemplateDict:
 	markup = markup.replace('{{addon}}', pkg)
 	markup = re.sub('\nconst line = .*?\n', '\nconst line = {{ Line }};\n', markup)
 	markup = re.sub('\nconst prefix = .*?\n', f"\nconst prefix = '{ prefix }';\n", markup)
+	qfmt = re.sub('\nconst side = .*?\n', f"\nconst side = 'question';\n", markup)
+	afmt = re.sub('\nconst side = .*?\n', f"\nconst side = 'answer';\n", markup)
+	print(qfmt)
 
 	template = collection.models.new_template(template_name)
-
-	template['qfmt'] = f'{markup}'
-
-	template['afmt'] = f'{markup}'
+	template['qfmt'] = qfmt
+	template['afmt'] = afmt
 
 	return template
