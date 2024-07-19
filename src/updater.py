@@ -101,9 +101,6 @@ class Updater:
 		return raw
 
 	def _update_v2_0_0(self, raw: Any) -> Dict[str, Any]:
-		if 'notetype' in raw:
-			del raw['notetype']
-
 		if 'decks' in raw:
 			# The old configuration is now the importer configuration in
 			# user_files.
@@ -112,6 +109,15 @@ class Updater:
 			importer_config = cast(ImporterConfig, raw)
 
 			self._patch_notes_v2_0_0(importer_config)
+
+			del raw['decks']
+
+		if 'colour' in raw:
+			del raw['colour']
+		if 'imports' in raw:
+			del raw['imports']
+		if 'notetype' in raw:
+			del raw['notetype']
 
 		return raw
 
