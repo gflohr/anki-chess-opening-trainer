@@ -8,9 +8,9 @@ from glob import glob
 
 id = 'https://www.guido-flohr.net/schema/anki-chess-opening-trainer.json'
 
-piece_css_2d = glob('assets/css/pieces/*.css')
+piece_css_2d = glob('public/assets/css/pieces/*.css')
 piece_css_2d = [re.sub('\\.css$', '', p) for p in piece_css_2d]
-piece_css_2d = [re.sub('^assets/css/pieces/', '', p) for p in piece_css_2d]
+piece_css_2d = [re.sub('^public/assets/css/pieces/', '', p) for p in piece_css_2d]
 piece_css_2d = sorted(piece_css_2d)
 
 board_image_2d = glob('assets/images/2d/board/*.*')
@@ -20,6 +20,17 @@ board_image_2d.extend(glob('assets/images/2d/board/svg/*.svg'))
 board_image_2d = [re.sub('\\.[^.]+$', '', p) for p in board_image_2d]
 board_image_2d = [re.sub('^assets/images/2d/board/', '', p) for p in board_image_2d]
 board_image_2d = sorted(board_image_2d)
+
+piece_images_3d = glob('assets/images/3d/piece/*')
+piece_images_3d = [re.sub('^assets/images/3d/piece/', '', p) for p in piece_images_3d]
+piece_images_3d = sorted(piece_images_3d)
+
+board_image_3d = glob('assets/images/3d/board/*.*')
+board_image_thumbnails = glob('assets/images/*.thumbnail.*')
+board_image_3d = [img for img in board_image_3d if img not in board_image_thumbnails]
+board_image_3d = [re.sub('\\.[^.]+$', '', p) for p in board_image_3d]
+board_image_3d = [re.sub('^assets/images/3d/board/', '', p) for p in board_image_3d]
+board_image_3d = sorted(board_image_3d)
 
 schema = {
 	'$schema': 'http://json-schema.org/draft-07/schema#',
@@ -40,7 +51,7 @@ schema = {
 			'description': 'The board style',
 			'type': 'object',
 			'additionalProperties': False,
-			'required': ['3D', '2Dpieces' ],
+			'required': ['3D', '2Dpieces', '2Dboard', '3Dpieces', '3Dboard' ],
 			'properties': {
 				'3D': {
 					'description': 'Whether to use a 3D board.',
@@ -54,10 +65,22 @@ schema = {
 					'default': 'cburnett',
 				},
 				'2Dboard': {
-					'description': 'Style for 2D pieces',
+					'description': 'Style for 2D board',
 					'type': 'string',
 					'enum': board_image_2d,
 					'default': 'blue3',
+				},
+				'3Dpieces': {
+					'description': 'Style for 3D pieces',
+					'type': 'string',
+					'enum': piece_images_3d,
+					'default': 'Basic',
+				},
+				'3Dboard': {
+					'description': 'Style for 3D board',
+					'type': 'string',
+					'enum': board_image_3d,
+					'default': 'Black-White-Aluminium',
 				},
 			},
 			'default': {},

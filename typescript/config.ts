@@ -62,9 +62,9 @@ export interface Config {
 			| 'staunty'
 			| 'tatiana';
 		/**
-		 * Style for 2D pieces
+		 * Style for 2D board
 		 */
-		'2Dboard'?:
+		'2Dboard':
 			| 'blue-marble'
 			| 'blue-marble.thumbnail'
 			| 'blue2'
@@ -114,5 +114,64 @@ export interface Config {
 			| 'wood3.thumbnail'
 			| 'wood4'
 			| 'wood4.thumbnail';
+		/**
+		 * Style for 3D pieces
+		 */
+		'3Dpieces':
+			| 'Basic'
+			| 'CubesAndPi'
+			| 'Experimental'
+			| 'Glass'
+			| 'Metal'
+			| 'ModernJade'
+			| 'ModernWood'
+			| 'RedVBlue'
+			| 'Staunton'
+			| 'Trimmed'
+			| 'Wood';
+		/**
+		 * Style for 3D board
+		 */
+		'3Dboard':
+			| 'Black-White-Aluminium'
+			| 'Black-White-Aluminium.thumbnail'
+			| 'Brushed-Aluminium'
+			| 'Brushed-Aluminium.thumbnail'
+			| 'China-Blue'
+			| 'China-Blue.thumbnail'
+			| 'China-Green'
+			| 'China-Green.thumbnail'
+			| 'China-Grey'
+			| 'China-Grey.thumbnail'
+			| 'China-Scarlet'
+			| 'China-Scarlet.thumbnail'
+			| 'China-Yellow'
+			| 'China-Yellow.thumbnail'
+			| 'Classic-Blue'
+			| 'Classic-Blue.thumbnail'
+			| 'Glass'
+			| 'Glass.thumbnail'
+			| 'Gold-Silver'
+			| 'Gold-Silver.thumbnail'
+			| 'Green-Glass'
+			| 'Green-Glass.thumbnail'
+			| 'Jade'
+			| 'Jade.thumbnail'
+			| 'Light-Wood'
+			| 'Light-Wood.thumbnail'
+			| 'Marble'
+			| 'Marble.thumbnail'
+			| 'Power-Coated'
+			| 'Power-Coated.thumbnail'
+			| 'Purple-Black'
+			| 'Purple-Black.thumbnail'
+			| 'Rosewood'
+			| 'Rosewood.thumbnail'
+			| 'Wax'
+			| 'Wax.thumbnail'
+			| 'Wood-Glass'
+			| 'Wood-Glass.thumbnail'
+			| 'Woodi'
+			| 'Woodi.thumbnail';
 	};
 }

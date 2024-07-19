@@ -21,7 +21,7 @@ config_schema = {
 			'description': 'The board style',
 			'type': 'object',
 			'additionalProperties': False,
-			'required': ['3D', '2Dpieces'],
+			'required': ['3D', '2Dpieces', '2Dboard', '3Dpieces', '3Dboard'],
 			'properties': {
 				'3D': {
 					'description': 'Whether to use a 3D board.',
@@ -44,11 +44,11 @@ config_schema = {
 						'shapes', 'spatial', 'staunty', 'tatiana'
 					],
 					'default':
-					'merida'
+					'cburnett'
 				},
 				'2Dboard': {
 					'description':
-					'Style for 2D pieces',
+					'Style for 2D board',
 					'type':
 					'string',
 					'enum': [
@@ -71,6 +71,47 @@ config_schema = {
 					],
 					'default':
 					'blue3'
+				},
+				'3Dpieces': {
+					'description':
+					'Style for 3D pieces',
+					'type':
+					'string',
+					'enum': [
+						'Basic', 'CubesAndPi', 'Experimental', 'Glass',
+						'Metal', 'ModernJade', 'ModernWood', 'RedVBlue',
+						'Staunton', 'Trimmed', 'Wood'
+					],
+					'default':
+					'Basic'
+				},
+				'3Dboard': {
+					'description':
+					'Style for 3D board',
+					'type':
+					'string',
+					'enum': [
+						'Black-White-Aluminium',
+						'Black-White-Aluminium.thumbnail', 'Brushed-Aluminium',
+						'Brushed-Aluminium.thumbnail', 'China-Blue',
+						'China-Blue.thumbnail', 'China-Green',
+						'China-Green.thumbnail', 'China-Grey',
+						'China-Grey.thumbnail', 'China-Scarlet',
+						'China-Scarlet.thumbnail', 'China-Yellow',
+						'China-Yellow.thumbnail', 'Classic-Blue',
+						'Classic-Blue.thumbnail', 'Glass', 'Glass.thumbnail',
+						'Gold-Silver', 'Gold-Silver.thumbnail', 'Green-Glass',
+						'Green-Glass.thumbnail', 'Jade', 'Jade.thumbnail',
+						'Light-Wood', 'Light-Wood.thumbnail', 'Marble',
+						'Marble.thumbnail', 'Power-Coated',
+						'Power-Coated.thumbnail', 'Purple-Black',
+						'Purple-Black.thumbnail', 'Rosewood',
+						'Rosewood.thumbnail', 'Wax', 'Wax.thumbnail',
+						'Wood-Glass', 'Wood-Glass.thumbnail', 'Woodi',
+						'Woodi.thumbnail'
+					],
+					'default':
+					'Black-White-Aluminium'
 				}
 			},
 			'default': {}
