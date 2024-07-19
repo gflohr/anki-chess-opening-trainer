@@ -21,12 +21,4 @@ rm -rf assets/images/3d/*
 test -e assets/images/3d || mkdir -p assets/images/3d
 cp -r lila/public/images/staunton/* assets/images/3d
 
-test -e assets/scss/lichess || mkdir -p assets/scss/lichess
-
-cd lila/ui
-./build
-cd ../..
-
-cp -r lila/ui/common/css/theme assets/scss/lichess
-
 rm -rf lila
