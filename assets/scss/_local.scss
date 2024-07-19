@@ -6,10 +6,15 @@ chess-board {
 	width: 400px;
 	height: 400px;
 	position: relative;
+	display: block;
 }
 
 .cg-wrap {
 	background-size: contain;
 	margin: 1em;
 	box-sizing: border-box;
+}
+
+.is3d .cg-wrap {
+	background-repeat: no-repeat;
 }

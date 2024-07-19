@@ -14,8 +14,10 @@
 		initialized = true;
 
 		classes = [];
+		console.log(config);
 		if (config.board['3D']) {
 			classes.push('is3d');
+			classes.push('cot-board-' + config.board['3Dboard']);
 		} else {
 			classes.push('is2d');
 			classes.push('cot-board-' + config.board['2Dboard']);
