@@ -9,7 +9,7 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "vite build && cp -r dist/* src && perl tools/copy-index-html.pl",
+    "build": "vite build && cp -r dist/* src && perl tools/anki-install.pl",
     "prebuild": "bun install && rimraf src/assets",
     "prebuild:watch": "bun install",
     "dev": "vite",

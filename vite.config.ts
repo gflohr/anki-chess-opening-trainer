@@ -10,5 +10,7 @@ export default defineConfig({
 		rollupOptions: {
 			input: './index.html',
 		},
+		minify: false,
+		cssMinify: false,
 	},
 })
