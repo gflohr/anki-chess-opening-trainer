@@ -2,12 +2,12 @@
 	import Trainer from './Trainer.svelte';
 </script>
 
-<main>
+<div id="main-wrap">
 	<Trainer></Trainer>
-</main>
+</div>
 
 <style>
-	main {
-		width: 400px;
+	#main-wrap, main {
+		display: grid;
 	}
 </style>

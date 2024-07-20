@@ -1,12 +1,17 @@
-body {
-	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+*, *::before, *::after {
+	box-sizing: inherit;
+	margin: 0;
+	padding: 0;
 }
 
-chess-board {
+body {
+	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	margin: 0;
+}
+
+chess-opening-trainer {
 	width: 400px;
 	height: 400px;
-	position: relative;
-	display: block;
 }
 
 .cg-wrap {
@@ -15,6 +20,20 @@ chess-board {
 	box-sizing: border-box;
 }
 
-.is3d .cg-wrap {
-	background-repeat: no-repeat;
+.is3d {
+	chess-board {
+		padding-bottom: 92.96875%;
+	}
+
+	.cg-wrap {
+		background-repeat: no-repeat;
+		height: 97.5840336134%;
+	}
+
+	piece {
+		width: 16.741%;
+		height: 23.563%;
+		left: -1.85%;
+		top: -9.1%;
+	}
 }

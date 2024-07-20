@@ -39,3 +39,9 @@
 	<Board></Board>
 	<Sidebar></Sidebar>
 </chess-opening-trainer>
+
+<style>
+	chess-opening-trainer {
+		display: grid;
+	}
+</style>
