@@ -18,7 +18,7 @@ export class ConfigLoader {
 		try {
 			const response = await fetch(path);
 			const meta: AnkiMeta = (await response.json()) as AnkiMeta;
-			console.log(`use real config: ${JSON.stringify(meta, null, '\t')}`)
+			console.log(`use real config: ${JSON.stringify(meta, null, '\t')}`);
 			return meta.config;
 		} catch (_) {
 			console.log('use default config');

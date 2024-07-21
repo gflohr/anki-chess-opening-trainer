@@ -38,11 +38,26 @@
 </script>
 
 <chess-clock>
-	<svg xmlns="http://www.w3.org/2000/svg"
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 24 24"
-		width="48px" height="48px">
-		<circle cx="12" cy="12" r="9" stroke="black" stroke-width="1.5" fill="none" />
-		<polyline points="12,6 12,12 16,16" stroke="black" stroke-width="1.5" fill="none" />
+		width="48px"
+		height="48px"
+	>
+		<circle
+			cx="12"
+			cy="12"
+			r="9"
+			stroke="black"
+			stroke-width="1.5"
+			fill="none"
+		/>
+		<polyline
+			points="12,6 12,12 16,16"
+			stroke="black"
+			stroke-width="1.5"
+			fill="none"
+		/>
 	</svg>
 	<div class="digits">
 		<div>{formatNumber(hours)}:</div>
@@ -55,10 +70,11 @@
 <style>
 	chess-clock {
 		display: flex;
-		font-family: sans-serif;
-		font-size: 2em;
 		align-items: center;
 		justify-content: center;
+		background-color: #eee;
+		font-size: 18pt;
+		padding: 0.5rem;
 	}
 	.digits {
 		display: flex;

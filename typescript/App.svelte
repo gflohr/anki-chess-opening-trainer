@@ -3,11 +3,14 @@
 </script>
 
 <div id="main-wrap">
-	<Trainer></Trainer>
+	<main>
+		<Trainer></Trainer>
+	</main>
 </div>
 
-<style>
-	#main-wrap, main {
+<style lang="scss">
+	#main-wrap {
 		display: grid;
+		margin-top: 2%;
 	}
 </style>

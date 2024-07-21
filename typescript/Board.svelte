@@ -11,7 +11,6 @@
 		}
 
 		classes = [];
-		console.log(config);
 		if (config.board['3D']) {
 			classes.push('is3d');
 			classes.push('cot-board-' + config.board['3Dboard']);
@@ -31,8 +30,13 @@
 	<Chessground addPieceZIndex={true} />
 </chess-board>
 
-<style>
-	chess-board.loading {
-		visibility: hidden;
-	}
+<style lang="scss">
+chess-board {
+	position: relative;
+
+}
+
+chess-board.loading {
+	visibility: hidden;
+}
 </style>

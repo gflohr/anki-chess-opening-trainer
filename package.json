@@ -1,82 +1,82 @@
 {
-  "name": "anki-chess-opening-trainer",
-  "version": "2.0.0-alpha.0.1.0",
-  "type": "module",
-  "description": "This is the source code repository for the [Anki](https://apps.ankiweb.net/)-add-on \"[Chess Opening Trainer](https://ankiweb.net/shared/info/705507113)\". Anki is a popular, open-source flashcard application.  The add-on takes a collection of chess games and creates flashcards from it, helping you in building up an opening repertoire.",
-  "main": "typescript/index.ts",
-  "browser": "src/assets/index.js",
-  "directories": {
-    "test": "tests"
-  },
-  "scripts": {
-    "build": "vite build && cp -r dist/* src && perl tools/anki-install.pl",
-    "prebuild": "bun install && rimraf src/assets",
-    "prebuild:watch": "bun install",
-    "dev": "vite",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "format": "prettier --write 'typescript/**/*.ts' 'typescript**/*.svelte' *.json *.mjs *.md *.html",
-    "watch": "tsc --watch",
-    "lint": "eslint './typescript/**/*.ts'",
-    "lint:fix": "eslint --fix './typescript/**/*.ts'",
-    "lint:fix-dry-run": "eslint --fix-dry-run './src/**/*.ts'",
-    "lint:staged": "lint-staged",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "GPL-3.0-only",
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "typescript",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
-  },
-  "lint-staged": {
-    "*.{js,ts,json,scss,css,md}": [
-      "prettier --write"
-    ],
-    "src/**/*.ts": [
-      "eslint"
-    ]
-  },
-  "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^3.1.1",
-    "@tsconfig/svelte": "^5.0.4",
-    "ajv": "^8.17.1",
-    "browser-sync": "^3.0.2",
-    "eslint": "^9.6.0",
-    "jest": "^29.7.0",
-    "json-schema-to-typescript": "^14.1.0",
-    "lint-staged": "^15.2.7",
-    "npm-run-all": "^4.1.5",
-    "postcss": "^8.4.39",
-    "prettier": "^3.3.2",
-    "prettier-plugin-svelte": "^3.2.6",
-    "rimraf": "^5.0.7",
-    "svelte": "^4.2.18",
-    "svelte-check": "^3.8.4",
-    "ts-jest": "^29.1.5",
-    "ts-loader": "^9.5.1",
-    "tslib": "^2.6.3",
-    "typescript": "^5.5.3",
-    "typescript-eslint": "^7.15.0",
-    "vite": "^5.3.4"
-  },
-  "dependencies": {
-    "snabbdom": "^3.6.2",
-    "svelte-chessground": "^2.0.3"
-  }
+	"name": "anki-chess-opening-trainer",
+	"version": "2.0.0-alpha.0.1.0",
+	"type": "module",
+	"description": "This is the source code repository for the [Anki](https://apps.ankiweb.net/)-add-on \"[Chess Opening Trainer](https://ankiweb.net/shared/info/705507113)\". Anki is a popular, open-source flashcard application.  The add-on takes a collection of chess games and creates flashcards from it, helping you in building up an opening repertoire.",
+	"main": "typescript/index.ts",
+	"browser": "src/assets/index.js",
+	"directories": {
+		"test": "tests"
+	},
+	"scripts": {
+		"build": "vite build && cp -r dist/* src && perl tools/anki-install.pl",
+		"prebuild": "bun install && rimraf src/assets",
+		"prebuild:watch": "bun install",
+		"dev": "vite",
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"format": "prettier --write 'typescript/**/*.ts' 'typescript**/*.svelte' *.json *.mjs *.md *.html",
+		"watch": "tsc --watch",
+		"lint": "eslint './typescript/**/*.ts'",
+		"lint:fix": "eslint --fix './typescript/**/*.ts'",
+		"lint:fix-dry-run": "eslint --fix-dry-run './src/**/*.ts'",
+		"lint:staged": "lint-staged",
+		"test": "jest",
+		"test:watch": "jest --watch",
+		"test:cov": "jest --coverage"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "GPL-3.0-only",
+	"jest": {
+		"moduleFileExtensions": [
+			"js",
+			"json",
+			"ts"
+		],
+		"rootDir": "typescript",
+		"testRegex": ".*\\.spec\\.ts$",
+		"transform": {
+			"^.+\\.(t|j)s$": "ts-jest"
+		},
+		"collectCoverageFrom": [
+			"**/*.(t|j)s"
+		],
+		"coverageDirectory": "../coverage",
+		"testEnvironment": "node"
+	},
+	"lint-staged": {
+		"*.{js,ts,json,scss,css,md}": [
+			"prettier --write"
+		],
+		"src/**/*.ts": [
+			"eslint"
+		]
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "^3.1.1",
+		"@tsconfig/svelte": "^5.0.4",
+		"ajv": "^8.17.1",
+		"browser-sync": "^3.0.2",
+		"eslint": "^9.6.0",
+		"jest": "^29.7.0",
+		"json-schema-to-typescript": "^14.1.0",
+		"lint-staged": "^15.2.7",
+		"npm-run-all": "^4.1.5",
+		"postcss": "^8.4.39",
+		"prettier": "^3.3.2",
+		"prettier-plugin-svelte": "^3.2.6",
+		"rimraf": "^5.0.7",
+		"svelte": "^4.2.18",
+		"svelte-check": "^3.8.4",
+		"ts-jest": "^29.1.5",
+		"ts-loader": "^9.5.1",
+		"tslib": "^2.6.3",
+		"typescript": "^5.5.3",
+		"typescript-eslint": "^7.15.0",
+		"vite": "^5.3.4"
+	},
+	"dependencies": {
+		"snabbdom": "^3.6.2",
+		"svelte-chessground": "^2.0.3"
+	}
 }

@@ -1,5 +1,5 @@
 *, *::before, *::after {
-	box-sizing: inherit;
+	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
 }
@@ -9,15 +9,9 @@ body {
 	margin: 0;
 }
 
-chess-opening-trainer {
-	width: 400px;
-	height: 400px;
-}
-
-.cg-wrap {
-	background-size: contain;
-	margin: 1em;
-	box-sizing: border-box;
+chess-board .cg-wrap {
+	background-size: cover;
+	background-repeat: no-repeat;
 }
 
 .is3d {

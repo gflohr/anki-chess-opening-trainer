@@ -41,7 +41,14 @@
 </chess-opening-trainer>
 
 <style>
-	chess-opening-trainer {
-		display: grid;
-	}
+chess-opening-trainer {
+	position: relative;
+	height: 100vh;
+	display: grid;
+	justify-content: center;
+	justify-items: stretch;
+	align-items: stretch;
+	grid-template-columns: 500px auto;
+	grid-template-rows: 500px;
+}
 </style>
