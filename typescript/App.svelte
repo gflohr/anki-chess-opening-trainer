@@ -11,6 +11,6 @@
 <style lang="scss">
 	#main-wrap {
 		display: grid;
-		margin-top: 2%;
+		margin-top: 4%;
 	}
 </style>

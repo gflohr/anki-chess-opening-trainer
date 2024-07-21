@@ -7,13 +7,28 @@
 
 	let linkElement: HTMLLinkElement;
 	const appElement = document.getElementById('app');
-	let rawLine = appElement?.dataset.line;
 	const prefix = appElement?.dataset.prefix;
+
+	// FIXME! Calculate that based on the available space!
+	let baseSize = 512;
+	let is3d = false;
+	let size: number = 1.0;
+	let width = size * baseSize;
+	let height = size * baseSize;
+
+	const recomputeDimensions = (is3d: boolean) => {
+		if (is3d) {
+			height = 958 / 1024 * size * baseSize;
+		} else {
+			height = size * baseSize;
+		}
+	}
 
 	const unsubscribe = configuration.subscribe(config => {
 		if (!config) {
 			return;
 		}
+
 		const pieces2D = config.board['2Dpieces'];
 		const linkUrl = `${prefix}/assets/css/pieces/${pieces2D}.css`;
 		if (!linkElement) {
@@ -22,6 +37,9 @@
 			document.head.appendChild(linkElement);
 		}
 		linkElement.href = linkUrl;
+
+		is3d = config.board['3D'];
+		recomputeDimensions(is3d);
 	});
 
 	onDestroy(() => {
@@ -35,7 +53,8 @@
 	});
 </script>
 
-<chess-opening-trainer>
+<chess-opening-trainer
+	style="grid-template-columns:{width}px auto; grid-template-rows:{height}px;">
 	<Board></Board>
 	<Sidebar></Sidebar>
 </chess-opening-trainer>
@@ -48,7 +67,5 @@ chess-opening-trainer {
 	justify-content: center;
 	justify-items: stretch;
 	align-items: stretch;
-	grid-template-columns: 500px auto;
-	grid-template-rows: 500px;
 }
 </style>

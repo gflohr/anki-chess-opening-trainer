@@ -39,7 +39,7 @@
 	<chess-move>
 		<chess-move-number>5</chess-move-number>
 		<chess-move-white>d3</chess-move-white>
-		<chess-move-black></chess-move-black>
+		<chess-move-black>?</chess-move-black>
 	</chess-move>
 </chess-movelist>
 
