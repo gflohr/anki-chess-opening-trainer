@@ -4,14 +4,11 @@ import json
 from typing import Any, List, cast
 from jsonschema import ValidationError, validate
 
-import anki
 from anki.notes import NotetypeId
 from aqt import mw
 from aqt.utils import show_critical
 
-
-import importer_config_schema
-
+from .importer_config_schema import importer_config_schema
 from .importer_config import ImporterConfig
 from .version import __version__
 
@@ -53,7 +50,7 @@ def load_importer_config() -> ImporterConfig:
 		try:
 			validate(raw_importer_config, schema=importer_config_schema)
 		except ValidationError as e:
-			show_critical(_('Your imports configuration is invalid, restoring defaults.'))
+			show_critical(_('Your imports configuration for Chess Opening Trainer is invalid, restoring defaults.'))
 			raw_importer_config = _fill_importer_config_defaults(None)
 			write_importer_config(raw_importer_config)
 			print(e)
