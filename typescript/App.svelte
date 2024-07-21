@@ -11,6 +11,7 @@
 <style lang="scss">
 	#main-wrap {
 		display: grid;
-		margin-top: 4%;
+		height: 100vh;
+		padding-top: 10vh
 	}
 </style>

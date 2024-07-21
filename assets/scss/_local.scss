@@ -9,18 +9,10 @@ body {
 	margin: 0;
 }
 
-chess-board .cg-wrap {
-	background-size: cover;
-	background-repeat: no-repeat;
-}
-
 .is3d {
-	chess-board {
-		padding-bottom: 92.96875%;
-		margin-top: -4px;
-	}
-
 	.cg-wrap {
+		background-repeat: no-repeat;
+		background-size: cover;
 		background-repeat: no-repeat;
 		height: 97.5840336134%;
 	}
@@ -32,3 +24,13 @@ chess-board .cg-wrap {
 		top: -9.1%;
 	}
 }
+
+chess-board.is3d {
+	//padding-bottom: 92.96875%;
+	margin-top: -4px;
+}
+
+chess-sidebar.is3d {
+	padding-bottom: 4.65%;
+}
+

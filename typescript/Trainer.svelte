@@ -62,7 +62,6 @@
 <style>
 chess-opening-trainer {
 	position: relative;
-	height: 100vh;
 	display: grid;
 	justify-content: center;
 	justify-items: stretch;
