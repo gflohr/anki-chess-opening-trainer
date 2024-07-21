@@ -9,14 +9,36 @@
 	const appElement = document.getElementById('app');
 	const prefix = appElement?.dataset.prefix;
 
-	// FIXME! Calculate that based on the available space!
 	let baseSize = 512;
 	let is3d = false;
 	let size: number = 1.0;
 	let width = size * baseSize;
 	let height = size * baseSize;
 
-	const recomputeDimensions = (is3d: boolean) => {
+	const resize = () => {
+		const mainWrap = document.getElementById('main-wrap');
+		if (!mainWrap) return;
+
+		const sidebar = mainWrap.querySelector('chess-sidebar');
+		if (!sidebar) return;
+
+		const styles = getComputedStyle(mainWrap);
+		const availableWidth = mainWrap.clientWidth -
+			parseFloat(styles.paddingLeft) - parseFloat(styles.paddingRight) -
+			parseFloat(styles.borderLeft) - parseFloat(styles.borderRight);
+		const availableHeight = mainWrap.clientHeight -
+			parseFloat(styles.paddingTop) - parseFloat(styles.paddingBottom) -
+			parseFloat(styles.borderTop) - parseFloat(styles.borderBottom);
+
+		const sidebarWidth = sidebar.clientWidth;
+
+		if (availableWidth - sidebarWidth < availableHeight) {
+			baseSize = availableWidth - sidebarWidth;
+		} else {
+			baseSize = availableHeight;
+		}
+
+		width = size * baseSize;
 		if (is3d) {
 			height = 958 / 1024 * size * baseSize;
 		} else {
@@ -39,17 +61,28 @@
 		linkElement.href = linkUrl;
 
 		is3d = config.board['3D'];
-		recomputeDimensions(is3d);
+		resize();
 	});
 
-	onDestroy(() => {
-		unsubscribe();
-	});
+	onDestroy(() => unsubscribe);
 
 	onMount(async () => {
 		const configLoader = new ConfigLoader(prefix as string);
 		const config = await configLoader.load();
 		configuration.set(config);
+
+		const root = document.getElementById('app');
+		if (!root) return;
+
+		const observer = new ResizeObserver(entries => {
+			resize();
+		});
+
+		observer.observe(root);
+
+		return new Promise((resolve) => {
+			resolve(() => observer.unobserve(root));
+		});
 	});
 </script>
 

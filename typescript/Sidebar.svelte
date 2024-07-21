@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import Clock from './Clock.svelte';
 	import Movelist from './Movelist.svelte';
 	import { configuration } from './store';
@@ -17,6 +18,8 @@
 			classes.push('is2d');
 		}
 	});
+
+	onDestroy(() => unsubscribe);
 </script>
 
 <chess-sidebar class={classes}>
