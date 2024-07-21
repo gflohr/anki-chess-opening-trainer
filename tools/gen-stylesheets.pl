@@ -66,10 +66,9 @@ foreach my $styledir (@pieces_styles_3d) {
 		my $colour = lc $Colour;
 		my $piece = lc $Piece;
 
-		if (exists $pieces{"$Colour-$Piece-Flipped.$ext"}
-		    && ($piece eq 'bishop' || $piece eq 'knight')) {
+		if (exists $pieces{"$Colour-$Piece-Flipped.$ext"}) {
 			my $selector = ".is3d.pieces-$style .cg-wrap.orientation-white .$colour.$piece";
-			my $flipped = $colour == 'black' ? '-Flipped' : '';
+			my $flipped = $colour eq 'black' ? '-Flipped' : '';
 			my $snippet = <<"EOF";
 $selector {
 	background-image: url(/assets/images/3d/piece/$style/$Colour-$Piece$flipped.$ext);
@@ -78,8 +77,8 @@ EOF
 			$snippets_pieces_3d{$selector} = $snippet;
 
 			$selector = ".is3d.pieces-$style .cg-wrap.orientation-black .$colour.$piece";
-			my $flipped = $colour == 'white' ? '-Flipped' : '';
-			my $snippet = <<"EOF";
+			$flipped = $colour eq 'white' ? '-Flipped' : '';
+			$snippet = <<"EOF";
 $selector {
 	background-image: url(/assets/images/3d/piece/$style/$Colour-$Piece$flipped.$ext);
 }
