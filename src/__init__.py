@@ -24,7 +24,7 @@ sys.path.append(moduledir)
 sys.path.append(os.path.join(moduledir, 'vendor'))
 
 # pylint: disable=wrong-import-order, wrong-import-position
-from .dialog import ImportDialog
+from .import_dialog import ImportDialog
 from .config import Config
 from .importer_config import ImporterConfig
 

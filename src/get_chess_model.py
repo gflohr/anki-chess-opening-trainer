@@ -62,10 +62,13 @@ def _get_page_template(collection: Collection) -> TemplateDict:
 	pkg = __name__.split('.')[0]
 	prefix = f'/_addons/{pkg}'
 	markup = markup.replace('{{addon}}', pkg)
-	markup = re.sub('\nconst line = .*?\n', '\nconst line = {{ Line }};\n', markup)
-	markup = re.sub('\nconst prefix = .*?\n', f"\nconst prefix = '{prefix}';\n", markup)
-	qfmt = re.sub('\nconst side = .*?\n', f"\nconst side = 'question';\n", markup)
-	afmt = re.sub('\nconst side = .*?\n', f"\nconst side = 'answer';\n", markup)
+
+	def replace_prefix(match: re.Match) -> str:
+		return f"{match.group(1)}const prefix = '{prefix}';\n"
+
+	markup = re.sub('(\n[ \t]*)const prefix = .*?\n', replace_prefix, markup)
+	qfmt = re.sub('(\n[ \t]*)const side = .*?\n', r"\1const side = 'question';\n", markup)
+	afmt = re.sub('(\n[ \t]*)const side = .*?\n', r"\1const side = 'answer';\n", markup)
 
 	template = collection.models.new_template(template_name)
 	template['qfmt'] = qfmt

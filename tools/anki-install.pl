@@ -31,6 +31,8 @@ sub copy_index_html {
 	$contents =~ s/.*<!-- BEGIN_PAGE -->\n//s or die;
 	$contents =~ s/[ \t]*<!-- END_PAGE -->.*//s or die;
 
+	$contents =~ s/(\n[ \t]*)const line = .*?\n([ \t]*const)/$1const line = {{ Line }};\n$2/s;
+
 	$contents = join "\n", $stylesheet, $contents, $script;
 
 	mkdir 'src/assets/html';
