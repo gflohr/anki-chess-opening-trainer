@@ -34,8 +34,6 @@ class SettingsDialog(QDialog):
 		self.mw = mw
 
 		self.setWindowTitle(_('Settings'))
-		# FIXME! Do we need this?
-		self.setGeometry(300, 200, 800, 600)
 		self._initUI()
 
 	def _initUI(self):
@@ -79,7 +77,8 @@ class SettingsDialog(QDialog):
 
 		# Web view
 		self.web_view = QWebEngineView()
-		self.web_view.setUrl(QUrl('https://www.google.com/'))
+		port = mw.mediaServer.getPort()
+		self.web_view.setUrl(QUrl(f'http://127.0.0.1:{port}/_addons/705507113/assets/html/index.html?configure=1'))
 		self.web_view.setMinimumHeight(300)
 		self.board_layout.addWidget(self.web_view, 3, 0, 1, 3)
 

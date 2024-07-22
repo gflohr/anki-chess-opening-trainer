@@ -28,17 +28,26 @@ sub copy_index_html {
 	my $stylesheet = $1;
 	$stylesheet =~ s{/assets/index-}{/_addons/$id/assets/index-};
 
-	$contents =~ s/.*<!-- BEGIN_PAGE -->\n//s or die;
-	$contents =~ s/[ \t]*<!-- END_PAGE -->.*//s or die;
+	$contents =~ s{<link rel="stylesheet".*?/assets/css/pieces/.*?>}{} or die;
+	$contents =~ s{/assets/}{/_addons/$id/assets/}g;
 
-	$contents =~ s/(\n[ \t]*)const line = .*?\n([ \t]*const)/$1const line = {{ Line }};\n$2/s;
-
-	$contents = join "\n", $stylesheet, $contents, $script;
+	$contents =~ s{(\n[ \t]*)const prefix = .*?\n}{$1const prefix='/_addons/$id';\n};
 
 	mkdir 'src/assets/html';
 
-	open my $fh, '>', 'src/assets/html/page.html' or die;
-	$fh->print($contents);
+	# Save index.html as is.
+	open my $fh_index, '>', 'src/assets/html/index.html' or die;
+	$fh_index->print($contents);
+
+	$contents =~ s/(\n[ \t]*)const line = .*?\n([ \t]*const)/$1const line = {{ Line }};\n$2/s;
+
+	# Extract snippet from index.html.
+	$contents =~ s/.*<!-- BEGIN_PAGE -->\n//s or die;
+	$contents =~ s/[ \t]*<!-- END_PAGE -->.*//s or die;
+	$contents = join "\n", $stylesheet, $contents, $script;
+
+	open my $fh_page, '>', 'src/assets/html/page.html' or die;
+	$fh_page->print($contents);
 
 	unlink 'src/index.html';
 
