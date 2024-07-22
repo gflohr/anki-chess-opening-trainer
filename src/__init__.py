@@ -25,6 +25,7 @@ sys.path.append(os.path.join(moduledir, 'vendor'))
 
 # pylint: disable=wrong-import-order, wrong-import-position
 from .import_dialog import ImportDialog
+from .settings_dialog import SettingsDialog
 from .config import Config
 from .importer_config import ImporterConfig
 
@@ -37,7 +38,8 @@ def show_import_dialog() -> None:
 	dlg.exec()
 
 def show_settings_dialog() -> None:
-	print('TODO! Show settings')
+	dlg = SettingsDialog()
+	dlg.exec()
 
 def init_i18n() -> None:
 	supported = ['en', 'en-GB', 'de']
