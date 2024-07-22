@@ -21,8 +21,7 @@ from aqt.qt import (QComboBox, QDialog, # type: ignore[attr-defined]
                     QGridLayout, QLabel, # type: ignore[attr-defined]
                     QListWidget, QListWidgetItem, # type: ignore[attr-defined]
                     QPushButton, Qt, QMessageBox, # type: ignore[attr-defined]
-                    QDesktopServices, QUrl, # type: ignore[attr-defined]
-                    QHBoxLayout) # type: ignore[attr-defined]
+					QDesktopServices, QUrl) # type: ignore[attr-defined]
 from aqt.utils import show_critical, show_info, show_warning
 from anki.utils import no_bundled_libs
 from anki.models import NotetypeDict
@@ -80,17 +79,9 @@ class ImportDialog(QDialog):
 		self.select_file_button.clicked.connect(self._select_input_file)
 		layout.addWidget(self.select_file_button, 2, 2)
 
-		settings_button = QPushButton(_('Settings'))
-		settings_button.clicked.connect(self._open_settings)
-
 		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
 		self.button_box = QDialogButtonBox(btn)
-
-		button_layout = QHBoxLayout()
-		button_layout.addWidget(settings_button)
-		button_layout.addWidget(self.button_box)
-
-		layout.addLayout(button_layout,
+		layout.addWidget(self.button_box,
 		                 4,
 		                 0,
 		                 1,
@@ -102,8 +93,6 @@ class ImportDialog(QDialog):
 		self.colour_combo.currentIndexChanged.connect(self._colour_changed)
 		self.deck_combo.currentIndexChanged.connect(self._deck_changed)
 
-	def _open_settings(self) -> None:
-		self.reject()
 
 	def _colour_changed(self) -> None:
 		if self.updating:
