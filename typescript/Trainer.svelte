@@ -4,10 +4,13 @@
 	import Sidebar from './Sidebar.svelte';
 	import { configuration } from './store';
 	import { ConfigLoader } from './config-loader';
+	import type { Config } from './config';
 
 	let linkElement: HTMLLinkElement;
 	const appElement = document.getElementById('app');
 	const prefix = appElement?.dataset.prefix;
+	const params = new URLSearchParams(document.location.search);
+	const configMode = !!params.get('configure');
 
 	let baseSize = 512;
 	let is3d = false;
@@ -20,7 +23,7 @@
 		if (!mainWrap) return;
 
 		const sidebar = mainWrap.querySelector('chess-sidebar');
-		if (!sidebar) return;
+		if (!configMode && !sidebar) return;
 
 		const styles = getComputedStyle(mainWrap);
 		const availableWidth = mainWrap.clientWidth -
@@ -30,7 +33,7 @@
 			parseFloat(styles.paddingTop) - parseFloat(styles.paddingBottom) -
 			parseFloat(styles.borderTop) - parseFloat(styles.borderBottom);
 
-		const sidebarWidth = sidebar.clientWidth;
+		const sidebarWidth = configMode ? 0 : sidebar.clientWidth;
 
 		if (availableWidth - sidebarWidth < availableHeight) {
 			baseSize = availableWidth - sidebarWidth;
@@ -67,8 +70,14 @@
 	onDestroy(() => unsubscribe);
 
 	onMount(async () => {
-		const configLoader = new ConfigLoader(prefix as string);
-		const config = await configLoader.load();
+		let config: Config;
+
+		if (params.has('config')) {
+			config = JSON.parse(params.get('config') as string);
+		} else {
+			const configLoader = new ConfigLoader(prefix as string);
+			config = await configLoader.load();
+		}
 		configuration.set(config);
 
 		const root = document.getElementById('app');
@@ -89,7 +98,9 @@
 <chess-opening-trainer
 	style="grid-template-columns:{width}px auto; grid-template-rows:{height}px;">
 	<Board></Board>
+	{#if !configMode}
 	<Sidebar></Sidebar>
+	{/if}
 </chess-opening-trainer>
 
 <style>
