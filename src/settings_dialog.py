@@ -17,7 +17,7 @@ from aqt.qt import (QDialog, QGridLayout, # type: ignore[attr-defined]
                     QTabWidget, QVBoxLayout, # type: ignore[attr-defined]
                     QCheckBox, QLabel, # type: ignore[attr-defined]
                     QRadioButton, QComboBox, # type: ignore[attr-defined]
-                    QWebEngineView, QIcon, # type: ignore[attr-defined]
+                    QWebEngineView, QUrl, # type: ignore[attr-defined]
 )
 
 
@@ -76,10 +76,10 @@ class SettingsDialog(QDialog):
 		self.board_layout.addWidget(self.piece_set_combo, 2, 1, 1, 2)
 
 		# Web view
-		#self.web_view = QWebEngineView()
-		#self.web_view.setUrl('https://www.google.com/')
-		#self.web_view.setMinimumHeight(300)
-		#self.board_layout.addWidget(self.web_view, 3, 0, 1, 3)
+		self.web_view = QWebEngineView()
+		self.web_view.setUrl(QUrl('https://www.google.com/'))
+		self.web_view.setMinimumHeight(300)
+		self.board_layout.addWidget(self.web_view, 3, 0, 1, 3)
 
 		self.board_tab.setLayout(self.board_layout)
 
