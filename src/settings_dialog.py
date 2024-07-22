@@ -17,7 +17,7 @@ from aqt.qt import (QDialog, QGridLayout, # type: ignore[attr-defined]
                     QTabWidget, QVBoxLayout, # type: ignore[attr-defined]
                     QCheckBox, QLabel, # type: ignore[attr-defined]
                     QRadioButton, QComboBox, # type: ignore[attr-defined]
-                    QWebEngineView, QUrl, # type: ignore[attr-defined]
+                    QWebEngineView, QUrl, Qt, # type: ignore[attr-defined]
 )
 
 
@@ -45,6 +45,7 @@ class SettingsDialog(QDialog):
 		# General tab
 		self.general_tab = QWidget()
 		self.general_layout = QVBoxLayout()
+		self.general_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 		self.show_clock = QCheckBox(_('Show clock'))
 		self.show_solutions = QCheckBox(_('Show number of correct moves'))
 		self.general_layout.addWidget(self.show_clock)
@@ -54,6 +55,7 @@ class SettingsDialog(QDialog):
 		# Board tab
 		self.board_tab = QWidget()
 		self.board_layout = QGridLayout()
+		self.board_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
 		self.board_style_label = QLabel(_('Board Style:'))
 		self.board_style_2d = QRadioButton("2D")
