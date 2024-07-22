@@ -15,7 +15,7 @@ import importlib
 import anki
 from aqt import mw, gui_hooks
 # pylint: disable=no-name-in-module
-from aqt.qt import QAction # type: ignore[attr-defined]
+from aqt.qt import QAction, QMenu # type: ignore[attr-defined]
 from aqt.utils import qconnect
 
 
@@ -36,6 +36,8 @@ def show_import_dialog() -> None:
 	dlg = ImportDialog()
 	dlg.exec()
 
+def show_settings_dialog() -> None:
+	print('TODO! Show settings')
 
 def init_i18n() -> None:
 	supported = ['en', 'en-GB', 'de']
@@ -49,18 +51,22 @@ def init_i18n() -> None:
 	                        languages=[lang])
 	t.install(names=['_', 'ngettext'])
 
-
 def init_web() -> None:
 	mw.addonManager.setWebExports(__name__, r'.*(css|js|jpg|svg|png|json)')
 
-
 def add_menu_item():
-	action = QAction(_('Chess Opening Trainer'), mw)
-	# set it to call testFunction when it's clicked
-	qconnect(action.triggered, show_import_dialog)
-	# and add it to the tools menu
 	if mw is not None:
-		mw.form.menuTools.addAction(action)
+		menu = QMenu(_('Chess Opening Trainer'), mw.form.menuTools)
+
+		import_action = QAction(_('Import PGN Files...'), mw)
+		qconnect(import_action.triggered, show_import_dialog)
+		menu.addAction(import_action)
+
+		settings_action = QAction(_('Settings...'), mw)
+		qconnect(import_action.triggered, show_settings_dialog)
+		menu.addAction(settings_action)
+
+		mw.form.menuTools.addMenu(menu)
 
 def load_config():
 	pkg = mw.addonManager.addonFromModule(__name__)
