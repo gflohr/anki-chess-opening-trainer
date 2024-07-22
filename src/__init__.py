@@ -65,7 +65,7 @@ def add_menu_item():
 		menu.addAction(import_action)
 
 		settings_action = QAction(_('Settings...'), mw)
-		qconnect(import_action.triggered, show_settings_dialog)
+		qconnect(settings_action.triggered, show_settings_dialog)
 		menu.addAction(settings_action)
 
 		mw.form.menuTools.addMenu(menu)

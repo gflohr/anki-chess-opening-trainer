@@ -36,6 +36,7 @@ class ImportDialog(QDialog):
 
 	# pylint: disable=too-few-public-methods, too-many-instance-attributes, too-many-statements
 	def __init__(self) -> None:
+		print('settings dialog ...')
 		if mw is None:
 			raise RuntimeError(_('Cannot run without main window!'))
 
