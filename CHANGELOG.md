@@ -2,6 +2,10 @@
 
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### 1.0.3 - 2024-07-23
+
+* fix GitHub issue #23 (ensure import dialog fits screen)
+
 ### 1.0.2 - 2024-07-05
 
 * fix GitHub issue #21 which could make some combinations of colour and deck no longer selectable
