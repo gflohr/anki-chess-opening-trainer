@@ -21,7 +21,9 @@ from aqt.qt import (QComboBox, QDialog, # type: ignore[attr-defined]
                     QGridLayout, QLabel, # type: ignore[attr-defined]
                     QListWidget, QListWidgetItem, # type: ignore[attr-defined]
                     QPushButton, Qt, QMessageBox, # type: ignore[attr-defined]
-					QDesktopServices, QUrl) # type: ignore[attr-defined]
+                    QDesktopServices, QUrl, # type: ignore[attr-defined]
+                    QApplication, # type: ignore[attr-defined]
+) # type: ignore[attr-defined]
 from aqt.utils import show_critical, show_info, show_warning
 from anki.utils import no_bundled_libs
 
@@ -108,6 +110,7 @@ class ImportDialog(QDialog):
 		self.colour_combo.currentIndexChanged.connect(self._colour_changed)
 		self.deck_combo.currentIndexChanged.connect(self._deck_changed)
 
+		self._adjust_dialog_size()
 
 	def _colour_changed(self) -> None:
 		if self.updating:
@@ -372,3 +375,23 @@ class ImportDialog(QDialog):
 		self.config['notetype'] = notetype_id
 
 		return True
+
+	def _adjust_dialog_size(self):
+		screen = QApplication.primaryScreen().availableGeometry()
+		dialog_size = self.sizeHint()
+
+		dwidth = max(dialog_size.width(), 768)
+		dheight = max(dialog_size.height(), 384)
+
+		swidth = screen.width()
+		sheight = screen.height()
+		print(f'Screen width: {swidth} x {sheight}')
+
+		swidth = max(swidth, 1024 / 0.9)
+		sheight = max(swidth, 768 / 0.9)
+		width = min(dwidth, swidth * 0.9)
+		height = min(dheight, sheight * 0.9)
+
+		print(f'Resize dialog to: {width} x {height}')
+
+		self.resize(width, height)
