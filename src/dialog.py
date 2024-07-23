@@ -386,8 +386,12 @@ class ImportDialog(QDialog):
 		swidth = screen.width()
 		sheight = screen.height()
 		print(f'Screen width: {swidth} x {sheight}')
+
+		swidth = max(swidth, 1024 / 0.9)
+		sheight = max(swidth, 768 / 0.9)
 		width = min(dwidth, swidth * 0.9)
 		height = min(dheight, sheight * 0.9)
 
 		print(f'Resize dialog to: {width} x {height}')
+
 		self.resize(width, height)
