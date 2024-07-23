@@ -23,7 +23,7 @@
 		if (!mainWrap) return;
 
 		const sidebar = mainWrap.querySelector('chess-sidebar');
-		if (!configMode && !sidebar) return;
+		if (!sidebar) return;
 
 		const styles = getComputedStyle(mainWrap);
 		const availableWidth = mainWrap.clientWidth -
@@ -33,7 +33,7 @@
 			parseFloat(styles.paddingTop) - parseFloat(styles.paddingBottom) -
 			parseFloat(styles.borderTop) - parseFloat(styles.borderBottom);
 
-		const sidebarWidth = configMode ? 0 : sidebar.clientWidth;
+		const sidebarWidth = sidebar.clientWidth;
 
 		if (availableWidth - sidebarWidth < availableHeight) {
 			baseSize = availableWidth - sidebarWidth;
@@ -98,9 +98,7 @@
 <chess-opening-trainer
 	style="grid-template-columns:{width}px auto; grid-template-rows:{height}px;">
 	<Board></Board>
-	{#if !configMode}
 	<Sidebar></Sidebar>
-	{/if}
 </chess-opening-trainer>
 
 <style>
