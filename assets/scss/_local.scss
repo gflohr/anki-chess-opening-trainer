@@ -9,11 +9,13 @@ body {
 	margin: 0;
 }
 
+.cg-wrap {
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
 .is3d {
 	.cg-wrap {
-		background-repeat: no-repeat;
-		background-size: cover;
-		background-repeat: no-repeat;
 		height: 97.5840336134%;
 	}
 
