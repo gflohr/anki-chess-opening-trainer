@@ -7,24 +7,44 @@
 # to Public License, Version 2, as published by Sam Hocevar. See
 # http://www.wtfpl.net/ for more details.
 
-import os
-import json
+from copy import deepcopy
 from typing import Any, cast
 
 from aqt import mw
-from aqt.utils import showCritical
 
-from .importer_config import ImporterConfig
+from .config import Config
 from .version import __version__
 from .importer_config_schema import importer_config_schema
 from .updater import Updater
 
+def singleton(cls):
+	instances = {}
+	def get_instance(*args, **kwargs):
+		if cls not in instances:
+			instances[cls] = cls(*args, **kwargs)
+		return instances[cls]
+	return get_instance
+
+@singleton
 class ConfigReader:
-	# pylint: disable=too-few-public-methods
-	def __init__(self) -> None:
+
+
+	_instance = None
+
+	def __init__(self):
 		if mw is None:
 			raise RuntimeError(_('Cannot run without main window!'))
 
-		updater = Updater(__version__)
-		raw_config = mw.addonManager.getConfig(__name__)
-		raw_config = updater.update_config(raw_config)
+		if not hasattr(self, '_initialized'):
+			updater = Updater(__version__)
+			raw_config = mw.addonManager.getConfig(__name__)
+			raw_config = updater.update_config(raw_config)
+			self.__initialized = True
+
+	@property
+	def config(self) -> Config:
+		return mw.addonManager.getConfig(__name__)
+
+	@config.setter
+	def config(self, new_config: Config):
+		mw.addonManager.writeConfig(new_config)

@@ -7,8 +7,7 @@
 # to Public License, Version 2, as published by Sam Hocevar. See
 # http://www.wtfpl.net/ for more details.
 
-import os
-
+import json
 from aqt import mw, AnkiQt
 
 # pylint: disable=no-name-in-module
@@ -17,8 +16,11 @@ from aqt.qt import (QDialog, QGridLayout, # type: ignore[attr-defined]
                     QTabWidget, QVBoxLayout, # type: ignore[attr-defined]
                     QCheckBox, QLabel, # type: ignore[attr-defined]
                     QRadioButton, QComboBox, # type: ignore[attr-defined]
-                    QWebEngineView, QUrl, Qt, # type: ignore[attr-defined]
+                    QWebEngineView, QUrl, QUrlQuery, # type: ignore[attr-defined]
+                    Qt, QHBoxLayout, # type: ignore[attr-defined]
 )
+
+from .config_reader import ConfigReader
 
 
 class SettingsDialog(QDialog):
@@ -32,6 +34,12 @@ class SettingsDialog(QDialog):
 		super().__init__()
 
 		self.mw = mw
+		self._config_reader = ConfigReader()
+		self._config = self._config_reader.config
+		pkg = __name__.split('.')[0]
+		port = mw.mediaServer.getPort()
+		self._base_url = QUrl(f'http://127.0.0.1:{port}')
+		self._base_url.setPath(f'/_addons/{pkg}/assets/html/index.html')
 
 		self.setWindowTitle(_('Settings'))
 		self._initUI()
@@ -40,16 +48,6 @@ class SettingsDialog(QDialog):
 		layout = QVBoxLayout()
 		self.tab_widget = QTabWidget()
 
-		# General tab
-		self.general_tab = QWidget()
-		self.general_layout = QVBoxLayout()
-		self.general_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-		self.show_clock = QCheckBox(_('Show clock'))
-		self.show_solutions = QCheckBox(_('Show number of correct moves'))
-		self.general_layout.addWidget(self.show_clock)
-		self.general_layout.addWidget(self.show_solutions)
-		self.general_tab.setLayout(self.general_layout)
-
 		# Board tab
 		self.board_tab = QWidget()
 		self.board_layout = QGridLayout()
@@ -57,11 +55,19 @@ class SettingsDialog(QDialog):
 
 		self.board_style_label = QLabel(_('Board Style:'))
 		self.board_style_2d = QRadioButton("2D")
+		if not self._config['board']['3D']:
+			self.board_style_2d.setChecked(True)
+		self.board_style_2d.clicked.connect(self._on_board_style_toggle())
 		self.board_style_3d = QRadioButton("3D")
-		self.board_style_2d.setChecked(True)
+		if self._config['board']['3D']:
+			self.board_style_3d.setChecked(True)
+		self.board_style_layout = QHBoxLayout()
+		self.board_style_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+		self.board_style_layout.addWidget(self.board_style_2d)
+		self.board_style_layout.addWidget(self.board_style_3d)
+
 		self.board_layout.addWidget(self.board_style_label, 0, 0)
-		self.board_layout.addWidget(self.board_style_2d, 0, 1)
-		self.board_layout.addWidget(self.board_style_3d, 0, 2)
+		self.board_layout.addLayout(self.board_style_layout, 0, 1)
 
 		self.board_image_label = QLabel(_('Board:'))
 		self.board_image_combo = QComboBox()
@@ -77,15 +83,13 @@ class SettingsDialog(QDialog):
 
 		# Web view
 		self.web_view = QWebEngineView()
-		port = mw.mediaServer.getPort()
-		self.web_view.setUrl(QUrl(f'http://127.0.0.1:{port}/_addons/705507113/assets/html/index.html?configure=1'))
+		self.web_view.setUrl(self._get_url())
 		self.web_view.setMinimumHeight(300)
 		self.board_layout.addWidget(self.web_view, 3, 0, 1, 3)
 
 		self.board_tab.setLayout(self.board_layout)
 
 		# Add tabs to the widget
-		self.tab_widget.addTab(self.general_tab, _('General'))
 		self.tab_widget.addTab(self.board_tab, _('Board'))
 
 		# Button Box
@@ -103,6 +107,15 @@ class SettingsDialog(QDialog):
 		#for filename in os.listdir(directory):
 		#	if filename.endswith(('.png', '.jpg', '.jpeg')):
 		#		combo.addItem(QIcon(os.path.join(directory, filename)), filename)
+
+	def _get_url(self) -> QUrl:
+		url = QUrl(self._base_url)
+		query = QUrlQuery(url)
+		query.addQueryItem('configure', '1')
+		query.addQueryItem('config', json.dumps(self._config))
+		url.setQuery(query)
+
+		return url
 
 	def accept(self) -> None:
 		assert isinstance(mw, AnkiQt)
