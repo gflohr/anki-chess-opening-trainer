@@ -55,12 +55,10 @@ class SettingsDialog(QDialog):
 
 		self.board_style_label = QLabel(_('Board Style:'))
 		self.board_style_2d = QRadioButton("2D")
-		if not self._config['board']['3D']:
-			self.board_style_2d.setChecked(True)
-		self.board_style_2d.clicked.connect(self._on_board_style_toggle())
+		self.board_style_2d.setChecked(not self._config['board']['3D'])
 		self.board_style_3d = QRadioButton("3D")
-		if self._config['board']['3D']:
-			self.board_style_3d.setChecked(True)
+		self.board_style_3d.setChecked(self._config['board']['3D'])
+		self.board_style_3d.toggled.connect(self._on_board_style_toggled)
 		self.board_style_layout = QHBoxLayout()
 		self.board_style_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
 		self.board_style_layout.addWidget(self.board_style_2d)
@@ -121,3 +119,14 @@ class SettingsDialog(QDialog):
 		assert isinstance(mw, AnkiQt)
 
 		super().accept()
+
+	def _on_board_style_toggled(self):
+		self._config['board']['3D'] = not self._config['board']['3D']
+		self.board_style_2d.setChecked(not self._config['board']['3D'])
+		self.board_style_3d.setChecked(self._config['board']['3D'])
+		self._update_webview()
+
+	def _update_webview(self):
+		escaped = json.dumps(json.dumps(self._config))
+		code = f"window.chessOpeningTrainerUpdateConfig({escaped})"
+		self.web_view.page().runJavaScript(code)

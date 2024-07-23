@@ -10,13 +10,16 @@
 	const appElement = document.getElementById('app');
 	const prefix = appElement?.dataset.prefix;
 	const params = new URLSearchParams(document.location.search);
-	const configMode = !!params.get('configure');
 
 	let baseSize = 512;
 	let is3d = false;
 	let size: number = 1.0;
 	let width = size * baseSize;
 	let height = size * baseSize;
+
+	(window as any).chessOpeningTrainerUpdateConfig = (newConfig: string) => {
+		configuration.set(JSON.parse(newConfig));
+	}
 
 	const resize = () => {
 		const mainWrap = document.getElementById('main-wrap');
