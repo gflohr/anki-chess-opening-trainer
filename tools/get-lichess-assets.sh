@@ -45,4 +45,6 @@ for thumb in assets/images/3d/board/*.thumbnail.*; do
 	cp $thumb src/images/3d/board
 done
 
+sh tools/consistency-check.sh || exit 1
+
 rm -rf lila
