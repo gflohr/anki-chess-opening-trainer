@@ -5,7 +5,6 @@
 	let minutes = 0;
 	let seconds = 0;
 	let tenths = 0;
-	let running = false;
 	let started: Date = new Date();
 	let interval = setInterval(updateTime, 100);
 

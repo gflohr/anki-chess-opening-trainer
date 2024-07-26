@@ -19,7 +19,7 @@
 
 	(window as any).chessOpeningTrainerUpdateConfig = (newConfig: string) => {
 		configuration.set(JSON.parse(newConfig));
-	}
+	};
 
 	const resize = () => {
 		const mainWrap = document.getElementById('main-wrap');
@@ -29,12 +29,18 @@
 		if (!sidebar) return;
 
 		const styles = getComputedStyle(mainWrap);
-		const availableWidth = mainWrap.clientWidth -
-			parseFloat(styles.paddingLeft) - parseFloat(styles.paddingRight) -
-			parseFloat(styles.borderLeft) - parseFloat(styles.borderRight);
-		const availableHeight = mainWrap.clientHeight -
-			parseFloat(styles.paddingTop) - parseFloat(styles.paddingBottom) -
-			parseFloat(styles.borderTop) - parseFloat(styles.borderBottom);
+		const availableWidth =
+			mainWrap.clientWidth -
+			parseFloat(styles.paddingLeft) -
+			parseFloat(styles.paddingRight) -
+			parseFloat(styles.borderLeft) -
+			parseFloat(styles.borderRight);
+		const availableHeight =
+			mainWrap.clientHeight -
+			parseFloat(styles.paddingTop) -
+			parseFloat(styles.paddingBottom) -
+			parseFloat(styles.borderTop) -
+			parseFloat(styles.borderBottom);
 
 		const sidebarWidth = sidebar.clientWidth;
 
@@ -46,11 +52,11 @@
 
 		width = size * baseSize;
 		if (is3d) {
-			height = 958 / 1024 * size * baseSize;
+			height = (958 / 1024) * size * baseSize;
 		} else {
 			height = size * baseSize;
 		}
-	}
+	};
 
 	const unsubscribe = configuration.subscribe(config => {
 		if (!config) {
@@ -92,24 +98,25 @@
 
 		observer.observe(root);
 
-		return new Promise((resolve) => {
+		return new Promise(resolve => {
 			resolve(() => observer.unobserve(root));
 		});
 	});
 </script>
 
 <chess-opening-trainer
-	style="grid-template-columns:{width}px auto; grid-template-rows:{height}px;">
+	style="grid-template-columns:{width}px auto; grid-template-rows:{height}px;"
+>
 	<Board></Board>
 	<Sidebar></Sidebar>
 </chess-opening-trainer>
 
 <style>
-chess-opening-trainer {
-	position: relative;
-	display: grid;
-	justify-content: center;
-	justify-items: stretch;
-	align-items: stretch;
-}
+	chess-opening-trainer {
+		position: relative;
+		display: grid;
+		justify-content: center;
+		justify-items: stretch;
+		align-items: stretch;
+	}
 </style>

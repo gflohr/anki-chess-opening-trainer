@@ -44,59 +44,65 @@
 </chess-movelist>
 
 <style lang="scss">
-chess-navigation {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-}
+	chess-navigation {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	}
 
-chess-navigation button {
-	padding: 0.5rem;
-	border: none;
-}
+	chess-navigation button {
+		padding: 0.5rem;
+		border: none;
+	}
 
-chess-movelist {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-	align-content: start;
-	overflow-y: auto;
-}
+	chess-movelist {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+		align-content: start;
+		overflow-y: auto;
+	}
 
-chess-move {
-	grid-column: span 5;
-	font-size: 14pt;
-	display: grid;
-	grid-template-columns: 1fr 2fr 2fr;
-	justify-items: center;
-}
+	chess-move {
+		grid-column: span 5;
+		font-size: 14pt;
+		display: grid;
+		grid-template-columns: 1fr 2fr 2fr;
+		justify-items: center;
+	}
 
-chess-move-number, chess-move-white, chess-move-black, chess-navigation {
-	border-bottom: 1px solid #ddd;
-}
+	chess-move-number,
+	chess-move-white,
+	chess-move-black,
+	chess-navigation {
+		border-bottom: 1px solid #ddd;
+	}
 
-chess-move-number {
-	background-color: #eee;
-}
+	chess-move-number {
+		background-color: #eee;
+	}
 
-chess-move-number, chess-move-white, chess-move-black {
-	justify-self: center;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	height: 100%;
-}
+	chess-move-number,
+	chess-move-white,
+	chess-move-black {
+		justify-self: center;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: 100%;
+	}
 
-chess-move-white, chess-move-black {
-	border-right: 1px solid #ddd;
-}
+	chess-move-white,
+	chess-move-black {
+		border-right: 1px solid #ddd;
+	}
 
-.answer-right {
-	color: rgb(27, 80, 27);
-	font-weight: bold;
-}
+	.answer-right {
+		color: rgb(27, 80, 27);
+		font-weight: bold;
+	}
 
-.answer-wrong {
-	color: rgb(172, 38, 38);
-	font-weight: bold;
-}
+	.answer-wrong {
+		color: rgb(172, 38, 38);
+		font-weight: bold;
+	}
 </style>

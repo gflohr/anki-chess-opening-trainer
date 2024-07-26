@@ -28,9 +28,9 @@
 </chess-sidebar>
 
 <style lang="scss">
-chess-sidebar {
-	display: grid;
-	grid-template-columns: 1fr;
-	grid-template-rows: max-content auto max-content;
-}
+	chess-sidebar {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: max-content auto max-content;
+	}
 </style>

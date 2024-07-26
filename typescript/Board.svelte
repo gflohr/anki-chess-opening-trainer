@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { ChessgroundUnstyled as Chessground } from 'svelte-chessground';
-	import { configuration } from './store';
+	import { configuration, chessGame } from './store';
+	import type { ChessGame } from './chess-game';
 
 	let classes: Array<string> = ['loading'];
+	const params = new URLSearchParams(document.location.search);
+	const configMode = params.has('configure');
 
-	const unsubscribe = configuration.subscribe(config => {
+	const unsubscribeConfiguration = configuration.subscribe(config => {
 		if (!config) {
 			return;
 		}
@@ -21,22 +24,30 @@
 		}
 	});
 
+	let game: ChessGame;
+	const unsubscribeChessGame = chessGame.subscribe(g => {
+		game = g;
+	});
+
 	onDestroy(() => {
-		unsubscribe();
+		unsubscribeConfiguration();
 	});
 </script>
 
 <chess-board class={classes.join(' ')}>
-	<Chessground addPieceZIndex={true} />
+	<Chessground
+		addPieceZIndex={true}
+		viewOnly={configMode}
+		fen={game.chess.fen()}
+	/>
 </chess-board>
 
 <style lang="scss">
-chess-board {
-	position: relative;
+	chess-board {
+		position: relative;
+	}
 
-}
-
-chess-board.loading {
-	visibility: hidden;
-}
+	chess-board.loading {
+		visibility: hidden;
+	}
 </style>

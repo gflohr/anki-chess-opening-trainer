@@ -12,6 +12,6 @@
 	#main-wrap {
 		display: grid;
 		height: 100vh;
-		padding-top: 10vh
+		padding-top: 10vh;
 	}
 </style>
