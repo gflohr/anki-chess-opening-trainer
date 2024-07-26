@@ -4,9 +4,11 @@ ls src/images/*/*/* | sed -e 's/^src.images.//' |
 	sed -e 's/\..*//' |
 	sort >got.txt
 
-ls assets/css/*/*.css \
+ls -d assets/css/*/*.css \
 	assets/images/2d/board/*.* \
-	assets/images/2d/board/svg/*.svg |
+	assets/images/2d/board/svg/*.svg \
+	assets/images/3d/board/*.* \
+	assets/images/3d/piece/* |
 	grep -v '\..*\.' |
 	sed -e 's/\/svg\//\//' |
 	sed -e 's/^assets.images.//' |

@@ -13,16 +13,21 @@ from typing import Dict
 from aqt import mw, AnkiQt
 
 # pylint: disable=no-name-in-module
-from aqt.qt import (QDialog, QGridLayout, # type: ignore[attr-defined]
-                    QDialogButtonBox, QWidget, # type: ignore[attr-defined]
-                    QTabWidget, QVBoxLayout, # type: ignore[attr-defined]
-                    QCheckBox, QLabel, # type: ignore[attr-defined]
-                    QRadioButton, QComboBox, # type: ignore[attr-defined]
-                    QWebEngineView, QUrl, QUrlQuery, # type: ignore[attr-defined]
-                    Qt, QHBoxLayout, QIcon, # type: ignore[attr-defined]
+from aqt.qt import (
+	QDialog, QGridLayout, QSize, QRect, # type: ignore[attr-defined]
+	QStyledItemDelegate, QDialogButtonBox, QWidget, # type: ignore[attr-defined]
+	QTabWidget, QVBoxLayout, # type: ignore[attr-defined]
+	QCheckBox, QLabel, # type: ignore[attr-defined]
+	QRadioButton, QComboBox, # type: ignore[attr-defined]
+	QWebEngineView, QUrl, QUrlQuery, # type: ignore[attr-defined]
+	Qt, QHBoxLayout, QIcon, # type: ignore[attr-defined]
 )
 
 from .config_reader import ConfigReader
+from .image_paths import (
+	piece_images_2d, piece_images_3d,
+	board_images_2d, board_images_3d,
+)
 
 
 class SettingsDialog(QDialog):
@@ -44,10 +49,7 @@ class SettingsDialog(QDialog):
 		self._base_url.setPath(f'/_addons/{pkg}/assets/html/index.html')
 
 		self.setWindowTitle(_('Settings'))
-		script_dir = os.path.dirname(os.path.abspath(__file__))
-		self._images_dir = os.path.abspath(os.path.join(script_dir, 'images'))
 
-		self._init_image_lists()
 		self._initUI()
 
 	def _init_image_lists(self):
@@ -84,13 +86,27 @@ class SettingsDialog(QDialog):
 
 		self.board_image_label = QLabel(_('Board:'))
 		self.board_image_combo = QComboBox()
-		self.populate_combo_with_images(self.board_image_combo)
+		self.board_image_combo.setIconSize(QSize(64, 32))
+		if self._config['board']['3D']:
+			boards = board_images_3d
+		else:
+			boards = board_images_2d
+		for board_spec in boards:
+			self.board_image_combo.addItem(QIcon(board_spec[0]), board_spec[1])
+			pass
 		self.board_layout.addWidget(self.board_image_label, 1, 0)
 		self.board_layout.addWidget(self.board_image_combo, 1, 1, 1, 2)
 
 		self.piece_set_label = QLabel(_('Piece Set:'))
 		self.piece_set_combo = QComboBox()
-		self.populate_combo_with_images(self.piece_set_combo)
+		self.piece_set_combo.setIconSize(QSize(64, 64))
+		if self._config['board']['3D']:
+			pieces = piece_images_3d
+		else:
+			pieces = piece_images_2d
+		for piece_spec in pieces:
+			self.piece_set_combo.addItem(QIcon(piece_spec[0]), piece_spec[1])
+			pass
 		self.board_layout.addWidget(self.piece_set_label, 2, 0)
 		self.board_layout.addWidget(self.piece_set_combo, 2, 1, 1, 2)
 
@@ -114,12 +130,6 @@ class SettingsDialog(QDialog):
 		layout.addWidget(self.tab_widget)
 		layout.addWidget(self.button_box)
 		self.setLayout(layout)
-
-	def populate_combo_with_images(self, combo):
-		pass
-		#for filename in os.listdir(directory):
-		#	if filename.endswith(('.png', '.jpg', '.jpeg')):
-		#		combo.addItem(QIcon(os.path.join(directory, filename)), filename)
 
 	def _get_url(self) -> QUrl:
 		url = QUrl(self._base_url)

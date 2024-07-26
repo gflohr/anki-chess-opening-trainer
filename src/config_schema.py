@@ -52,22 +52,12 @@ config_schema = {
 					'type':
 					'string',
 					'enum': [
-						'blue-marble', 'blue-marble.thumbnail', 'blue2',
-						'blue2.thumbnail', 'blue3', 'blue3.thumbnail',
-						'canvas2', 'canvas2.thumbnail', 'green-plastic',
-						'green-plastic.thumbnail', 'grey', 'grey.thumbnail',
-						'horsey', 'horsey.current-premove', 'horsey.last-move',
-						'horsey.move-dest', 'horsey.selected',
-						'horsey.thumbnail', 'leather', 'leather.thumbnail',
-						'maple', 'maple.thumbnail', 'maple2',
-						'maple2.thumbnail', 'marble', 'marble.thumbnail',
-						'metal', 'metal.thumbnail', 'ncf-board', 'olive',
-						'olive.thumbnail', 'pink-pyramid',
-						'pink-pyramid.thumbnail', 'purple-diag',
-						'purple-diag.thumbnail', 'svg/blue', 'svg/brown',
-						'svg/green', 'svg/ic', 'svg/newspaper', 'svg/purple',
-						'wood', 'wood.thumbnail', 'wood2', 'wood2.thumbnail',
-						'wood3', 'wood3.thumbnail', 'wood4', 'wood4.thumbnail'
+						'blue-marble', 'blue2', 'blue3', 'canvas2',
+						'green-plastic', 'grey', 'horsey', 'leather', 'maple',
+						'maple2', 'marble', 'metal', 'olive', 'pink-pyramid',
+						'purple-diag', 'svg/blue', 'svg/brown', 'svg/green',
+						'svg/ic', 'svg/newspaper', 'svg/purple', 'wood',
+						'wood2', 'wood3', 'wood4'
 					],
 					'default':
 					'blue3'
@@ -91,24 +81,12 @@ config_schema = {
 					'type':
 					'string',
 					'enum': [
-						'Black-White-Aluminium',
-						'Black-White-Aluminium.thumbnail', 'Brushed-Aluminium',
-						'Brushed-Aluminium.thumbnail', 'China-Blue',
-						'China-Blue.thumbnail', 'China-Green',
-						'China-Green.thumbnail', 'China-Grey',
-						'China-Grey.thumbnail', 'China-Scarlet',
-						'China-Scarlet.thumbnail', 'China-Yellow',
-						'China-Yellow.thumbnail', 'Classic-Blue',
-						'Classic-Blue.thumbnail', 'Glass', 'Glass.thumbnail',
-						'Gold-Silver', 'Gold-Silver.thumbnail', 'Green-Glass',
-						'Green-Glass.thumbnail', 'Jade', 'Jade.thumbnail',
-						'Light-Wood', 'Light-Wood.thumbnail', 'Marble',
-						'Marble.thumbnail', 'Power-Coated',
-						'Power-Coated.thumbnail', 'Purple-Black',
-						'Purple-Black.thumbnail', 'Rosewood',
-						'Rosewood.thumbnail', 'Wax', 'Wax.thumbnail',
-						'Wood-Glass', 'Wood-Glass.thumbnail', 'Woodi',
-						'Woodi.thumbnail'
+						'Black-White-Aluminium', 'Brushed-Aluminium',
+						'China-Blue', 'China-Green', 'China-Grey',
+						'China-Scarlet', 'China-Yellow', 'Classic-Blue',
+						'Glass', 'Gold-Silver', 'Green-Glass', 'Jade',
+						'Light-Wood', 'Marble', 'Power-Coated', 'Purple-Black',
+						'Rosewood', 'Wax', 'Wood-Glass', 'Woodi'
 					],
 					'default':
 					'Black-White-Aluminium'

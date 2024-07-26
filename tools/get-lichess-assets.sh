@@ -11,11 +11,15 @@ test -e assets/css/piece || mkdir -p assets/css/piece
 cp -r lila/public/piece-css/*.css assets/css/piece
 rm -f assets/css/piece/*.external.css
 
-rm -f assets/images/2d/board/*.jpg
-rm -f assets/images/2d/board/svg/*.svg
+rm -f assets/images/2d/board/*.*
+rm -rf assets/images/2d/board/svg
 test -e assets/images/2d/board || mkdir -p assets/images/2d/board
-cp -r lila/public/images/board/* assets/images/2d/board
-rm -f assets/images/2d/board/*.orig.jpg
+for thumb in lila/public/images/board/*.thumbnail.*; do
+	file=`echo $thumb | sed -e 's/\.thumbnail\././'`
+	cp $file $thumb assets/images/2d/board
+done
+cp -r lila/public/images/board/svg assets/images/2d/board
+rm -f assets/images/2d/board/*.orig.*
 
 rm -rf assets/images/3d/*
 test -e assets/images/3d || mkdir -p assets/images/3d
@@ -47,6 +51,12 @@ echo >>src/image_paths.py
 rm -f src/images/2d/board/*
 echo "directory = os.path.join(_images_dir, '2d', 'board')" >>src/image_paths.py
 echo "board_images_2d: List[Tuple[str, str]] = [" >>src/image_paths.py
+for img in assets/images/2d/board/svg/*.svg; do
+	cp $img src/images/2d/board
+	filename=`echo $img | sed -e 's/.*\///'`
+	name=`echo $filename | sed -e 's/\..*//'`
+	echo "	(os.path.join(directory, '$filename'), '$name')," >>src/image_paths.py
+done
 for thumb in assets/images/2d/board/*.thumbnail.*; do
 	cp $thumb src/images/2d/board
 	filename=`echo $thumb | sed -e 's/.*\///'`
@@ -77,13 +87,6 @@ for thumb in assets/images/3d/board/*.thumbnail.*; do
 	echo "	(os.path.join(directory, '$filename'), '$name')," >>src/image_paths.py
 done
 echo "]" >>src/image_paths.py
-
-cat <<EOF >>src/image_paths.py
-print(piece_images_2d)
-print(board_images_2d)
-print(piece_images_3d)
-print(board_images_3d)
-EOF
 
 sh tools/consistency-check.sh || exit 1
 

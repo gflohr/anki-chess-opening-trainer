@@ -13,9 +13,10 @@ piece_css_2d = [re.sub('\\.css$', '', p) for p in piece_css_2d]
 piece_css_2d = [re.sub('^public/assets/css/pieces/', '', p) for p in piece_css_2d]
 piece_css_2d = sorted(piece_css_2d)
 
-board_image_2d = glob('assets/images/2d/board/*.*')
-board_image_thumbnails = glob('assets/images/*.thumbnail.*')
-board_image_2d = [img for img in board_image_2d if img not in board_image_thumbnails]
+board_image_2d = list(map(
+	lambda thumb: thumb.replace('.thumbnail.', '.'),
+	glob('assets/images/2d/board/*.thumbnail.*')
+))
 board_image_2d.extend(glob('assets/images/2d/board/svg/*.svg'))
 board_image_2d = [re.sub('\\.[^.]+$', '', p) for p in board_image_2d]
 board_image_2d = [re.sub('^assets/images/2d/board/', '', p) for p in board_image_2d]
@@ -25,9 +26,10 @@ piece_images_3d = glob('assets/images/3d/piece/*')
 piece_images_3d = [re.sub('^assets/images/3d/piece/', '', p) for p in piece_images_3d]
 piece_images_3d = sorted(piece_images_3d)
 
-board_image_3d = glob('assets/images/3d/board/*.*')
-board_image_thumbnails = glob('assets/images/*.thumbnail.*')
-board_image_3d = [img for img in board_image_3d if img not in board_image_thumbnails]
+board_image_3d = list(map(
+	lambda thumb: thumb.replace('.thumbnail.', '.'),
+	glob('assets/images/3d/board/*.thumbnail.*')
+))
 board_image_3d = [re.sub('\\.[^.]+$', '', p) for p in board_image_3d]
 board_image_3d = [re.sub('^assets/images/3d/board/', '', p) for p in board_image_3d]
 board_image_3d = sorted(board_image_3d)
