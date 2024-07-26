@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { ChessgroundUnstyled as Chessground } from 'svelte-chessground';
+	import { type Key } from 'chessground/types';
 	import { configuration, chessGame } from './store';
-	import type { ChessGame } from './chess-game';
+	import { ChessGame } from './chess-game';
 
 	let classes: Array<string> = ['loading'];
 	const params = new URLSearchParams(document.location.search);
@@ -25,8 +26,16 @@
 	});
 
 	let game: ChessGame;
+	let lastMove: Array<Key>;
 	const unsubscribeChessGame = chessGame.subscribe(g => {
 		game = g;
+
+		const history = game.chess.history({ verbose: true });
+		if (history.length) {
+			const lastEntry = history[history.length - 1];
+			lastMove = [lastEntry.from, lastEntry.to];
+			console.log(lastMove);
+		}
 	});
 
 	onDestroy(() => {
@@ -40,6 +49,7 @@
 		addPieceZIndex={true}
 		viewOnly={configMode}
 		fen={game.chess.fen()}
+		lastMove={lastMove}
 	/>
 </chess-board>
 

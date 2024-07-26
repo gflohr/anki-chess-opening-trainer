@@ -46,3 +46,8 @@ chess-sidebar.is3d {
 chess-move san {
 	font-family: Chess;
 }
+
+square.last-move {
+	will-change: transform;
+	background-color: rgba(155,199,0,.41)
+}
