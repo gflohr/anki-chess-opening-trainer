@@ -39,7 +39,7 @@ class ConfigReader:
 			updater = Updater(__version__)
 			raw_config = mw.addonManager.getConfig(__name__)
 			raw_config = updater.update_config(raw_config)
-			self.__initialized = True
+			self._initialized = True
 
 	@property
 	def config(self) -> Config:
@@ -47,4 +47,4 @@ class ConfigReader:
 
 	@config.setter
 	def config(self, new_config: Config):
-		mw.addonManager.writeConfig(new_config)
+		mw.addonManager.writeConfig(__name__, new_config)

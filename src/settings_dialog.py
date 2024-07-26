@@ -14,8 +14,8 @@ from aqt import mw, AnkiQt
 
 # pylint: disable=no-name-in-module
 from aqt.qt import (
-	QDialog, QGridLayout, QSize, QRect, # type: ignore[attr-defined]
-	QStyledItemDelegate, QDialogButtonBox, QWidget, # type: ignore[attr-defined]
+	QDialog, QGridLayout, QSize, QComboBox, # type: ignore[attr-defined]
+	QDialogButtonBox, QWidget, QStyleFactory, # type: ignore[attr-defined]
 	QTabWidget, QVBoxLayout, # type: ignore[attr-defined]
 	QCheckBox, QLabel, # type: ignore[attr-defined]
 	QRadioButton, QComboBox, # type: ignore[attr-defined]
@@ -28,6 +28,11 @@ from .image_paths import (
 	piece_images_2d, piece_images_3d,
 	board_images_2d, board_images_3d,
 )
+
+
+class ThumbnailComboBox(QComboBox):
+	def sizeHint(self):
+		return QSize(super().sizeHint().width(), 36)
 
 
 class SettingsDialog(QDialog):
@@ -85,30 +90,22 @@ class SettingsDialog(QDialog):
 		self.board_layout.addLayout(self.board_style_layout, 0, 1)
 
 		self.board_image_label = QLabel(_('Board:'))
-		self.board_image_combo = QComboBox()
+		self.board_image_combo = ThumbnailComboBox()
 		self.board_image_combo.setIconSize(QSize(64, 32))
-		if self._config['board']['3D']:
-			boards = board_images_3d
-		else:
-			boards = board_images_2d
-		for board_spec in boards:
-			self.board_image_combo.addItem(QIcon(board_spec[0]), board_spec[1])
-			pass
+		self.board_image_combo.setMinimumHeight(36)
+		self.board_image_combo.setStyle(QStyleFactory.create('Fusion'))
 		self.board_layout.addWidget(self.board_image_label, 1, 0)
 		self.board_layout.addWidget(self.board_image_combo, 1, 1, 1, 2)
 
 		self.piece_set_label = QLabel(_('Piece Set:'))
-		self.piece_set_combo = QComboBox()
+		self.piece_set_combo = ThumbnailComboBox()
 		self.piece_set_combo.setIconSize(QSize(64, 64))
-		if self._config['board']['3D']:
-			pieces = piece_images_3d
-		else:
-			pieces = piece_images_2d
-		for piece_spec in pieces:
-			self.piece_set_combo.addItem(QIcon(piece_spec[0]), piece_spec[1])
-			pass
+		self.piece_set_combo.setMinimumHeight(68)
+		self.piece_set_combo.setStyle(QStyleFactory.create('Fusion'))
 		self.board_layout.addWidget(self.piece_set_label, 2, 0)
 		self.board_layout.addWidget(self.piece_set_combo, 2, 1, 1, 2)
+
+		self._fill_thumbnail_combos()
 
 		# Web view
 		self.web_view = QWebEngineView()
@@ -140,9 +137,28 @@ class SettingsDialog(QDialog):
 
 		return url
 
-	def accept(self) -> None:
-		assert isinstance(mw, AnkiQt)
+	def _fill_thumbnail_combos(self):
+		self._fill_board_combo()
+		self._fill_piece_set_combo()
 
+	def _fill_board_combo(self):
+		if self._config['board']['3D']:
+			boards = board_images_3d
+		else:
+			boards = board_images_2d
+		for board_spec in boards:
+			self.board_image_combo.addItem(QIcon(board_spec[0]), board_spec[1])
+
+	def _fill_piece_set_combo(self):
+		if self._config['board']['3D']:
+			pieces = piece_images_3d
+		else:
+			pieces = piece_images_2d
+		for piece_spec in pieces:
+			self.piece_set_combo.addItem(QIcon(piece_spec[0]), piece_spec[1])
+
+	def accept(self) -> None:
+		self._config_reader.config = self._config
 		super().accept()
 
 	def _on_board_style_toggled(self):
