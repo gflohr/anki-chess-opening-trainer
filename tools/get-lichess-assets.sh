@@ -6,6 +6,10 @@ rm -rf lila
 
 git clone --depth=1 https://github.com/lichess-org/lila
 
+rm -rf assets/fonts
+test -e assets/fonts || mkdir -p assets/fonts
+cp lila/public/font/lichess.chess.woff2 assets/fonts
+
 rm -f assets/css/piece/*.css
 test -e assets/css/piece || mkdir -p assets/css/piece
 cp -r lila/public/piece-css/*.css assets/css/piece

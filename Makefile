@@ -91,11 +91,8 @@ test:
 sourcedist:
 	python -m ankiscripts.sourcedist
 
-assets/css/piece/cburnett.css: ./tools/get-lichess-assets.sh
+src/image_paths.py: ./tools/get-lichess-assets.sh
 	sh $<
-
-src/image_paths.py: assets/css/piece/cburnett.css
-	tools/gen-image-paths.pl >$@ || (rm $@; exit 1)
 
 clean:
 	rm -rf build/ $(GENERATED) assets/css assets/images

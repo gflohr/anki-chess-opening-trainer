@@ -9,6 +9,13 @@ body {
 	margin: 0;
 }
 
+@font-face {
+	font-family: 'Chess';
+	src: url('/assets/fonts/lichess.chess.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+
 .cg-wrap {
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -36,3 +43,6 @@ chess-sidebar.is3d {
 	padding-bottom: 4.65%;
 }
 
+chess-move san {
+	font-family: Chess;
+}

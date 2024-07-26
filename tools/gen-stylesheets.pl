@@ -12,6 +12,7 @@ foreach my $img (@board_images_2d) {
 	my $style = $img;
 	$style =~ s{.*/}{};
 	$style =~ s{\..*$}{};
+	next if $style eq 'ncf-board';
 
 	my $path = $img;
 	$path =~ s/^assets/../;

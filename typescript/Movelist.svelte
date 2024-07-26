@@ -107,14 +107,18 @@
 				<chess-move-number>{entry.moveNumber}</chess-move-number>
 				<chess-move-white
 					class:current-move={game.currentMoveNumber - 1 === entry.moveNumber &&
-						game.currentColor === BLACK && entry.white !== '...'}
+						game.currentColor === BLACK &&
+						entry.white !== '...'}
+					class:ellipsis={entry.white === '...'}
 				>
 					<san>{entry.white}</san>
 				</chess-move-white>
 				<chess-move-black
 					class:current-move={game.currentMoveNumber - 1 === entry.moveNumber &&
-						game.currentColor === WHITE && entry.black !== '...'}
-				>
+						game.currentColor === WHITE &&
+						entry.black !== '...'}
+					class:ellipsis={entry.black === '...'}
+					>
 					<san>{entry.black}</san>
 				</chess-move-black>
 			</chess-move>
@@ -122,7 +126,7 @@
 	{/each}
 	<chess-move>
 		<chess-move-number>3</chess-move-number>
-		<chess-move-white class="answer-right">Bb5</chess-move-white>
+		<chess-move-white class="answer-right"><san>Bb5</san></chess-move-white>
 		<chess-move-black></chess-move-black>
 	</chess-move>
 </chess-movelist>
@@ -180,12 +184,15 @@
 	chess-move-white,
 	chess-move-black,
 	chess-comment {
+		color: #666;
 		border-right: 1px solid #ddd;
 	}
 
-	chess-move-white:hover, chess-move-black:hover {
+	chess-move-white:not(.ellipsis):hover,
+	chess-move-black:not(.ellipsis):hover {
 		color: white;
 		background-color: #1b78cf;
+		cursor: pointer;
 	}
 
 	.current-move {
@@ -196,7 +203,6 @@
 		grid-column: span 5;
 		font-size: 11pt;
 		padding: 4pt;
-		color: #666;
 	}
 
 	.answer-right {
