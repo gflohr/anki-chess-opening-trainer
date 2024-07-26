@@ -105,7 +105,8 @@
 </script>
 
 <chess-opening-trainer
-	style="grid-template-columns:{width}px auto; grid-template-rows:{height}px;"
+	style="grid-template-columns:{width}px {width /
+		2}px; grid-template-rows:{height}px;"
 >
 	<Board></Board>
 	<Sidebar></Sidebar>

@@ -31,6 +31,7 @@
 
 	onDestroy(() => {
 		unsubscribeConfiguration();
+		unsubscribeChessGame();
 	});
 </script>
 

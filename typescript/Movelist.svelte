@@ -1,3 +1,96 @@
+<script lang="ts">
+	import { onDestroy } from 'svelte';
+	import { chessGame } from './store';
+	import { type Move, BLACK, WHITE } from 'chess.js';
+	import type { ChessGame } from './chess-game';
+
+	type MovelistMove = {
+		moveNumber: number;
+		white: string;
+		black: string;
+	};
+
+	type ChessMove = Move & {
+		comment: string;
+	};
+
+	let moves: Array<MovelistMove | string> = [];
+	let game: ChessGame;
+	const unsubscribeChessGame = chessGame.subscribe(g => {
+		game = g;
+		const chess = game.chess;
+
+		const history = chess.history({ verbose: true }) as Array<ChessMove>;
+		const comments = chess.getComments();
+
+		for (const i in history) {
+			history[i].comment = comments[i].comment;
+		}
+
+		moves = [];
+		if (game.gameComments.length) {
+			moves.push(game.gameComments);
+		}
+
+		let moveNumber = game.firstMoveNumber;
+		let move = createMove(moveNumber);
+
+		for (let i = 0; i < history.length; ++i) {
+			const entry = history[i];
+
+			if (i === 0 && entry.color === BLACK) {
+				move.white = '...';
+			}
+
+			if (entry.color === WHITE) {
+				move.white = getSAN(entry);
+			} else {
+				move.black = getSAN(entry);
+			}
+
+			if (entry.comment.length) {
+				if (entry.color === WHITE) {
+					move.black = '...';
+					moves.push(move);
+					move = createMove(moveNumber);
+					move.white = '...';
+				} else {
+					moves.push(move);
+					move = createMove(moveNumber++);
+				}
+
+				moves.push(entry.comment);
+				continue;
+			}
+
+			if (entry.color === BLACK) {
+				moves.push(move);
+				move = createMove(++moveNumber);
+			}
+		}
+
+		if (move.white.length) {
+			moves.push(move);
+		}
+	});
+
+	function createMove(moveNumber: number): MovelistMove {
+		return {
+			moveNumber,
+			white: '',
+			black: '',
+		};
+	}
+
+	function getSAN(move: ChessMove): string {
+		return move.san;
+	}
+
+	onDestroy(() => {
+		unsubscribeChessGame();
+	});
+</script>
+
 <chess-navigation>
 	<button>&nbsp;&nbsp;=&nbsp;&nbsp;</button>
 	<button>&nbsp;&nbsp;|&lt;&lt;&nbsp;&nbsp;</button>
@@ -6,40 +99,31 @@
 	<button>&nbsp;&nbsp;&gt;&gt;|&nbsp;&nbsp;</button>
 </chess-navigation>
 <chess-movelist>
-	<chess-move>
-		<chess-move-number>1</chess-move-number>
-		<chess-move-white>e4</chess-move-white>
-		<chess-move-black>e5</chess-move-black>
-	</chess-move>
-	<chess-move>
-		<chess-move-number>2</chess-move-number>
-		<chess-move-white>♘f3</chess-move-white>
-		<chess-move-black>♞c6</chess-move-black>
-	</chess-move>
+	{#each moves as entry}
+		{#if typeof entry === 'string'}
+			<chess-comment>{entry}</chess-comment>
+		{:else}
+			<chess-move>
+				<chess-move-number>{entry.moveNumber}</chess-move-number>
+				<chess-move-white
+					class:current-move={game.currentMoveNumber - 1 === entry.moveNumber &&
+						game.currentColor === BLACK && entry.white !== '...'}
+				>
+					<san>{entry.white}</san>
+				</chess-move-white>
+				<chess-move-black
+					class:current-move={game.currentMoveNumber - 1 === entry.moveNumber &&
+						game.currentColor === WHITE && entry.black !== '...'}
+				>
+					<san>{entry.black}</san>
+				</chess-move-black>
+			</chess-move>
+		{/if}
+	{/each}
 	<chess-move>
 		<chess-move-number>3</chess-move-number>
-		<chess-move-white>♘c3</chess-move-white>
-		<chess-move-black>d6</chess-move-black>
-	</chess-move>
-	<chess-move>
-		<chess-move-number>4</chess-move-number>
-		<chess-move-white>♗c4</chess-move-white>
-		<chess-move-black>♝g4</chess-move-black>
-	</chess-move>
-	<chess-move>
-		<chess-move-number>5</chess-move-number>
-		<chess-move-white>d3</chess-move-white>
-		<chess-move-black class="answer-right">♛f6</chess-move-black>
-	</chess-move>
-	<chess-move>
-		<chess-move-number>5</chess-move-number>
-		<chess-move-white>d3</chess-move-white>
-		<chess-move-black class="answer-wrong">♞g4</chess-move-black>
-	</chess-move>
-	<chess-move>
-		<chess-move-number>5</chess-move-number>
-		<chess-move-white>d3</chess-move-white>
-		<chess-move-black>?</chess-move-black>
+		<chess-move-white class="answer-right">Bb5</chess-move-white>
+		<chess-move-black></chess-move-black>
 	</chess-move>
 </chess-movelist>
 
@@ -72,11 +156,13 @@
 	chess-move-number,
 	chess-move-white,
 	chess-move-black,
-	chess-navigation {
+	chess-navigation,
+	chess-comment {
 		border-bottom: 1px solid #ddd;
 	}
 
-	chess-move-number {
+	chess-move-number,
+	chess-comment {
 		background-color: #eee;
 	}
 
@@ -92,8 +178,25 @@
 	}
 
 	chess-move-white,
-	chess-move-black {
+	chess-move-black,
+	chess-comment {
 		border-right: 1px solid #ddd;
+	}
+
+	chess-move-white:hover, chess-move-black:hover {
+		color: white;
+		background-color: #1b78cf;
+	}
+
+	.current-move {
+		background-color: lightblue;
+	}
+
+	chess-comment {
+		grid-column: span 5;
+		font-size: 11pt;
+		padding: 4pt;
+		color: #666;
 	}
 
 	.answer-right {
