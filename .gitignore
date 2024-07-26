@@ -11,10 +11,12 @@ src/vendor
 src/manifest.json
 src/meta.json
 src/version.py
-src/basic_names.py
+src/image_paths.py
 /build
 /ankidata
 /ankiweb-description.md
 /node_modules
 /src/assets
 /src/user_files/imports.json
+/assets/css
+/assets/images

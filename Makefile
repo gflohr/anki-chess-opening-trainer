@@ -10,11 +10,12 @@ GENERATED = $(ENUMS) \
 	src/importer_config.py \
 	src/config.schema.json \
 	src/config.json \
+	src/image_paths.py \
 	typescript/config.ts \
 	typescript/default-config.ts \
 	assets/scss/_chessground.scss
 
-generated: $(GENERATED)
+generated: $(GENERATED) assets/css/piece/cburnett.css
 
 assets:
 	bun run build
@@ -90,11 +91,14 @@ test:
 sourcedist:
 	python -m ankiscripts.sourcedist
 
-update-assets:
-	sh ./tools/get-lichess-assets.sh
+assets/css/piece/cburnett.css: ./tools/get-lichess-assets.sh
+	sh $<
+
+src/image_paths.py: assets/css/piece/cburnett.css
+	tools/gen-image-paths.pl >$@ || (rm $@; exit 1)
 
 clean:
-	rm -rf build/ $(GENERATED)
+	rm -rf build/ $(GENERATED) assets/css assets/images
 
 .PHONY: all assets zip ankiweb vendor fix mypy pylint lint test sourcedist \
 	update-assets clean

@@ -7,7 +7,9 @@
 # to Public License, Version 2, as published by Sam Hocevar. See
 # http://www.wtfpl.net/ for more details.
 
+import os
 import json
+from typing import Dict
 from aqt import mw, AnkiQt
 
 # pylint: disable=no-name-in-module
@@ -17,7 +19,7 @@ from aqt.qt import (QDialog, QGridLayout, # type: ignore[attr-defined]
                     QCheckBox, QLabel, # type: ignore[attr-defined]
                     QRadioButton, QComboBox, # type: ignore[attr-defined]
                     QWebEngineView, QUrl, QUrlQuery, # type: ignore[attr-defined]
-                    Qt, QHBoxLayout, # type: ignore[attr-defined]
+                    Qt, QHBoxLayout, QIcon, # type: ignore[attr-defined]
 )
 
 from .config_reader import ConfigReader
@@ -42,7 +44,20 @@ class SettingsDialog(QDialog):
 		self._base_url.setPath(f'/_addons/{pkg}/assets/html/index.html')
 
 		self.setWindowTitle(_('Settings'))
+		script_dir = os.path.dirname(os.path.abspath(__file__))
+		self._images_dir = os.path.abspath(os.path.join(script_dir, 'images'))
+
+		self._init_image_lists()
 		self._initUI()
+
+	def _init_image_lists(self):
+		self._boards_2d: Dict[QIcon, str] = []
+		directory = os.path.join(self._images_dir, '2d', 'board')
+
+		for filename in os.listdir(directory):
+			icon = QIcon(os.path.join(directory, filename))
+		#	if filename.endswith(('.png', '.jpg', '.jpeg')):
+		#		combo.addItem(QIcon(os.path.join(directory, filename)), filename)
 
 	def _initUI(self):
 		layout = QVBoxLayout()
