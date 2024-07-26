@@ -52,13 +52,12 @@ rm -f src/images/2d/board/*
 echo "directory = os.path.join(_images_dir, '2d', 'board')" >>src/image_paths.py
 echo "board_images_2d: List[Tuple[str, str]] = [" >>src/image_paths.py
 for img in assets/images/2d/board/svg/*.svg; do
-	cp $img src/images/2d/board
-	filename=`echo $img | sed -e 's/.*\///'`
-	name=`echo $filename | sed -e 's/\..*//'`
-	echo "	(os.path.join(directory, '$filename'), '$name')," >>src/image_paths.py
+	tools/svg-thumbnail.sh $img src/images/2d/board
 done
 for thumb in assets/images/2d/board/*.thumbnail.*; do
 	cp $thumb src/images/2d/board
+done
+for thumb in src/images/2d/board/*.thumbnail.*; do
 	filename=`echo $thumb | sed -e 's/.*\///'`
 	name=`echo $filename | sed -e 's/\..*//'`
 	echo "	(os.path.join(directory, '$filename'), '$name')," >>src/image_paths.py

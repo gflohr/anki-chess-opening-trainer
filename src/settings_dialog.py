@@ -80,7 +80,6 @@ class SettingsDialog(QDialog):
 		self.board_style_2d.setChecked(not self._config['board']['3D'])
 		self.board_style_3d = QRadioButton("3D")
 		self.board_style_3d.setChecked(self._config['board']['3D'])
-		self.board_style_3d.toggled.connect(self._on_board_style_toggled)
 		self.board_style_layout = QHBoxLayout()
 		self.board_style_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
 		self.board_style_layout.addWidget(self.board_style_2d)
@@ -128,6 +127,11 @@ class SettingsDialog(QDialog):
 		layout.addWidget(self.button_box)
 		self.setLayout(layout)
 
+		# Connect signals.
+		self.board_style_3d.toggled.connect(self._on_board_style_toggled)
+		self.board_image_combo.currentIndexChanged.connect(self._on_board_changed)
+		self.piece_set_combo.currentIndexChanged.connect(self._on_piece_set_changed)
+
 	def _get_url(self) -> QUrl:
 		url = QUrl(self._base_url)
 		query = QUrlQuery(url)
@@ -144,18 +148,32 @@ class SettingsDialog(QDialog):
 	def _fill_board_combo(self):
 		if self._config['board']['3D']:
 			boards = board_images_3d
+			selected = self._config['board']['3Dboard']
 		else:
 			boards = board_images_2d
+			selected = self._config['board']['2Dboard']
+		index = 0
+		self.board_image_combo.clear()
 		for board_spec in boards:
 			self.board_image_combo.addItem(QIcon(board_spec[0]), board_spec[1])
+			if selected == board_spec[1]:
+				self.board_image_combo.setCurrentIndex(index)
+			index = index + 1
 
 	def _fill_piece_set_combo(self):
 		if self._config['board']['3D']:
 			pieces = piece_images_3d
+			selected = self._config['board']['3Dpieces']
 		else:
 			pieces = piece_images_2d
+			selected = self._config['board']['2Dpieces']
+		index = 0
+		self.piece_set_combo.clear()
 		for piece_spec in pieces:
 			self.piece_set_combo.addItem(QIcon(piece_spec[0]), piece_spec[1])
+			if selected == piece_spec[1]:
+				self.piece_set_combo.setCurrentIndex(index)
+			index = index + 1
 
 	def accept(self) -> None:
 		self._config_reader.config = self._config
@@ -165,6 +183,23 @@ class SettingsDialog(QDialog):
 		self._config['board']['3D'] = not self._config['board']['3D']
 		self.board_style_2d.setChecked(not self._config['board']['3D'])
 		self.board_style_3d.setChecked(self._config['board']['3D'])
+		self._fill_thumbnail_combos()
+		self._update_webview()
+
+	def _on_board_changed(self):
+		selected = self.board_image_combo.currentText()
+		if self._config['board']['3D']:
+			self._config['board']['3Dboard'] = selected
+		else:
+			self._config['board']['2Dboard'] = selected
+		self._update_webview()
+
+	def _on_piece_set_changed(self):
+		selected = self.piece_set_combo.currentText()
+		if self._config['board']['3D']:
+			self._config['board']['3Dpieces'] = selected
+		else:
+			self._config['board']['2Dpieces'] = selected
 		self._update_webview()
 
 	def _update_webview(self):
