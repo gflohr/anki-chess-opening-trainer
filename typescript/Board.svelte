@@ -1,13 +1,20 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { ChessgroundUnstyled as Chessground } from 'svelte-chessground';
-	import { type Key } from 'chessground/types';
+	import type { Key } from 'chessground/types';
+	import type { Config as ChessgroundConfig } from 'chessground/config';
 	import { configuration, chessGame } from './store';
 	import { ChessGame } from './chess-game';
 
 	let classes: Array<string> = ['loading'];
 	const params = new URLSearchParams(document.location.search);
 	const configMode = params.has('configure');
+	let viewOnly = configMode;
+	let config: ChessgroundConfig = {
+		movable: {
+			free: false,
+		}
+	};
 
 	const unsubscribeConfiguration = configuration.subscribe(config => {
 		if (!config) {
@@ -26,16 +33,17 @@
 	});
 
 	let game: ChessGame;
-	let lastMove: Array<Key>;
+	const lastMove: Array<Key> = [];
 	const unsubscribeChessGame = chessGame.subscribe(g => {
 		game = g;
 
 		const history = game.chess.history({ verbose: true });
 		if (history.length) {
 			const lastEntry = history[history.length - 1];
-			lastMove = [lastEntry.from, lastEntry.to];
-			console.log(lastMove);
+			lastMove[0] = lastEntry.from
+			lastMove[1] = lastEntry.to;
 		}
+
 	});
 
 	onDestroy(() => {
@@ -47,9 +55,10 @@
 <chess-board class={classes.join(' ')}>
 	<Chessground
 		addPieceZIndex={true}
-		viewOnly={configMode}
+		viewOnly={viewOnly}
 		fen={game.chess.fen()}
 		lastMove={lastMove}
+		{config}
 	/>
 </chess-board>
 

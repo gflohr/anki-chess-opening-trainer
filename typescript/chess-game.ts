@@ -1,4 +1,4 @@
-import { Chess, type Color } from 'chess.js';
+import { Chess, type Color, type Square, SQUARES } from 'chess.js';
 
 type LineMove = {
 	move: string;
@@ -32,6 +32,17 @@ export class ChessGame {
 		}
 		this._currentMoveNumber = this._chess.moveNumber();
 		this._currentColor = this._chess.turn();
+	}
+
+	toDests(): Map<Square, Array<Square>> {
+		const dests = new Map<Square, Array<Square>>();
+
+		SQUARES.forEach(s => {
+			const ms = this._chess.moves({square: s, verbose: true});
+			if (ms.length) dests.set(s, ms.map(m => m.to));
+		});
+
+		return dests;
 	}
 
 	get chess(): Chess {

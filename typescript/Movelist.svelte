@@ -2,7 +2,7 @@
 	import { onDestroy } from 'svelte';
 	import { chessGame } from './store';
 	import { type Move, BLACK, WHITE } from 'chess.js';
-	import type { ChessGame } from './chess-game';
+	import { ChessGame } from './chess-game';
 
 	type MovelistMove = {
 		moveNumber: number;
@@ -16,6 +16,7 @@
 
 	let moves: Array<MovelistMove | string> = [];
 	let game: ChessGame;
+
 	const unsubscribeChessGame = chessGame.subscribe(g => {
 		game = g;
 		const chess = game.chess;
