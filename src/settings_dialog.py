@@ -34,6 +34,11 @@ class ThumbnailComboBox(QComboBox):
 	def sizeHint(self):
 		return QSize(super().sizeHint().width(), 36)
 
+orientations = {
+	'Automatic': 0,
+	'White': 1,
+	'Black': 2,
+}
 
 class SettingsDialog(QDialog):
 
@@ -117,6 +122,8 @@ class SettingsDialog(QDialog):
 		orientation_combo.addItem(_('Automatic'))
 		orientation_combo.addItem(_('White'))
 		orientation_combo.addItem(_('Black'))
+		currentIndex = orientations[self._config['board']['orientation']]
+		orientation_combo.setCurrentIndex(currentIndex)
 		orientation_combo.setToolTip(
 			'Set the board orientation:\n'
 			'- White: View from White\'s perspective.\n'
@@ -129,6 +136,7 @@ class SettingsDialog(QDialog):
 
 		clock_label = QLabel(_('Display clock'))
 		clock_checbkox = QCheckBox()
+		clock_checbkox.setChecked(self._config['board']['displayClock'])
 		self.board_layout.addWidget(clock_label, row, 0)
 		self.board_layout.addWidget(clock_checbkox, row, 1, 1, 2)
 		row = row + 1
@@ -159,6 +167,7 @@ class SettingsDialog(QDialog):
 
 		show_num_answers_label = QLabel(_('Show number of answers:'))
 		show_num_answers_checkbox = QCheckBox()
+		show_num_answers_checkbox.setChecked(self._config['studying']['showNumberOfAnswers'])
 		show_num_answers_checkbox.setToolTip(_('''
 If this is checked, the number of rows for the moves to enter will correspond
 with the expected number of moves.
@@ -169,9 +178,14 @@ with the expected number of moves.
 
 		auto_turn_label = QLabel(_('Turn card automatically:'))
 		auto_turn_checkbox = QCheckBox()
+		auto_turn_checkbox.setChecked(self._config['studying']['autoTurnCard'])
+		# If "show number of answers" is switched off, automatically turning
+		# the card would void the idea of that setting.
+		auto_turn_checkbox.setCheckable(self._config['studying']['showNumberOfAnswers'])
 		auto_turn_checkbox.setToolTip(_('''
 If this is checked, the card is automatically turned, when all expected moves
-have been entered.
+have been entered.  Unchecking this is only possible if you have also switched
+displaying the number of answers.
 ''').strip())
 		studying_layout.addWidget(auto_turn_label, row, 0)
 		studying_layout.addWidget(auto_turn_checkbox, row, 1)
