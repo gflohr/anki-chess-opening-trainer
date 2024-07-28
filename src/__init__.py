@@ -54,7 +54,7 @@ def init_i18n() -> None:
 	t.install(names=['_', 'ngettext'])
 
 def init_web() -> None:
-	mw.addonManager.setWebExports(__name__, r'.*(css|js|jpg|svg|png|json|html)')
+	mw.addonManager.setWebExports(__name__, r'.*(css|js|jpg|svg|png|json|html|woff2)')
 
 def add_menu_item():
 	if mw is not None:
