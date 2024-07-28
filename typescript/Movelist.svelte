@@ -17,6 +17,9 @@
 	let moves: Array<MovelistMove | string> = [];
 	let task: ChessTask;
 
+	const appElement = document.getElementById('app') as HTMLElement;
+	const side = appElement.dataset.side;
+
 	const unsubscribeChessTask = chessTask.subscribe(t => {
 		task = t;
 		const chess = task.chess;
@@ -102,7 +105,9 @@
 <chess-movelist>
 	{#each moves as entry}
 		{#if typeof entry === 'string'}
+			{#if side === 'answer'}
 			<chess-comment>{entry}</chess-comment>
+			{/if}
 		{:else}
 			<chess-move>
 				<chess-move-number>{entry.moveNumber}</chess-move-number>
