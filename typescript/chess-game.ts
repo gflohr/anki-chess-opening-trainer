@@ -1,4 +1,6 @@
-import { Chess, type Color, type Square, SQUARES } from 'chess.js';
+import { Chess, type Color, type Square, SQUARES, BLACK, WHITE } from 'chess.js';
+import { type Config as ChessgroundConfig } from 'chessground/config';
+import { chessGame } from './store';
 
 type LineMove = {
 	move: string;
@@ -16,33 +18,26 @@ type Line = {
 export class ChessGame {
 	private readonly _chess: Chess;
 	private readonly _line: Line;
-	private readonly _firstMoveNumber: number;
-	private _currentMoveNumber: number;
-	private _currentColor: Color;
+	private readonly firstMoveNumber: number;
+	private readonly firstColor: Color = WHITE;
+	private _currentMoveNumber: number = 1;
+	private _currentColor: Color = WHITE;
+	private _config: ChessgroundConfig;
 
-	constructor() {
+	constructor(config: ChessgroundConfig) {
+		this._config = config;
 		const appElement = document.getElementById('app');
 		this._line = JSON.parse(appElement?.dataset.line as string) as Line;
 
 		this._chess = new Chess(this._line.fen);
-		this._firstMoveNumber = this._chess.moveNumber();
+		this.firstMoveNumber = this._chess.moveNumber();
+		this.firstColor = this._chess.turn();
 		for (const move of this._line.moves) {
 			this._chess.move(move.move);
 			this._chess.setComment(move.comments.join('\n'));
 		}
-		this._currentMoveNumber = this._chess.moveNumber();
-		this._currentColor = this._chess.turn();
-	}
 
-	toDests(): Map<Square, Array<Square>> {
-		const dests = new Map<Square, Array<Square>>();
-
-		SQUARES.forEach(s => {
-			const ms = this._chess.moves({square: s, verbose: true});
-			if (ms.length) dests.set(s, ms.map(m => m.to));
-		});
-
-		return dests;
+		this.updateState(false);
 	}
 
 	get chess(): Chess {
@@ -53,10 +48,6 @@ export class ChessGame {
 		return this._line;
 	}
 
-	get firstMoveNumber(): number {
-		return this._firstMoveNumber;
-	}
-
 	get currentMoveNumber(): number {
 		return this._currentMoveNumber;
 	}
@@ -65,7 +56,70 @@ export class ChessGame {
 		return this._currentColor;
 	}
 
+	get chessgroundConfig(): ChessgroundConfig {
+		return this._config;
+	}
+
 	get gameComments(): string {
 		return this._line.game_comments.join('\n');
+	}
+
+	private toDests(): Map<Square, Array<Square>> {
+		const dests = new Map<Square, Array<Square>>();
+
+		SQUARES.forEach(s => {
+			const ms = this._chess.moves({square: s, verbose: true});
+			if (ms.length) dests.set(s, ms.map(m => m.to));
+		});
+
+		return dests;
+	}
+
+	private updateState(doSet: boolean) {
+		this._config.fen = this._chess.fen();
+
+		this.updateMoveNumberAndColor();
+		this.updateLastMove();
+		this.updateMovable();
+		if (doSet) {
+			chessGame.set(this);
+		}
+	}
+
+	private updateMoveNumberAndColor() {
+		this._currentMoveNumber = this._chess.moveNumber();
+		this._currentColor = this._chess.turn();
+	}
+
+	private updateLastMove() {
+		const history = this._chess.history({verbose: true});
+
+		if (!history.length) {
+			this._config.lastMove = [];
+		} else {
+			let i = (this._currentMoveNumber - this.firstMoveNumber) << 1;
+			if (this._currentColor === this.firstColor) {
+				--i;
+			} else if (this._currentColor === WHITE) {
+				i -= 2;
+			}
+
+			const entry = history[i];
+			this._config.lastMove = [ entry.from, entry.to ];
+		}
+	}
+
+	private updateMovable() {
+		this._config.movable = {};
+		const movable = this._config.movable
+
+		movable.free = false;
+		movable.dests = this.toDests();
+
+		if (this._chess.turn() === BLACK) {
+			movable.color = 'black';
+		} else {
+			movable.color = 'white';
+		}
 	}
 }

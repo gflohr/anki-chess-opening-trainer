@@ -7,14 +7,7 @@
 	import { ChessGame } from './chess-game';
 
 	let classes: Array<string> = ['loading'];
-	const params = new URLSearchParams(document.location.search);
-	const configMode = params.has('configure');
-	let viewOnly = configMode;
-	let config: ChessgroundConfig = {
-		movable: {
-			free: false,
-		}
-	};
+	let config: ChessgroundConfig = {};
 
 	const unsubscribeConfiguration = configuration.subscribe(config => {
 		if (!config) {
@@ -33,18 +26,13 @@
 	});
 
 	let game: ChessGame;
-	const lastMove: Array<Key> = [];
 	const unsubscribeChessGame = chessGame.subscribe(g => {
 		game = g;
-
-		const history = game.chess.history({ verbose: true });
-		if (history.length) {
-			const lastEntry = history[history.length - 1];
-			lastMove[0] = lastEntry.from
-			lastMove[1] = lastEntry.to;
-		}
-
 	});
+
+	$: if (game) {
+		config = game.chessgroundConfig;
+	}
 
 	onDestroy(() => {
 		unsubscribeConfiguration();
@@ -53,13 +41,7 @@
 </script>
 
 <chess-board class={classes.join(' ')}>
-	<Chessground
-		addPieceZIndex={true}
-		viewOnly={viewOnly}
-		fen={game.chess.fen()}
-		lastMove={lastMove}
-		{config}
-	/>
+	<Chessground {config} />
 </chess-board>
 
 <style lang="scss">
