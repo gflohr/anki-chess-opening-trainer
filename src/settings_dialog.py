@@ -7,10 +7,9 @@
 # to Public License, Version 2, as published by Sam Hocevar. See
 # http://www.wtfpl.net/ for more details.
 
-import os
 import json
 from typing import Dict
-from aqt import mw, AnkiQt
+from aqt import mw
 
 # pylint: disable=no-name-in-module
 from aqt.qt import (
@@ -39,6 +38,7 @@ orientations = {
 	'White': 1,
 	'Black': 2,
 }
+orientations_reversed = ['Automatic', 'White', 'Black']
 
 class SettingsDialog(QDialog):
 
@@ -118,27 +118,27 @@ class SettingsDialog(QDialog):
 		row = row + 1
 
 		orientation_label = QLabel(_('Board orientation'))
-		orientation_combo = QComboBox()
-		orientation_combo.addItem(_('Automatic'))
-		orientation_combo.addItem(_('White'))
-		orientation_combo.addItem(_('Black'))
+		self.orientation_combo = QComboBox()
+		self.orientation_combo.addItem(_('Automatic'))
+		self.orientation_combo.addItem(_('White'))
+		self.orientation_combo.addItem(_('Black'))
 		currentIndex = orientations[self._config['board']['orientation']]
-		orientation_combo.setCurrentIndex(currentIndex)
-		orientation_combo.setToolTip(
+		self.orientation_combo.setCurrentIndex(currentIndex)
+		self.orientation_combo.setToolTip(
 			'Set the board orientation:\n'
 			'- White: View from White\'s perspective.\n'
 			'- Black: View from Black\'s perspective.\n'
 			'- Automatic: View from the perspective of the side to move.'
 		)
 		self.board_layout.addWidget(orientation_label, row, 0)
-		self.board_layout.addWidget(orientation_combo, row, 1, 1, 2)
+		self.board_layout.addWidget(self.orientation_combo, row, 1, 1, 2)
 		row = row + 1
 
 		clock_label = QLabel(_('Display clock'))
-		clock_checbkox = QCheckBox()
-		clock_checbkox.setChecked(self._config['board']['displayClock'])
+		self.clock_checbkox = QCheckBox()
+		self.clock_checbkox.setChecked(self._config['board']['displayClock'])
 		self.board_layout.addWidget(clock_label, row, 0)
-		self.board_layout.addWidget(clock_checbkox, row, 1, 1, 2)
+		self.board_layout.addWidget(self.clock_checbkox, row, 1, 1, 2)
 		row = row + 1
 
 		self._fill_thumbnail_combos()
@@ -157,6 +157,8 @@ class SettingsDialog(QDialog):
 		self.board_style_3d.toggled.connect(self._on_board_style_toggled)
 		self.board_image_combo.currentIndexChanged.connect(self._on_board_changed)
 		self.piece_set_combo.currentIndexChanged.connect(self._on_piece_set_changed)
+		self.orientation_combo.currentIndexChanged.connect(self._on_orientation_changed)
+		self.clock_checbkox.toggled.connect(self._on_display_clock_changed)
 
 	def _initStudyingTab(self):
 		studying_tab = QWidget()
@@ -166,34 +168,38 @@ class SettingsDialog(QDialog):
 		row = 0
 
 		show_num_answers_label = QLabel(_('Show number of answers:'))
-		show_num_answers_checkbox = QCheckBox()
-		show_num_answers_checkbox.setChecked(self._config['studying']['showNumberOfAnswers'])
-		show_num_answers_checkbox.setToolTip(_('''
+		self.show_num_answers_checkbox = QCheckBox()
+		self.show_num_answers_checkbox.setChecked(self._config['studying']['showNumberOfAnswers'])
+		self.show_num_answers_checkbox.setToolTip(_('''
 If this is checked, the number of rows for the moves to enter will correspond
 with the expected number of moves.
 ''').strip())
 		studying_layout.addWidget(show_num_answers_label, row, 0)
-		studying_layout.addWidget(show_num_answers_checkbox, row, 1)
+		studying_layout.addWidget(self.show_num_answers_checkbox, row, 1)
 		row = row + 1
 
 		auto_turn_label = QLabel(_('Turn card automatically:'))
-		auto_turn_checkbox = QCheckBox()
-		auto_turn_checkbox.setChecked(self._config['studying']['autoTurnCard'])
+		self.auto_turn_checkbox = QCheckBox()
+		self.auto_turn_checkbox.setChecked(self._config['studying']['autoTurnCard'])
 		# If "show number of answers" is switched off, automatically turning
 		# the card would void the idea of that setting.
-		auto_turn_checkbox.setCheckable(self._config['studying']['showNumberOfAnswers'])
-		auto_turn_checkbox.setToolTip(_('''
+		self.auto_turn_checkbox.setEnabled(self._config['studying']['showNumberOfAnswers'])
+		self.auto_turn_checkbox.setToolTip(_('''
 If this is checked, the card is automatically turned, when all expected moves
 have been entered.  Unchecking this is only possible if you have also switched
 displaying the number of answers.
 ''').strip())
 		studying_layout.addWidget(auto_turn_label, row, 0)
-		studying_layout.addWidget(auto_turn_checkbox, row, 1)
+		studying_layout.addWidget(self.auto_turn_checkbox, row, 1)
 		row = row + 1
 
 		studying_tab.setLayout(studying_layout)
 
 		self.tab_widget.addTab(studying_tab, _('Studying'))
+
+		# Connect signals.
+		self.show_num_answers_checkbox.toggled.connect(self._on_show_num_answers_toggled)
+		self.auto_turn_checkbox.toggled.connect(self._on_auto_turn_toggled)
 
 	def _get_url(self) -> QUrl:
 		url = QUrl(self._base_url)
@@ -264,6 +270,20 @@ displaying the number of answers.
 		else:
 			self._config['board']['2Dpieces'] = selected
 		self._update_webview()
+
+	def _on_orientation_changed(self):
+		orientation = orientations_reversed[self.orientation_combo.currentIndex()]
+		self._config['board']['orientation'] = orientation
+
+	def _on_display_clock_changed(self):
+		self._config['board']['displayClock'] = self.clock_checbkox.isChecked()
+
+	def _on_show_num_answers_toggled(self):
+		self._config['studying']['showNumberOfAnswers'] = self.show_num_answers_checkbox.isChecked()
+		self.auto_turn_checkbox.setEnabled(self._config['studying']['showNumberOfAnswers'])
+
+	def _on_auto_turn_toggled(self):
+		self._config['studying']['autoTurnCard'] = self.auto_turn_checkbox.isChecked()
 
 	def _update_webview(self):
 		escaped = json.dumps(json.dumps(self._config))
