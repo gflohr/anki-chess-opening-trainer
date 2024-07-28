@@ -57,15 +57,6 @@ class SettingsDialog(QDialog):
 
 		self._initUI()
 
-	def _init_image_lists(self):
-		self._boards_2d: Dict[QIcon, str] = []
-		directory = os.path.join(self._images_dir, '2d', 'board')
-
-		for filename in os.listdir(directory):
-			icon = QIcon(os.path.join(directory, filename))
-		#	if filename.endswith(('.png', '.jpg', '.jpeg')):
-		#		combo.addItem(QIcon(os.path.join(directory, filename)), filename)
-
 	def _initUI(self):
 		layout = QVBoxLayout()
 		self.tab_widget = QTabWidget()
