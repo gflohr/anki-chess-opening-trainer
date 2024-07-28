@@ -59,9 +59,22 @@ class SettingsDialog(QDialog):
 
 	def _initUI(self):
 		layout = QVBoxLayout()
-		self.tab_widget = QTabWidget()
 
-		# Board tab
+		self.tab_widget = QTabWidget()
+		self._initBoardTab()
+		self._initStudyingTab()
+
+		# Button Box
+		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+		self.button_box = QDialogButtonBox(btn)
+		self.button_box.accepted.connect(self.accept)
+		self.button_box.rejected.connect(self.reject)
+
+		layout.addWidget(self.tab_widget)
+		layout.addWidget(self.button_box)
+		self.setLayout(layout)
+
+	def _initBoardTab(self):
 		self.board_tab = QWidget()
 		self.board_layout = QGridLayout()
 		self.board_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
@@ -105,23 +118,43 @@ class SettingsDialog(QDialog):
 
 		self.board_tab.setLayout(self.board_layout)
 
-		# Add tabs to the widget
 		self.tab_widget.addTab(self.board_tab, _('Board'))
-
-		# Button Box
-		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
-		self.button_box = QDialogButtonBox(btn)
-		self.button_box.accepted.connect(self.accept)
-		self.button_box.rejected.connect(self.reject)
-
-		layout.addWidget(self.tab_widget)
-		layout.addWidget(self.button_box)
-		self.setLayout(layout)
 
 		# Connect signals.
 		self.board_style_3d.toggled.connect(self._on_board_style_toggled)
 		self.board_image_combo.currentIndexChanged.connect(self._on_board_changed)
 		self.piece_set_combo.currentIndexChanged.connect(self._on_piece_set_changed)
+
+	def _initStudyingTab(self):
+		studying_tab = QWidget()
+		studying_layout = QGridLayout()
+		studying_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+		row = 0
+
+		show_num_answers_label = QLabel(_('Show number of answers:'))
+		show_num_answers_checkbox = QCheckBox()
+		show_num_answers_checkbox.setToolTip(_('''
+If this is checked, the number of rows for the moves to enter will correspond
+with the expected number of moves.
+''').strip())
+		studying_layout.addWidget(show_num_answers_label, row, 0)
+		studying_layout.addWidget(show_num_answers_checkbox, row, 1)
+		row = row + 1
+
+		auto_turn_label = QLabel(_('Turn card automatically:'))
+		auto_turn_checkbox = QCheckBox()
+		auto_turn_checkbox.setToolTip(_('''
+If this is checked, the card is automatically turned, when all expected moves
+have been entered.
+''').strip())
+		studying_layout.addWidget(auto_turn_label, row, 0)
+		studying_layout.addWidget(auto_turn_checkbox, row, 1)
+		row = row + 1
+
+		studying_tab.setLayout(studying_layout)
+
+		self.tab_widget.addTab(studying_tab, _('Studying'))
 
 	def _get_url(self) -> QUrl:
 		url = QUrl(self._base_url)
