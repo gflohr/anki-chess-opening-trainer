@@ -79,6 +79,7 @@ class SettingsDialog(QDialog):
 		self.board_layout = QGridLayout()
 		self.board_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
+		row = 0;
 		self.board_style_label = QLabel(_('Board Style:'))
 		self.board_style_2d = QRadioButton("2D")
 		self.board_style_2d.setChecked(not self._config['board']['3D'])
@@ -89,24 +90,48 @@ class SettingsDialog(QDialog):
 		self.board_style_layout.addWidget(self.board_style_2d)
 		self.board_style_layout.addWidget(self.board_style_3d)
 
-		self.board_layout.addWidget(self.board_style_label, 0, 0)
-		self.board_layout.addLayout(self.board_style_layout, 0, 1)
+		self.board_layout.addWidget(self.board_style_label, row, 0)
+		self.board_layout.addLayout(self.board_style_layout, row, 1)
+		row = row + 1
 
 		self.board_image_label = QLabel(_('Board:'))
 		self.board_image_combo = ThumbnailComboBox()
 		self.board_image_combo.setIconSize(QSize(64, 32))
 		self.board_image_combo.setMinimumHeight(36)
 		self.board_image_combo.setStyle(QStyleFactory.create('Fusion'))
-		self.board_layout.addWidget(self.board_image_label, 1, 0)
-		self.board_layout.addWidget(self.board_image_combo, 1, 1, 1, 2)
+		self.board_layout.addWidget(self.board_image_label, row, 0)
+		self.board_layout.addWidget(self.board_image_combo, row, 1, 1, 2)
+		row = row + 1
 
 		self.piece_set_label = QLabel(_('Piece Set:'))
 		self.piece_set_combo = ThumbnailComboBox()
 		self.piece_set_combo.setIconSize(QSize(64, 64))
 		self.piece_set_combo.setMinimumHeight(68)
 		self.piece_set_combo.setStyle(QStyleFactory.create('Fusion'))
-		self.board_layout.addWidget(self.piece_set_label, 2, 0)
-		self.board_layout.addWidget(self.piece_set_combo, 2, 1, 1, 2)
+		self.board_layout.addWidget(self.piece_set_label, row, 0)
+		self.board_layout.addWidget(self.piece_set_combo, row, 1, 1, 2)
+		row = row + 1
+
+		orientation_label = QLabel(_('Board orientation'))
+		orientation_combo = QComboBox()
+		orientation_combo.addItem(_('Automatic'))
+		orientation_combo.addItem(_('White'))
+		orientation_combo.addItem(_('Black'))
+		orientation_combo.setToolTip(
+			'Set the board orientation:\n'
+			'- White: View from White\'s perspective.\n'
+			'- Black: View from Black\'s perspective.\n'
+			'- Automatic: View from the perspective of the side to move.'
+		)
+		self.board_layout.addWidget(orientation_label, row, 0)
+		self.board_layout.addWidget(orientation_combo, row, 1, 1, 2)
+		row = row + 1
+
+		clock_label = QLabel(_('Display clock'))
+		clock_checbkox = QCheckBox()
+		self.board_layout.addWidget(clock_label, row, 0)
+		self.board_layout.addWidget(clock_checbkox, row, 1, 1, 2)
+		row = row + 1
 
 		self._fill_thumbnail_combos()
 
@@ -114,7 +139,7 @@ class SettingsDialog(QDialog):
 		self.web_view = QWebEngineView()
 		self.web_view.setUrl(self._get_url())
 		self.web_view.setMinimumHeight(300)
-		self.board_layout.addWidget(self.web_view, 3, 0, 1, 3)
+		self.board_layout.addWidget(self.web_view, row, 0, 1, 3)
 
 		self.board_tab.setLayout(self.board_layout)
 
