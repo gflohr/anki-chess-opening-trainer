@@ -10,5 +10,11 @@ export const defaultConfig: Config = {
 		'2Dboard': 'blue3',
 		'3Dpieces': 'Basic',
 		'3Dboard': 'Black-White-Aluminium',
+		orientation: 'Automatic',
+		displayClock: true,
+	},
+	studying: {
+		showNumberOfAnswers: true,
+		autoTurnCard: true,
 	},
 };

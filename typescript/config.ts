@@ -129,5 +129,26 @@ export interface Config {
 			| 'Wax'
 			| 'Wood-Glass'
 			| 'Woodi';
+		/**
+		 * Orientation of the board
+		 */
+		orientation: 'Automatic' | 'White' | 'Black';
+		/**
+		 * Let a clock run while you are finding the answer(s)
+		 */
+		displayClock: boolean;
+	};
+	/**
+	 * Modify the studying process.
+	 */
+	studying?: {
+		/**
+		 * Show an empty move entry for each expected move.
+		 */
+		showNumberOfAnswers: boolean;
+		/**
+		 * Automatically turn the card, when all moves have been entered.
+		 */
+		autoTurnCard: boolean;
 	};
 }

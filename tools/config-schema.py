@@ -53,7 +53,15 @@ schema = {
 			'description': 'The board style',
 			'type': 'object',
 			'additionalProperties': False,
-			'required': ['3D', '2Dpieces', '2Dboard', '3Dpieces', '3Dboard' ],
+			'required': [
+				'3D',
+				'2Dpieces',
+				'2Dboard',
+				'3Dpieces',
+				'3Dboard',
+				'orientation',
+				'displayClock',
+			],
 			'properties': {
 				'3D': {
 					'description': 'Whether to use a 3D board.',
@@ -83,6 +91,39 @@ schema = {
 					'type': 'string',
 					'enum': board_image_3d,
 					'default': 'Black-White-Aluminium',
+				},
+				'orientation': {
+					'description': 'Orientation of the board',
+					'type': 'string',
+					'enum': ['Automatic', 'White', 'Black'],
+					'default': 'Automatic',
+				},
+				'displayClock': {
+					'description': 'Let a clock run while you are finding the answer(s)',
+					'type': 'boolean',
+					'default': True,
+				},
+			},
+			'default': {},
+		},
+		'studying': {
+			'description': 'Modify the studying process.',
+			'type': 'object',
+			'additionalProperties': False,
+			'required': [
+				'showNumberOfAnswers',
+				'autoTurnCard',
+			],
+			'properties': {
+				'showNumberOfAnswers': {
+					'description': 'Show an empty move entry for each expected move.',
+					'type': 'boolean',
+					'default': True,
+				},
+				'autoTurnCard': {
+					'description': 'Automatically turn the card, when all moves have been entered.',
+					'type': 'boolean',
+					'default': True,
 				},
 			},
 			'default': {},
