@@ -89,17 +89,16 @@
 		}
 		configuration.set(config);
 
-		const root = document.getElementById('app');
-		if (!root) return;
+		if (!appElement) return;
 
 		const observer = new ResizeObserver(entries => {
 			resize();
 		});
 
-		observer.observe(root);
+		observer.observe(appElement);
 
 		return new Promise(resolve => {
-			resolve(() => observer.unobserve(root));
+			resolve(() => observer.unobserve(appElement));
 		});
 	});
 </script>
