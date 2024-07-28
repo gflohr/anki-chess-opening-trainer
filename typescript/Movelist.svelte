@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { chessGame } from './store';
+	import { chessTask } from './store';
 	import { type Move, BLACK, WHITE } from 'chess.js';
-	import { ChessGame } from './chess-game';
+	import { ChessTask } from './chess-task';
 
 	type MovelistMove = {
 		moveNumber: number;
@@ -15,11 +15,11 @@
 	};
 
 	let moves: Array<MovelistMove | string> = [];
-	let game: ChessGame;
+	let task: ChessTask;
 
-	const unsubscribeChessGame = chessGame.subscribe(g => {
-		game = g;
-		const chess = game.chess;
+	const unsubscribeChessTask = chessTask.subscribe(t => {
+		task = t;
+		const chess = task.chess;
 
 		const history = chess.history({ verbose: true }) as Array<ChessMove>;
 		const comments = chess.getComments();
@@ -29,11 +29,11 @@
 		}
 
 		moves = [];
-		if (game.gameComments.length) {
-			moves.push(game.gameComments);
+		if (task.gameComments.length) {
+			moves.push(task.gameComments);
 		}
 
-		let moveNumber = game.firstMoveNumber;
+		let moveNumber = task.firstMoveNumber;
 		let move = createMove(moveNumber);
 
 		for (let i = 0; i < history.length; ++i) {
@@ -88,7 +88,7 @@
 	}
 
 	onDestroy(() => {
-		unsubscribeChessGame();
+		unsubscribeChessTask();
 	});
 </script>
 
@@ -107,16 +107,16 @@
 			<chess-move>
 				<chess-move-number>{entry.moveNumber}</chess-move-number>
 				<chess-move-white
-					class:current-move={game.currentMoveNumber - 1 === entry.moveNumber &&
-						game.currentColor === BLACK &&
+					class:current-move={task.currentMoveNumber - 1 === entry.moveNumber &&
+						task.currentColor === BLACK &&
 						entry.white !== '...'}
 					class:ellipsis={entry.white === '...'}
 				>
 					<san>{entry.white}</san>
 				</chess-move-white>
 				<chess-move-black
-					class:current-move={game.currentMoveNumber - 1 === entry.moveNumber &&
-						game.currentColor === WHITE &&
+					class:current-move={task.currentMoveNumber - 1 === entry.moveNumber &&
+						task.currentColor === WHITE &&
 						entry.black !== '...'}
 					class:ellipsis={entry.black === '...'}
 					>

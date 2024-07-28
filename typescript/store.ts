@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import { type Config as ChessgroundConfig } from 'chessground/config';
 import { type Config } from './config';
-import { ChessGame } from './chess-game';
+import { ChessTask } from './chess-task';
 
 export const configuration = writable<Config | undefined>();
 
@@ -12,5 +12,5 @@ const chessgroundConfig: ChessgroundConfig = {
 	viewOnly: configMode,
 }
 
-const game = new ChessGame(chessgroundConfig);
-export const chessGame = writable(game);
+const task = new ChessTask(chessgroundConfig);
+export const chessTask = writable(task);

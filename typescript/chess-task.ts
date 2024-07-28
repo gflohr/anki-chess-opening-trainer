@@ -1,6 +1,6 @@
 import { Chess, type Color, type Square, SQUARES, BLACK, WHITE } from 'chess.js';
 import { type Config as ChessgroundConfig } from 'chessground/config';
-import { chessGame } from './store';
+import { chessTask } from './store';
 
 type LineMove = {
 	move: string;
@@ -15,11 +15,11 @@ type Line = {
 	responses: Array<LineMove>;
 };
 
-export class ChessGame {
+export class ChessTask {
 	private readonly _chess: Chess;
 	private readonly _line: Line;
-	private readonly firstMoveNumber: number;
-	private readonly firstColor: Color = WHITE;
+	private readonly _firstMoveNumber: number;
+	private readonly _firstColor: Color = WHITE;
 	private _currentMoveNumber: number = 1;
 	private _currentColor: Color = WHITE;
 	private _config: ChessgroundConfig;
@@ -30,8 +30,8 @@ export class ChessGame {
 		this._line = JSON.parse(appElement?.dataset.line as string) as Line;
 
 		this._chess = new Chess(this._line.fen);
-		this.firstMoveNumber = this._chess.moveNumber();
-		this.firstColor = this._chess.turn();
+		this._firstMoveNumber = this._chess.moveNumber();
+		this._firstColor = this._chess.turn();
 		for (const move of this._line.moves) {
 			this._chess.move(move.move);
 			this._chess.setComment(move.comments.join('\n'));
@@ -46,6 +46,14 @@ export class ChessGame {
 
 	get line(): Line {
 		return this._line;
+	}
+
+	get firstMoveNumber(): number {
+		return this._firstMoveNumber;
+	}
+
+	get firstColor(): Color {
+		return this._firstColor;
 	}
 
 	get currentMoveNumber(): number {
@@ -82,7 +90,7 @@ export class ChessGame {
 		this.updateLastMove();
 		this.updateMovable();
 		if (doSet) {
-			chessGame.set(this);
+			chessTask.set(this);
 		}
 	}
 
@@ -97,8 +105,8 @@ export class ChessGame {
 		if (!history.length) {
 			this._config.lastMove = [];
 		} else {
-			let i = (this._currentMoveNumber - this.firstMoveNumber) << 1;
-			if (this._currentColor === this.firstColor) {
+			let i = (this._currentMoveNumber - this._firstMoveNumber) << 1;
+			if (this._currentColor === this._firstColor) {
 				--i;
 			} else if (this._currentColor === WHITE) {
 				i -= 2;

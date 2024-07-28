@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { ChessgroundUnstyled as Chessground } from 'svelte-chessground';
-	import type { Key } from 'chessground/types';
 	import type { Config as ChessgroundConfig } from 'chessground/config';
-	import { configuration, chessGame } from './store';
-	import { ChessGame } from './chess-game';
+	import { configuration, chessTask } from './store';
+	import { ChessTask } from './chess-task';
 
 	let classes: Array<string> = ['loading'];
 	let config: ChessgroundConfig = {};
@@ -25,18 +24,18 @@
 		}
 	});
 
-	let game: ChessGame;
-	const unsubscribeChessGame = chessGame.subscribe(g => {
-		game = g;
+	let task: ChessTask;
+	const unsubscribeChessTask= chessTask.subscribe(t => {
+		task = t;
 	});
 
-	$: if (game) {
-		config = game.chessgroundConfig;
+	$: if (task) {
+		config = task.chessgroundConfig;
 	}
 
 	onDestroy(() => {
 		unsubscribeConfiguration();
-		unsubscribeChessGame();
+		unsubscribeChessTask();
 	});
 </script>
 
