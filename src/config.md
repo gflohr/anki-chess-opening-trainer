@@ -1,6 +1,4 @@
-# Configuration for Opening-Trainer
+# Configuration for the Anki Chess Opening Trainer
 
-## `version`
-
-The version of the add-on that this configuration had been created with.
-Changing this value is a recipe for trouble.
+No user-servicable parts inside here! Use the add-on's settings dialogue for
+configuring it.
