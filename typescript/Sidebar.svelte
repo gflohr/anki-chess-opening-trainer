@@ -5,6 +5,7 @@
 	import { configuration } from './store';
 
 	let classes: Array<string> = [];
+	let displayClock = true;
 
 	const unsubscribe = configuration.subscribe(config => {
 		if (!config) {
@@ -17,6 +18,8 @@
 		} else {
 			classes.push('is2d');
 		}
+
+		displayClock = config.board.displayClock;
 	});
 
 	onDestroy(() => unsubscribe);
@@ -24,7 +27,9 @@
 
 <chess-sidebar class={classes}>
 	<Movelist></Movelist>
+	{#if displayClock}
 	<Clock></Clock>
+	{/if}
 </chess-sidebar>
 
 <style lang="scss">
