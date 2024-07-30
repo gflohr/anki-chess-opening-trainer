@@ -139,11 +139,11 @@
 </script>
 
 <chess-navigation>
-	<button>&nbsp;&nbsp;=&nbsp;&nbsp;</button>
-	<button>&nbsp;&nbsp;|&lt;&lt;&nbsp;&nbsp;</button>
-	<button>&nbsp;&nbsp;&lt;&lt;&nbsp;&nbsp;</button>
-	<button>&nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;</button>
-	<button>&nbsp;&nbsp;&gt;&gt;|&nbsp;&nbsp;</button>
+	<button><i class="bi-three-dots"></i></button>
+	<button><i class="bi-skip-backward-fill"></i></button>
+	<button><i class="bi-caret-left-fill"></button>
+	<button><i class="bi-caret-right-fill"></i></button>
+	<button><i class="bi-skip-forward-fill"></i></button>
 </chess-navigation>
 <chess-movelist>
 	{#each moves as entry}
