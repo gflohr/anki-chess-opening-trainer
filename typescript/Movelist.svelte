@@ -181,9 +181,9 @@
 			<chess-move-number class="answer">{responseMoveNumber}</chess-move-number>
 			{#if responseColor === WHITE}
 			<chess-move-white class="answer-right">{entry.white}</chess-move-white>
-			<chess-move-black class="ellipsis"></chess-move-black>
+			<chess-move-black class="answer-right ellipsis"><i class="bi-check-lg"></i></chess-move-black>
 			{:else}
-			<chess-move-white class="ellipsis"></chess-move-white>
+			<chess-move-white class="answer-right ellipsis"><i class="bi-check-lg"></i></chess-move-white>
 			<chess-move-black class="answer-right"><san>{entry.black}</san></chess-move-black>
 			{/if}
 		</chess-move>
@@ -269,13 +269,15 @@
 		padding: 4pt;
 	}
 
+	[class^="answer-"]{
+		font-weight: bold;
+	}
+
 	.answer-right {
 		color: rgb(27, 80, 27);
-		font-weight: bold;
 	}
 
 	.answer-wrong {
 		color: rgb(172, 38, 38);
-		font-weight: bold;
 	}
 </style>
