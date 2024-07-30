@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { chessTask } from './store';
-	import { type Move, BLACK, WHITE } from 'chess.js';
+	import { type Color, type Move, BLACK, WHITE } from 'chess.js';
 	import { ChessTask } from './chess-task';
 
 	type MovelistMove = {
@@ -17,12 +17,19 @@
 	let moves: Array<MovelistMove | string> = [];
 	let responses: Array<MovelistMove | string> = [];
 	let task: ChessTask;
+	let responseMoveNumber: number;
+	let responseColor: Color;
 
 	const appElement = document.getElementById('app') as HTMLElement;
 	const side = appElement.dataset.side;
 
 	const unsubscribeChessTask = chessTask.subscribe(t => {
 		task = t;
+
+		responseMoveNumber = task.currentMoveNumber;
+		responseColor = task.currentColor;
+		console.log(responseColor);
+
 		const chess = task.chess;
 
 		const history = chess.history({ verbose: true }) as Array<ChessMove>;
@@ -33,6 +40,7 @@
 		}
 
 		moves = fillMoves(task, history);
+		responses = fillResponses(task);
 	});
 
 	function fillMoves(task: ChessTask, history: Array<ChessMove>): Array<MovelistMove | string> {
@@ -86,6 +94,33 @@
 		return moves;
 	}
 
+	function fillResponses(task: ChessTask): Array<MovelistMove | string> {
+		const entries: Array<MovelistMove | string> = [];
+
+		for (let i = 0; i < task.line.responses.length; ++i) {
+			const response = task.line.responses[i];
+			console.log(response);
+			const entry = createMove(responseMoveNumber);
+
+			const move = task.chess.move(response.move);
+			console.log(move);
+			if (responseColor === BLACK) {
+				entry.black = getSAN(move);
+			} else {
+				entry.white = getSAN(move);
+			}
+			task.chess.undo();
+			entries.push(entry);
+
+			const comments = response.comments.join('\n');
+			if (comments.length) {
+				entries.push(comments);
+			}
+		}
+
+		return entries;
+	}
+
 	function createMove(moveNumber: number): MovelistMove {
 		return {
 			moveNumber,
@@ -94,7 +129,7 @@
 		};
 	}
 
-	function getSAN(move: ChessMove): string {
+	function getSAN(move: Move): string {
 		return move.san;
 	}
 
@@ -138,11 +173,22 @@
 			</chess-move>
 		{/if}
 	{/each}
-	<chess-move>
-		<chess-move-number class="answer">3</chess-move-number>
-		<chess-move-white class="answer-right"><san>Bb5</san></chess-move-white>
-		<chess-move-black></chess-move-black>
-	</chess-move>
+	{#each responses as entry}
+		{#if typeof entry === 'string'}
+		<chess-comment>{entry}</chess-comment>
+		{:else}
+		<chess-move>
+			<chess-move-number class="answer">{responseMoveNumber}</chess-move-number>
+			{#if responseColor === WHITE}
+			<chess-move-white class="answer-right">{entry.white}</chess-move-white>
+			<chess-move-black class="ellipsis"></chess-move-black>
+			{:else}
+			<chess-move-white class="ellipsis"></chess-move-white>
+			<chess-move-black class="answer-right"><san>{entry.black}</san></chess-move-black>
+			{/if}
+		</chess-move>
+		{/if}
+	{/each}
 </chess-movelist>
 
 <style lang="scss">
