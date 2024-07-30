@@ -192,6 +192,11 @@
 </chess-movelist>
 
 <style lang="scss">
+	$black-font-color: #666;
+	$grey-font-color: #ddd;
+	$grey-background-color: #eee;
+	$grey-highlighted-background-color: #ccc;
+
 	chess-navigation {
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -200,6 +205,12 @@
 	chess-navigation button {
 		padding: 0.5rem;
 		border: none;
+		font-size: larger;
+		cursor: pointer;
+	}
+
+	chess-navigation button:hover {
+		background-color: $grey-highlighted-background-color;
 	}
 
 	chess-movelist {
@@ -222,12 +233,12 @@
 	chess-move-black,
 	chess-navigation,
 	chess-comment {
-		border-bottom: 1px solid #ddd;
+		border-bottom: 1px solid $grey-font-color;
 	}
 
 	chess-move-number,
 	chess-comment {
-		background-color: #eee;
+		background-color: $grey-background-color;
 	}
 
 	chess-move-number.answer {
@@ -248,8 +259,8 @@
 	chess-move-white,
 	chess-move-black,
 	chess-comment {
-		color: #666;
-		border-right: 1px solid #ddd;
+		color: $black-font-color;
+		border-right: 1px solid $grey-font-color;
 	}
 
 	chess-move-white:not(.ellipsis):hover,
