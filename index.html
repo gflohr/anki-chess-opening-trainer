@@ -12,29 +12,35 @@
 		<div id="app"></div>
 		<script>
 			const line = {
-				fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1',
-				game_comments: ["Remove this file! It's for testing purpose only!"],
+				fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+				game_comments: ['Playing the Italian opening with White'],
 				moves: [
-					{ move: 'c7c5', comments: [], nag: 0 },
+					{ move: 'e2e4', comments: [], nag: 0 },
+					{ move: 'e7e5', comments: [], nag: 0 },
+					{ move: 'g1f3', comments: [], nag: 0 },
+					{ move: 'b8c6', comments: [], nag: 0 },
 					{
-						move: 'g1f3',
-						comments: [
-							'Das Vollzentrum kann hier nicht gebildet werden, weil der Bauer dann wegen 2. ... cxd4 in den Bauernhimmel geht.',
-						],
+						move: 'f1c4',
+						comments: ['The Italian Opening.'],
 						nag: 0,
 					},
-					{ move: 'b8c6', comments: [], nag: 0 },
+					{ move: 'f8c5', comments: [], nag: 0 },
 				],
 				responses: [
+				{
+						move: 'c2c3',
+						comments: ['Prepares d4; this is the most common opening.'],
+						nag: 0,
+					},
 					{
-						move: 'f1b5',
-						comments: ['Mit der Idee, den Springer zu tauschen.'],
+						move: 'b2b4',
+						comments: ['Attacks the bishop with tempo at the price of a pawn.'],
 						nag: 0,
 					},
 				],
 			};
 			const prefix = '';
-			const side = 'question';
+			const side = 'answer';
 			const appElement = document.getElementById('app');
 			appElement.dataset.line = JSON.stringify(line);
 			appElement.dataset.prefix = prefix;

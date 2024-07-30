@@ -15,6 +15,7 @@
 	};
 
 	let moves: Array<MovelistMove | string> = [];
+	let responses: Array<MovelistMove | string> = [];
 	let task: ChessTask;
 
 	const appElement = document.getElementById('app') as HTMLElement;
@@ -31,7 +32,12 @@
 			history[i].comment = comments[i].comment;
 		}
 
-		moves = [];
+		moves = fillMoves(task, history);
+	});
+
+	function fillMoves(task: ChessTask, history: Array<ChessMove>): Array<MovelistMove | string> {
+		const moves: Array<MovelistMove | string> = [];
+
 		if (task.gameComments.length) {
 			moves.push(task.gameComments);
 		}
@@ -76,7 +82,9 @@
 		if (move.white.length) {
 			moves.push(move);
 		}
-	});
+
+		return moves;
+	}
 
 	function createMove(moveNumber: number): MovelistMove {
 		return {
@@ -131,7 +139,7 @@
 		{/if}
 	{/each}
 	<chess-move>
-		<chess-move-number>3</chess-move-number>
+		<chess-move-number class="answer">3</chess-move-number>
 		<chess-move-white class="answer-right"><san>Bb5</san></chess-move-white>
 		<chess-move-black></chess-move-black>
 	</chess-move>
@@ -174,6 +182,10 @@
 	chess-move-number,
 	chess-comment {
 		background-color: #eee;
+	}
+
+	chess-move-number.answer {
+		font-weight: bold;
 	}
 
 	chess-move-number,
