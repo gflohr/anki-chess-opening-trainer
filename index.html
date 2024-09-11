@@ -11,6 +11,7 @@
 		<!-- BEGIN_PAGE -->
 		<div id="app"></div>
 		<script>
+		(() => {
 			const line = {
 				fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
 				game_comments: ['Playing the Italian opening with White'],
@@ -45,6 +46,7 @@
 			appElement.dataset.line = JSON.stringify(line);
 			appElement.dataset.prefix = prefix;
 			appElement.dataset.side = side;
+		})();
 		</script>
 		<script type="module" src="/typescript/main.ts"></script>
 		<!-- END_PAGE -->
