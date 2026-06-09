@@ -9,6 +9,8 @@
 
 from __future__ import annotations
 
+from urllib import parse
+
 from chess import Board, Color
 
 from .page import Page
@@ -22,6 +24,27 @@ class Answer(Page):
 		self.fullmove_number = fullmove_number
 		Page.__init__(self, colour=colour, turn=turn)
 		self.set_board(board)
+
+	def lichess_link(self) -> str | None:
+		if self.board is None:
+			return None
+
+		fen = parse.quote(self.board.fen(), safe="")
+		return f"https://lichess.org/analysis?fen={fen}"
+	
+	def extra_html(self, note_id: int) -> str:
+		rendered = super().extra_html(note_id)
+		link = self.lichess_link()
+		if link is not None:
+			rendered += (
+				'<br>'
+				f'<a href="{link}" '
+				'target="_blank" '
+				'rel="noopener noreferrer">'
+				'Open in Lichess'
+				'</a>'
+			)
+		return rendered
 
 	def render(self, note_id) -> str:
 		rendered = str(self.fullmove_number) + '.'
