@@ -70,7 +70,7 @@ Next, you have to give the name of the first chapter.  Choose "A41 Old
 Indian Defence".  You should now see a chess board that allows you to enter
 moves.
 
-It makes sense to first enter the main line, for example **1. d4 d6 2. c4 d6
+It makes sense to first enter the main line, for example **1. d4 Nf6 2. c4 d6
 3. Nc3 e5 4. d5**.  Say, you want to prepare for other replies of black to **3. Nc3.**
 Select that move in the move window, and then enter another move **3. ... Nf6**.
 That will create a variation.  A good continuation for white whould be 
@@ -80,7 +80,7 @@ Black can also blunder here.  Select **3. Nc3** again and enter **3. ... Be6**. 
 a blunder but you have to remember how to exploit it.  The correct answer is
 **4. d5** because it attacks both the knight on c6 and the bishop on e6.
 
-Later in Anki the move sequence **1. d4 d6 2. c4 d6 3. Nc3 Be6** will become a
+Later in Anki the move sequence **1. d4 Nf6 2. c4 d6 3. Nc3 Be6** will become a
 question.  You will see the sequence of moves and a board representation of
 this position.  The response will say **4. d5** and you will also see the position
 *after* that move.
