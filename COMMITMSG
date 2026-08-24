@@ -1,7 +1,0 @@
-fix: README has typos in pgn
-
-- README.md: fix Old Indian Defence PGN (Nf6 not d6)
-
-Fixes #31
-
-Signed-off-by: Vedant Madane <6527493+VedantMadane@users.noreply.github.com>
