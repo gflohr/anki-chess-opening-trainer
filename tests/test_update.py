@@ -122,6 +122,35 @@ class TestUpdate(unittest.TestCase):
 		got = updater.update_config(matching_config)
 		self.assertDictEqual(wanted, got)
 
+	@patch('src.updater.basic_names', BASIC_NAMES)
+	@patch('anki.lang.current_lang', 'en-US')
+	def test_config_with_tag(self):
+		"""Tests that config with tag field in imports validates and is preserved."""
+		from jsonschema import validate
+		from src.schema import schema
+
+		version = sv.Version('1.2.3')
+		updater = Updater(version, self.mw_mock)
+
+		config = {
+			'version': str(version),
+			'colour': 'white',
+			'decks': {'white': WHITE_DECK_ID, 'black': None},
+			'imports': {
+				str(WHITE_DECK_ID): {
+					'colour': 'white',
+					'files': ['/path/to/italian.pgn'],
+					'tag': 'italian_game'
+				}
+			},
+			'notetype': MOCK_NOTETYPE_ID
+		}
+
+		# Verify it passes jsonschema validation
+		validate(config, schema=schema)
+
+		got = updater.update_config(config)
+		self.assertEqual(got['imports'][str(WHITE_DECK_ID)]['tag'], 'italian_game')
 
 if __name__ == '__main__':
 	unittest.main()

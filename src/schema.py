@@ -65,6 +65,11 @@ schema = {
 							'items': {
 								'type': 'string'
 							}
+						},
+						'tag': {
+							'type': 'string',
+							'description':
+							'Optional tag for notes in this opening'
 						}
 					},
 					'required': ['colour', 'files']

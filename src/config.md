@@ -81,6 +81,10 @@ One of "black" or "white"
 
 This list of imported filenames.
 
+### `imports.ID.tag`
+
+An optional tag that is added to all notes in this opening.
+
 ## `notetype`
 
 The note type that you had selected. This should be a note type with
