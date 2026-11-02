@@ -12,38 +12,42 @@ from __future__ import annotations
 from urllib import parse
 
 from chess import Board, Color
+from chess.pgn import Game, StringExporter
 
 from .page import Page
 
 
 class Answer(Page):
-	def __init__(self, move: str, board: Board, colour: Color):
+	def __init__(self, move: str, board: Board, game: Game, colour: Color):
 		fullmove_number = board.fullmove_number
 		turn = not board.turn
 		self.move = move
 		self.fullmove_number = fullmove_number
 		Page.__init__(self, colour=colour, turn=turn)
 		self.set_board(board)
+		self.game = game
 
 	def lichess_link(self) -> str | None:
 		if self.board is None:
 			return None
 
-		fen = parse.quote(self.board.fen().replace(' ', '_'), safe="")
-		return f"https://lichess.org/analysis?fen={fen}"
+		# Print the PGN string representation
+		exporter = StringExporter(headers=False, variations=False, comments=False)
+		pgn = parse.quote(self.game.accept(exporter), safe='')
+
+		return f"https://lichess.org/analysis/pgn/{pgn}"
 
 	def extra_html(self, note_id: int) -> str:
 		rendered = super().extra_html(note_id)
 		link = self.lichess_link()
 		if link is not None:
-			# FIXME! Translate the label!
 			label = _('Open in Lichess')
 			rendered += (
 				'<br>'
 				f'<a href="{link}" '
 				'target="_blank" '
 				'rel="noopener noreferrer">'
-				'{label}'
+				f'{label}'
 				'</a>'
 			)
 		return rendered

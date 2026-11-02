@@ -12,7 +12,7 @@ from typing import Dict, Literal, cast
 
 import chess
 from chess import Color, Board
-from chess.pgn import BaseVisitor
+from chess.pgn import BaseVisitor, Game
 
 from .answer import Answer
 from .question import Question
@@ -21,28 +21,27 @@ from .question import Question
 # Monkey-patch the piece_symbol() method.
 def i18n_piece_symbol(piece_type: chess.PieceType) -> str:
 	piece_symbols = [
-	    None,
-	    # TRANSLATORS: This is the letter to use for a pawn.
-	    _('p'),
-	    # TRANSLATORS: This is the letter to use for a knight.
-	    _('n'),
-	    # TRANSLATORS: This is the letter to use for a bishop.
-	    _('b'),
-	    # TRANSLATORS: This is the letter to use for a rook.
-	    _('r'),
-	    # TRANSLATORS: This is the letter to use for a queen.
-	    _('q'),
-	    # TRANSLATORS: This is the letter to use for a king.
-	    _('k'),
+		None,
+		# TRANSLATORS: This is the letter to use for a pawn.
+		_('p'),
+		# TRANSLATORS: This is the letter to use for a knight.
+		_('n'),
+		# TRANSLATORS: This is the letter to use for a bishop.
+		_('b'),
+		# TRANSLATORS: This is the letter to use for a rook.
+		_('r'),
+		# TRANSLATORS: This is the letter to use for a queen.
+		_('q'),
+		# TRANSLATORS: This is the letter to use for a king.
+		_('k'),
 	]
 	return typing.cast(str, piece_symbols[piece_type])
 
 
 class PositionVisitor(BaseVisitor):
 
-
 	# pylint: disable=too-many-instance-attributes
-	def __init__(self, colour):
+	def __init__(self, colour, game_node: Game = None):
 		self.colour: Color = colour
 		self.initial: Board
 		self.has_board = False
@@ -51,9 +50,17 @@ class PositionVisitor(BaseVisitor):
 		self.last_text = None
 		self.accumulated_comments = []
 		self.my_move = True
+		self.headers = None
+
+		# Store the base game template to extract/preserve original headers
+		self.game_node = game_node
 
 	def begin_game(self) -> None:
 		self.has_board = False
+
+	def visit_headers(self, headers) -> chess.pgn.Headers:
+		self.headers = headers
+		return headers
 
 	def visit_board(self, board) -> None:
 		if not self.has_board:
@@ -61,6 +68,9 @@ class PositionVisitor(BaseVisitor):
 			self.has_board = True
 
 	def visit_move(self, board, move) -> None:
+		# Determine if this move is the last move of the variation.
+		is_last_move = len(board.move_stack) + 1 == len(list(self.game_node.mainline_moves())) if self.game_node else False
+
 		if board.turn == self.colour:
 			if board.ply():
 				saved_piece_symbol = chess.piece_symbol
@@ -69,6 +79,36 @@ class PositionVisitor(BaseVisitor):
 				chess.piece_symbol = saved_piece_symbol
 			else:
 				text = _('Moves from starting position?')
+
+			# Construct PGN representation leading up to the current move
+			current_game = Game()
+			if self.game_node:
+				# Copy all headers from the original game
+				for key, value in self.game_node.headers.items():
+					current_game.headers[key] = value
+
+				# Handle outcome based on whether it is the last move of the variation
+				if is_last_move and "Result" in self.game_node.headers:
+					current_game.headers["Result"] = self.game_node.headers["Result"]
+				else:
+					current_game.headers["Result"] = "*"
+			elif hasattr(self, 'headers') and self.headers:
+				for key, value in self.headers.items():
+					current_game.headers[key] = value
+				current_game.headers["Result"] = "*"
+			else:
+				current_game.headers["Result"] = "*"
+
+			# Populate nodes from board stack
+			node = current_game
+			temp_board = self.initial.copy()
+			for m in board.move_stack:
+				node = node.add_variation(m)
+				temp_board.push(m)
+
+			# Include the current visit move as well
+			node = node.add_variation(move)
+
 			answer_board = board.copy()
 			saved_piece_symbol = chess.piece_symbol
 			chess.piece_symbol = i18n_piece_symbol
@@ -81,17 +121,18 @@ class PositionVisitor(BaseVisitor):
 				return
 
 			answer = Answer(
-			    san,
-			    board=answer_board,
-			    colour=self.colour,
+				san,
+				board=answer_board,
+				game=current_game,
+				colour=self.colour,
 			)
 
 			if text not in self.cards:
 				turn = not board.turn
 				question = self.cards[text] = Question(
-				    text,
-				    turn=turn,
-				    colour=self.colour,
+					text,
+					turn=turn,
+					colour=self.colour,
 				)
 				if hasattr(self, 'accumulated_comments'):
 					for comment in self.accumulated_comments:
@@ -107,7 +148,6 @@ class PositionVisitor(BaseVisitor):
 		else:
 			self.accumulated_comments = []
 			self.my_move = False
-
 
 	def visit_comment(self, comment: str) -> None:
 		if self.last_text and isinstance(self.cards[self.last_text], Question):
