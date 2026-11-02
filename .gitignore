@@ -8,8 +8,10 @@ src/manifest.json
 src/meta.json
 src/version.py
 src/basic_names.py
+src/config.py
 /build
-/ankidata
+/ankidata*
 /ankiweb-description.md
 .DS_Store
 /.coverage
+/uv.lock
