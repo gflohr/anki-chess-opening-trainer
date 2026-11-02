@@ -51,7 +51,7 @@ class Answer(Page):
 	def render(self, note_id) -> str:
 		rendered = str(self.fullmove_number) + '.'
 		if not self.turn:
-			rendered += '...'
+			rendered += ' ...'
 		rendered += ' ' + self.move
 		rendered += self.extra_html(note_id)
 
