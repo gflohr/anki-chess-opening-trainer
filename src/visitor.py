@@ -11,7 +11,7 @@ import typing
 from typing import Dict, Literal, cast
 
 import chess
-from chess import Color, Board
+from chess import Color, Board, STARTING_FEN
 from chess.pgn import BaseVisitor, Game
 
 from .answer import Answer
@@ -47,7 +47,7 @@ class PositionVisitor(BaseVisitor):
 		self.has_board = False
 		self.seen: Dict[str, str] = {}
 		self.cards: Dict[str, Question] = {}
-		self.last_text = None
+		self.last_question_key = None
 		self.accumulated_comments = []
 		self.my_move = True
 
@@ -64,29 +64,31 @@ class PositionVisitor(BaseVisitor):
 
 	def visit_move(self, board, move) -> None:
 		if board.turn == self.colour:
-			if board.ply():
+			if board.ply() and self.game_node and self.game_node.board().fen() != STARTING_FEN:
 				saved_piece_symbol = chess.piece_symbol
 				chess.piece_symbol = i18n_piece_symbol
 				text = self.initial.variation_san(board.move_stack)
 				chess.piece_symbol = saved_piece_symbol
 			else:
-				text = _('Moves from starting position?')
+				text = ''
 
-			# Construct PGN representation leading up to the current move
+			question_key = " ".join(board.fen().split()[:4])
+
+			# Construct PGN representation leading up to the current move.
 			current_game = Game()
 			if self.game_node:
 				current_game.setup(self.game_node.board())
 			elif hasattr(self, 'initial'):
 				current_game.setup(self.initial)
 
-			# Populate nodes from board stack
+			# Populate nodes from board stack.
 			node = current_game
 			temp_board = self.initial.copy()
 			for m in board.move_stack:
 				node = node.add_variation(m)
 				temp_board.push(m)
 
-			# Include the current visit move as well
+			# Include the current visit move as well.
 			node = node.add_variation(move)
 
 			answer_board = board.copy()
@@ -107,9 +109,9 @@ class PositionVisitor(BaseVisitor):
 				colour=self.colour,
 			)
 
-			if text not in self.cards:
+			if question_key not in self.cards:
 				turn = not board.turn
-				question = self.cards[text] = Question(
+				question = self.cards[question_key] = Question(
 					text,
 					turn=turn,
 					colour=self.colour,
@@ -117,21 +119,21 @@ class PositionVisitor(BaseVisitor):
 
 				for comment in self.accumulated_comments:
 					question.add_comment(comment)
-					self.accumulated_comments = []
+				self.accumulated_comments = []
 				question.set_board(board.copy())
-			elif answer.find(self.cards[text].answers):
+			elif answer.find(self.cards[question_key].answers):
 				return
 
-			self.cards[text].add_answer(answer)
+			self.cards[question_key].add_answer(answer)
 			self.my_move = True
-			self.last_text = text
+			self.last_question_key = question_key
 		else:
 			self.accumulated_comments = []
 			self.my_move = False
 
 	def visit_comment(self, comment: str) -> None:
-		if self.last_text and isinstance(self.cards[self.last_text], Question):
-			question: Question = cast(Question, self.cards[self.last_text])
+		if self.last_question_key and isinstance(self.cards[self.last_question_key], Question):
+			question: Question = cast(Question, self.cards[self.last_question_key])
 			if self.my_move:
 				question.answers[-1].add_comment(comment)
 			elif self.accumulated_comments:
