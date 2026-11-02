@@ -1,19 +1,18 @@
 [project]
 name = "anki-chess-opening-trainer"
 version = "1.1.0"
-requires-python = "==3.12.*"
+requires-python = "==3.13.*"
 dependencies = [
-    "chess==1.10.0",
+    "chess==1.11.2",
     "semantic_version==2.10.0",
-    "jsonschema==4.22.0",
-    "typing_extensions==4.12.1",
+    "jsonschema==4.26.0",
+    "typing_extensions==4.16.0",
 ]
 
 [dependency-groups]
-# These are your testing/development requirements from dev.txt
 dev = [
-    "anki==23.10",
-    "aqt==23.10",
+    "anki==26.09.2",
+    "aqt==26.09.2",
     "PyQt6-WebEngine",
     "ankiscripts",
     "yapf",
@@ -23,7 +22,7 @@ dev = [
     "pylint",
     "pytest==9.2.0",
     "pytest-cov==7.1.0",
-    "datamodel-code-generator==0.33.0",
+    "datamodel-code-generator==0.87.0",
 ]
 
 [tool.uv.sources]

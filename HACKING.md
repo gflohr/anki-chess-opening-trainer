@@ -54,6 +54,11 @@ uv sync --all-groups
 make test
 ```
 
+### Terminate all Other Anki Instances
+
+Anki may just switch the focused window, if another version of it is already
+running.
+
 ### Run Local Anki
 
 Test that you can run Anki locally in your virtual environment:
