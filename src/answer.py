@@ -37,12 +37,13 @@ class Answer(Page):
 		link = self.lichess_link()
 		if link is not None:
 			# FIXME! Translate the label!
+			label = _('Open in Lichess')
 			rendered += (
 				'<br>'
 				f'<a href="{link}" '
 				'target="_blank" '
 				'rel="noopener noreferrer">'
-				'Open in Lichess'
+				'{label}'
 				'</a>'
 			)
 		return rendered
