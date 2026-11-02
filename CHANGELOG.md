@@ -2,6 +2,10 @@
 
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### 1.2.0 - 2026-11-02
+
+* add possibility to add a tag to nodes (GitHub PR #33)
+
 ### 1.1.0 - 2026-06-15
 
 * add "Open in Lichess link" (GitHub issue #28 and PR #29)
@@ -12,7 +16,8 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### 1.0.2 - 2024-07-05
 
-* fix GitHub issue #21 which could make some combinations of colour and deck no longer selectable
+* fix GitHub issue #21 which could make some combinations of colour and deck no
+  longer selectable
 
 ### 1.0.1 - 2024-07-04
 
