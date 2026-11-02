@@ -108,9 +108,7 @@ Trainer` exists.
 
 ### Run Tests
 
-Unfortunately, the tests cannot be run at the moment, at least under macOS.
-Python terminates with a segmentation fault. Theoretically, you should do
-this:
+The tests are best run from the `Makefile`:
 
 ```
 make test

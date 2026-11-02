@@ -55,4 +55,5 @@ def add_menu_item():
 
 init_i18n()
 DeleteHook().installHook()
-add_menu_item()
+if 'pytest' not in sys.modules:
+	add_menu_item()
