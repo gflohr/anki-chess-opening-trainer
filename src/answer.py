@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from urllib import parse
 
-from chess import Board, Color
+from chess import Board, Color, STARTING_FEN
 from chess.pgn import Game, StringExporter
 
 from .page import Page
@@ -32,12 +32,18 @@ class Answer(Page):
 			return None
 
 		# Print the PGN string representation.
-		exporter = StringExporter(headers=True, variations=False, comments=True)
-		print(self.game.accept(exporter))
+		exporter = StringExporter(headers=False, variations=False, comments=False)
+		moves = self.game.accept(exporter)
 
-		pgn = parse.quote(self.game.accept(exporter), safe='')
+		if self.game.board().fen() == STARTING_FEN:
+			headers = ''
+		else:
+			fen = self.game.board().fen()
+			headers = f'[Setup "1"]\n[FEN "{fen}"]\n\n'
 
-		return f"https://lichess.org/analysis/pgn/{pgn}"
+		pgn = parse.quote(headers + moves, safe='')
+
+		return f'https://lichess.org/analysis/pgn/{pgn}'
 
 	def extra_html(self, note_id: int) -> str:
 		rendered = super().extra_html(note_id)

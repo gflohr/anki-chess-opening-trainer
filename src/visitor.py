@@ -48,7 +48,6 @@ class PositionVisitor(BaseVisitor):
 		self.seen: Dict[str, str] = {}
 		self.cards: Dict[str, Question] = {}
 		self.last_text = None
-		self.initial_comment = None
 		self.accumulated_comments = []
 		self.my_move = True
 
@@ -115,10 +114,10 @@ class PositionVisitor(BaseVisitor):
 					turn=turn,
 					colour=self.colour,
 				)
-				if hasattr(self, 'accumulated_comments'):
-					for comment in self.accumulated_comments:
-						question.add_comment(comment)
-						self.accumulated_comments = []
+
+				for comment in self.accumulated_comments:
+					question.add_comment(comment)
+					self.accumulated_comments = []
 				question.set_board(board.copy())
 			elif answer.find(self.cards[text].answers):
 				return
