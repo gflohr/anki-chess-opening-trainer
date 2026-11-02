@@ -33,7 +33,8 @@ class Importer:
 	    collection: Collection,
 	    colour: chess.Color,
 	    notetype_id: NotetypeId,
-	    deck_id: DeckId
+	    deck_id: DeckId,
+	    tag: Optional[str] = None
 	) -> None:
 		self.collection = collection
 		self.colour = colour
@@ -50,6 +51,12 @@ class Importer:
 
 		self.visitor = PositionVisitor(colour=colour)
 		self.filenames = filenames
+		self.tags: List[str] = []
+		if tag:
+			if hasattr(self.collection, 'tags') and hasattr(self.collection.tags, 'split'):
+				self.tags = self.collection.tags.split(tag)
+			else:
+				self.tags = [t for t in tag.strip().split() if t]
 
 
 	def run(self) -> Tuple[int, int, int, int, int]:
@@ -104,7 +111,15 @@ class Importer:
 	def _update_note(self, note: Note, question: Question) -> bool:
 		rendered_question = question.render(note.id)
 		answer: Answer = cast(Answer, question.render_answers(note.id))
-		if not note.fields[0] == rendered_question or not note.fields[1] == answer:
+		fields_changed = not note.fields[0] == rendered_question or not note.fields[1] == answer
+
+		tags_changed = False
+		for t in self.tags:
+			if not note.has_tag(t):
+				note.add_tag(t)
+				tags_changed = True
+
+		if fields_changed or tags_changed:
 			note.fields[0] = rendered_question
 			note.fields[1] = answer
 			self.collection.update_note(note)
@@ -114,6 +129,9 @@ class Importer:
 
 	def _create_note(self, question: Question) -> Note:
 		note = Note(self.collection, self.model)
+		for t in self.tags:
+			if not note.has_tag(t):
+				note.add_tag(t)
 
 		# We have to add the note first without content so that we have a
 		# note id to work with.

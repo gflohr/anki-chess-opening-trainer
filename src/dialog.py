@@ -16,9 +16,9 @@ from typing import List, Literal, Union
 from aqt import mw, AnkiQt
 from aqt.operations import QueryOp
 # pylint: disable=no-name-in-module
-from aqt.qt import (QComboBox, QDialog, # type: ignore[attr-defined]
+from aqt.qt import (QComboBox, QCompleter, QDialog, # type: ignore[attr-defined]
                     QDialogButtonBox, QFileDialog, # type: ignore[attr-defined]
-                    QGridLayout, QLabel, # type: ignore[attr-defined]
+                    QGridLayout, QLabel, QLineEdit, # type: ignore[attr-defined]
                     QListWidget, QListWidgetItem, # type: ignore[attr-defined]
                     QPushButton, Qt, QMessageBox, # type: ignore[attr-defined]
                     QDesktopServices, QUrl, # type: ignore[attr-defined]
@@ -96,10 +96,20 @@ class ImportDialog(QDialog):
 		if current_index >= 0:
 			self.model_combo.setCurrentIndex(current_index)
 
+		layout.addWidget(QLabel(_('Tag')), 4, 0)
+		self.tag_edit = QLineEdit()
+		if self.mw is not None and hasattr(self.mw, 'col') and self.mw.col is not None:
+			tags = sorted(self.mw.col.tags.all())
+			completer = QCompleter(tags, self)
+			completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+			completer.setFilterMode(Qt.MatchFlag.MatchContains)
+			self.tag_edit.setCompleter(completer)
+		layout.addWidget(self.tag_edit, 4, 1)
+
 		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
 		self.button_box = QDialogButtonBox(btn)
 		layout.addWidget(self.button_box,
-		                 4,
+		                 5,
 		                 0,
 		                 1,
 		                 3,
@@ -142,6 +152,9 @@ class ImportDialog(QDialog):
 				record = config['imports'][str(deck_id)]
 				for filename in record['files']:
 					self.file_list.addItem(filename)
+				self.tag_edit.setText(record.get('tag', ''))
+			else:
+				self.tag_edit.clear()
 
 		self.updating = False
 
@@ -161,6 +174,9 @@ class ImportDialog(QDialog):
 
 			for filename in record['files']:
 				self.file_list.addItem(filename)
+			self.tag_edit.setText(record.get('tag', ''))
+		else:
+			self.tag_edit.clear()
 
 		self.updating = False
 
@@ -196,6 +212,9 @@ class ImportDialog(QDialog):
 				record = config['imports'][str(deck_id)]
 				for filename in record['files']:
 					self.file_list.addItem(filename)
+				self.tag_edit.setText(record.get('tag', ''))
+			else:
+				self.tag_edit.clear()
 
 		if config['notetype'] is not None:
 			notetype_id = config['notetype']
@@ -248,6 +267,7 @@ class ImportDialog(QDialog):
 				record = self.config['imports'][str(deck_id)]
 				filenames = record['files']
 				notetype_id = self.config['notetype']
+				tag = record.get('tag')
 
 				importer = Importer(
 					collection=mw.col,
@@ -255,6 +275,7 @@ class ImportDialog(QDialog):
 					notetype_id=notetype_id,
 					filenames=filenames,
 					colour=('white' == colour),
+					tag=tag,
 				)
 
 				return importer.run()
@@ -364,13 +385,19 @@ class ImportDialog(QDialog):
 			if item is not None:
 				files.append(item.text())
 
+		tag = self.tag_edit.text().strip()
+
 		self.config['colour'] = colour
 		self.config['decks'][colour] = deck_id
 
-		self.config['imports'][str(deck_id)] = {
+		import_record = {
 			'colour': colour,
 			'files': files,
 		}
+		if tag:
+			import_record['tag'] = tag
+
+		self.config['imports'][str(deck_id)] = import_record
 
 		self.config['notetype'] = notetype_id
 
