@@ -40,6 +40,8 @@ On Windows, do one of the following:
 .\.venv\Scripts\activate.bat
 ```
 
+You have to do that in every shell that you are using for development.
+
 ### Install Dependencies
 
 ```sh
@@ -115,3 +117,6 @@ To update Anki to a more recent version, edit `requirements/dev.txt` and
 change the version numbers for `anki` and `aqt`. Then re-install the
 dependencies:
 
+```sh
+uv sync --all-groups
+```
