@@ -31,8 +31,10 @@ class Answer(Page):
 		if self.board is None:
 			return None
 
-		# Print the PGN string representation
-		exporter = StringExporter(headers=False, variations=False, comments=False)
+		# Print the PGN string representation.
+		exporter = StringExporter(headers=True, variations=False, comments=True)
+		print(self.game.accept(exporter))
+
 		pgn = parse.quote(self.game.accept(exporter), safe='')
 
 		return f"https://lichess.org/analysis/pgn/{pgn}"

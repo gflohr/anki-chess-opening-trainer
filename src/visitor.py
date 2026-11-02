@@ -48,9 +48,9 @@ class PositionVisitor(BaseVisitor):
 		self.seen: Dict[str, str] = {}
 		self.cards: Dict[str, Question] = {}
 		self.last_text = None
+		self.initial_comment = None
 		self.accumulated_comments = []
 		self.my_move = True
-		self.headers = None
 
 		# Store the base game template to extract/preserve original headers
 		self.game_node = game_node
@@ -58,19 +58,12 @@ class PositionVisitor(BaseVisitor):
 	def begin_game(self) -> None:
 		self.has_board = False
 
-	def visit_headers(self, headers) -> chess.pgn.Headers:
-		self.headers = headers
-		return headers
-
 	def visit_board(self, board) -> None:
 		if not self.has_board:
 			self.initial = board.copy()
 			self.has_board = True
 
 	def visit_move(self, board, move) -> None:
-		# Determine if this move is the last move of the variation.
-		is_last_move = len(board.move_stack) + 1 == len(list(self.game_node.mainline_moves())) if self.game_node else False
-
 		if board.turn == self.colour:
 			if board.ply():
 				saved_piece_symbol = chess.piece_symbol
@@ -83,21 +76,9 @@ class PositionVisitor(BaseVisitor):
 			# Construct PGN representation leading up to the current move
 			current_game = Game()
 			if self.game_node:
-				# Copy all headers from the original game
-				for key, value in self.game_node.headers.items():
-					current_game.headers[key] = value
-
-				# Handle outcome based on whether it is the last move of the variation
-				if is_last_move and "Result" in self.game_node.headers:
-					current_game.headers["Result"] = self.game_node.headers["Result"]
-				else:
-					current_game.headers["Result"] = "*"
-			elif hasattr(self, 'headers') and self.headers:
-				for key, value in self.headers.items():
-					current_game.headers[key] = value
-				current_game.headers["Result"] = "*"
-			else:
-				current_game.headers["Result"] = "*"
+				current_game.setup(self.game_node.board())
+			elif hasattr(self, 'initial'):
+				current_game.setup(self.initial)
 
 			# Populate nodes from board stack
 			node = current_game
