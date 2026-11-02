@@ -29,13 +29,14 @@ class Answer(Page):
 		if self.board is None:
 			return None
 
-		fen = parse.quote(self.board.fen(), safe="")
+		fen = parse.quote(self.board.fen().replace(' ', '_'), safe="")
 		return f"https://lichess.org/analysis?fen={fen}"
-	
+
 	def extra_html(self, note_id: int) -> str:
 		rendered = super().extra_html(note_id)
 		link = self.lichess_link()
 		if link is not None:
+			# FIXME! Translate the label!
 			rendered += (
 				'<br>'
 				f'<a href="{link}" '
