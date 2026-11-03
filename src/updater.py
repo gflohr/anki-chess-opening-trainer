@@ -65,7 +65,7 @@ class Updater:
 
 		def replace_href(match: re.Match) -> str:
 			url = match.group(1)
-			return f'<a href="{url.replace(" ", "_")}"'
+			return f'<a href="{url.replace(' ', '_').replace('%20', '_')}"'
 
 		for id in raw['imports']:
 			deck_id = DeckId(id)
@@ -81,6 +81,7 @@ class Updater:
 					continue
 
 				answer_text = note.fields[1]
+				print(answer_text)
 
 				# This will not fully migrate the Lichess links to the new
 				# version with a full analysis of the entire PGN. This is not

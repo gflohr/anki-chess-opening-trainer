@@ -165,7 +165,7 @@ class TestUpdate(unittest.TestCase):
 		mock_note = MagicMock()
 		mock_note.fields = [
 			"Some question",
-			'<a href="https://lichess.org/analysis?fen=k7/8/8/1Q6/8/2K5/8/8 b - - 5 3"  target="_blank" rel="noopener noreferrer">'
+			'<a href="https://lichess.org/analysis?fen=k7/8/8/1Q6/8/2K5/8/8%20b%20-%20- 5 3"  target="_blank" rel="noopener noreferrer">'
 		]
 		mock_card.note.return_value = mock_note
 		self.mw_mock.col.get_card.return_value = mock_card
