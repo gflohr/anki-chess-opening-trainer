@@ -8,6 +8,10 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 * distinguish between initial position of standard chess and custom setup positions (GitHub issues [#37](https://github.com/gflohr/anki-chess-opening-trainer/issues/37))
 * Fix "Open in Lichess" link. The link now points to the entire game, not just the resulting position.
 
+It is recommended that you re-import your PGN files after the upgrade.
+Otherwise, the Lichess links will still point to a static analysis of the
+position, not to the analysis of the entire game.
+
 ### 1.1.0 - 2026-06-15
 
 * add "Open in Lichess" link (GitHub issue [#28](https://github.com/gflohr/anki-chess-opening-trainer/issues/28) and PR [#29](https://github.com/gflohr/anki-chess-opening-trainer/pull/29))
