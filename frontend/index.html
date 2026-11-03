@@ -3,11 +3,11 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Anki Chess Opening Trainer</title>
+	<title>Chess Opening Trainer</title>
 	<!-- Bootstrap Icons CDN -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	<style>
-		/* Colour Tokens for Dark (Default) & Light Themes */
+		/* Color Tokens for Dark (Default) & Light Themes */
 		:root {
 			--bg-app: #121418;
 			--bg-header: #1b1e24;
@@ -20,9 +20,11 @@
 			--text-number: #6b7280;
 			--success-color: #2ea043;
 			--danger-color: #da3633;
+			--warning-color: #d97706;
 			--shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 			--badge-correct-bg: rgba(46, 160, 67, 0.15);
 			--badge-wrong-bg: rgba(218, 54, 51, 0.15);
+			--badge-missing-bg: rgba(217, 119, 6, 0.15);
 			--accent-active: rgba(255, 255, 255, 0.05);
 		}
 
@@ -38,9 +40,11 @@
 			--text-number: #9ca3af;
 			--success-color: #16a34a;
 			--danger-color: #dc2626;
+			--warning-color: #b45309;
 			--shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 			--badge-correct-bg: rgba(22, 163, 74, 0.12);
 			--badge-wrong-bg: rgba(220, 38, 38, 0.12);
+			--badge-missing-bg: rgba(180, 83, 9, 0.12);
 			--accent-active: rgba(0, 0, 0, 0.04);
 		}
 
@@ -86,6 +90,7 @@
 
 		.brand i {
 			font-size: 1.3rem;
+			color: #3b82f6;
 		}
 
 		/* Theme Toggle Switch */
@@ -151,7 +156,7 @@
 			height: calc(100vh - 54px);
 		}
 
-		/* Landscape Mode (Desktop / Wide screen) -> Moves Section RIGHT */
+		/* Responsive layout based on screen orientation & size */
 		@media (orientation: landscape) {
 			.app-container {
 				flex-direction: row;
@@ -167,20 +172,8 @@
 				height: 100%;
 				border-left: 1px solid var(--border-color);
 			}
-			/* Prevent collapsing details in landscape desktop mode */
-			details.collapsible summary {
-				pointer-events: none;
-			}
-			details.collapsible summary::-webkit-details-marker,
-			details.collapsible summary .chevron-icon {
-				display: none;
-			}
-			details.collapsible[open] summary {
-				border-bottom: 1px solid var(--border-color);
-			}
 		}
 
-		/* Portrait Mode (Mobile / Narrow screen) -> Moves Section ABOVE Board */
 		@media (orientation: portrait) {
 			.app-container {
 				flex-direction: column-reverse;
@@ -234,43 +227,8 @@
 			transition: background-color 0.3s ease, border-color 0.3s ease;
 		}
 
-		/* Collapsible Subsection (Move History) */
-		details.collapsible {
-			display: flex;
-			flex-direction: column;
-			border-bottom: 1px solid var(--border-color);
-		}
-
-		details.collapsible summary {
-			padding: 12px 16px;
-			font-weight: 600;
-			font-size: 0.9rem;
-			background-color: var(--bg-header);
-			cursor: pointer;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			list-style: none;
-			user-select: none;
-			transition: background-color 0.3s ease;
-		}
-
-		details.collapsible summary::-webkit-details-marker {
-			display: none;
-		}
-
-		details.collapsible summary .chevron-icon {
-			transition: transform 0.2s ease;
-			color: var(--text-muted);
-		}
-
-		details.collapsible[open] summary .chevron-icon {
-			transform: rotate(180deg);
-		}
-
-		/* Subsection Content & Table Styling */
-		.history-container,
-		.verification-container {
+		/* Tables & Grid styling */
+		.history-container {
 			flex: 1;
 			overflow-y: auto;
 		}
@@ -314,54 +272,79 @@
 			width: calc((100% - 44px) / 2);
 		}
 
-		/* Verification Panel Specific Styling */
-		.verification-section {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			min-height: 180px;
-			background-color: var(--bg-card);
-		}
-
-		.verification-header {
-			padding: 12px 16px;
-			font-weight: 600;
-			font-size: 0.9rem;
-			background-color: var(--bg-header);
-			border-bottom: 1px solid var(--border-color);
-			display: flex;
-			align-items: center;
-			gap: 8px;
-		}
-
-		/* Move Badges in Tables */
+		/* Move Entry Badges with markers to the RIGHT of text */
 		.move-entry {
 			display: inline-flex;
 			align-items: center;
 			gap: 6px;
-			padding: 2px 6px;
+			padding: 3px 8px;
 			border-radius: 4px;
 			font-weight: 500;
+			font-size: 0.88rem;
 		}
 
+		/* Correct State: Green */
 		.move-entry.correct {
 			background-color: var(--badge-correct-bg);
 			color: var(--success-color);
 		}
 
+		/* Wrong State: Red */
 		.move-entry.wrong {
 			background-color: var(--badge-wrong-bg);
 			color: var(--danger-color);
+		}
+
+		/* Missing Correct Move State (Strict Mode Answer View): Amber */
+		.move-entry.missing {
+			background-color: var(--badge-missing-bg);
+			color: var(--warning-color);
+			border: 1px dashed var(--warning-color);
+		}
+
+		.empty-cell {
+			color: var(--text-number);
+			font-style: italic;
+		}
+
+		/* Click Dummy Controls Panel */
+		.dummy-controls {
+			padding: 10px 16px;
+			background-color: var(--bg-header);
+			border-top: 1px solid var(--border-color);
+			display: flex;
+			gap: 12px;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 0.78rem;
+			color: var(--text-muted);
+		}
+
+		.dummy-controls label {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			cursor: pointer;
+		}
+
+		.dummy-controls select {
+			background: var(--bg-card);
+			color: var(--text-main);
+			border: 1px solid var(--border-color);
+			border-radius: 4px;
+			padding: 2px 6px;
+			font-size: 0.78rem;
 		}
 	</style>
 </head>
 <body data-theme="dark">
 
-	<!-- Header with Light/Dark Mode Switcher -->
+	<!-- Header Toolbar -->
 	<header>
 		<div class="brand">
-			<i class="bi bi-box-seam"></i>
-			<span>Anki Opening Trainer</span>
+			<i class="bi bi-diagram-3-fill"></i>
+			<span>Chess Opening Trainer</span>
 		</div>
 		<div class="theme-toggle-wrapper">
 			<i class="bi bi-sun-fill"></i>
@@ -373,119 +356,55 @@
 		</div>
 	</header>
 
-	<!-- Responsive Main App Layout -->
+	<!-- App Container -->
 	<div class="app-container">
 
 		<!-- Chessboard Display Section -->
 		<section class="board-section">
 			<div class="board-wrapper">
-				<img src="board.svg" alt="Chessboard" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/d/d5/Chess_Board_External_Variables.svg';">
+				<img src="board.svg" alt="Chessboard" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'400\' viewBox=\'0 0 400 400\'><rect width=\'400\' height=\'400\' fill=\'%23b58863\'/><g fill=\'%23f0d9b5\'><rect width=\'50\' height=\'50\' x=\'0\' y=\'0\'/><rect width=\'50\' height=\'50\' x=\'100\' y=\'0\'/><rect width=\'50\' height=\'50\' x=\'200\' y=\'0\'/><rect width=\'50\' height=\'50\' x=\'300\' y=\'0\'/><rect width=\'50\' height=\'50\' x=\'50\' y=\'50\'/><rect width=\'50\' height=\'50\' x=\'150\' y=\'50\'/><rect width=\'50\' height=\'50\' x=\'250\' y=\'50\'/><rect width=\'50\' height=\'50\' x=\'350\' y=\'50\'/><rect width=\'50\' height=\'50\' x=\'0\' y=\'100\'/><rect width=\'50\' height=\'50\' x=\'100\' y=\'100\'/><rect width=\'50\' height=\'50\' x=\'200\' y=\'100\'/><rect width=\'50\' height=\'50\' x=\'300\' y=\'100\'/><rect width=\'50\' height=\'50\' x=\'50\' y=\'150\'/><rect width=\'50\' height=\'50\' x=\'150\' y=\'150\'/><rect width=\'50\' height=\'50\' x=\'250\' y=\'150\'/><rect width=\'50\' height=\'50\' x=\'350\' y=\ me\'/><rect width=\'50\' height=\'50\' x=\'0\' y=\'200\'/><rect width=\'50\' height=\'50\' x=\'100\' y=\'200\'/><rect width=\'50\' height=\'50\' x=\'200\' y=\'200\'/><rect width=\'50\' height=\'50\' x=\'300\' y=\'200\'/><rect width=\'50\' height=\'50\' x=\'50\' y=\'250\'/><rect width=\'50\' height=\'50\' x=\'150\' y=\'250\'/><rect width=\'50\' height=\'50\' x=\'250\' y=\'250\'/><rect width=\'50\' height=\'50\' x=\'350\' y=\'250\'/><rect width=\'50\' height=\'50\' x=\'0\' y=\'300\'/><rect width=\'50\' height=\'50\' x=\'100\' y=\'300\'/><rect width=\'50\' height=\'50\' x=\'200\' y=\'300\'/><rect width=\'50\' height=\'50\' x=\'300\' y=\'300\'/><rect width=\'50\' height=\'50\' x=\'50\' y=\'350\'/><rect width=\'50\' height=\'50\' x=\'150\' y=\'350\'/><rect width=\'50\' height=\'50\' x=\'250\' y=\'350\'/><rect width=\'50\' height=\'50\' x=\'350\' y=\'350\'/></g></svg>';">
 			</div>
 		</section>
 
 		<!-- Moves Section -->
 		<section class="moves-section">
 
-			<!-- Top Subsection: Move History (Collapsible on Mobile) -->
-			<details class="collapsible" open>
-				<summary>
-					<span><i class="bi bi-list-ol" style="margin-right: 6px;"></i> Move History</span>
-					<i class="bi bi-chevron-down chevron-icon"></i>
-				</summary>
+			<!-- Subsection 1: Stockfish Analysis (later) -->
+
+			<!-- Subsection 2: Move History -->
+			<div class="space-sensitive">
 				<div class="history-container">
 					<table class="move-table">
-						<thead>
-							<tr>
-								<th class="col-num">#</th>
-								<th class="col-white">White</th>
-								<th class="col-black">Black</th>
-							</tr>
-						</thead>
 						<tbody>
 							<tr>
-								<td class="col-num">1.</td>
+								<td class="col-num">1</td>
 								<td class="col-white">e4</td>
-								<td class="col-black">c5</td>
+								<td class="col-black">e5</td>
 							</tr>
 							<tr>
-								<td class="col-num">2.</td>
+								<td class="col-num">2</td>
 								<td class="col-white">Nf3</td>
-								<td class="col-black">d6</td>
+								<td class="col-black">Nc6</td>
 							</tr>
 							<tr>
-								<td class="col-num">3.</td>
-								<td class="col-white">d4</td>
-								<td class="col-black">cxd4</td>
+								<td class="col-num">3</td>
+								<td class="col-white">Bb5</td>
+								<td class="col-black">Qg5 <!-- wrong --></td>
 							</tr>
 							<tr>
-								<td class="col-num">4.</td>
-								<td class="col-white">Nxd4</td>
-								<td class="col-black">Nf6</td>
+								<td class="col-num"></td>
+								<td class="col-white"></td>
+								<td class="col-black">Nh6 <!-- wrong --></td>
 							</tr>
 							<tr>
-								<td class="col-num">5.</td>
-								<td class="col-white">Nc3</td>
-								<td class="col-black">a6</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</details>
-
-			<!-- Bottom Subsection: Move Verification & Input (Never Collapsed) -->
-			<div class="verification-section">
-				<div class="verification-header">
-					<i class="bi bi-check2-square"></i>
-					<span>Move Verification</span>
-				</div>
-				<div class="verification-container">
-					<table class="move-table">
-						<thead>
-							<tr>
-								<th class="col-num">#</th>
-								<th class="col-white">White Moves</th>
-								<th class="col-black">Black Moves</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="col-num">6.</td>
-								<td class="col-white">
-									<div class="move-entry correct">
-										<i class="bi bi-check-circle-fill"></i> Be3
-									</div>
-								</td>
-								<td class="col-black">
-									<div class="move-entry correct">
-										<i class="bi bi-check-circle-fill"></i> e5
-									</div>
-								</td>
+								<td class="col-num"></td>
+								<td class="col-white"></td>
+								<td class="col-black">a6 <!-- right --></td>
 							</tr>
 							<tr>
-								<td class="col-num">7.</td>
-								<td class="col-white">
-									<div class="move-entry correct">
-										<i class="bi bi-check-circle-fill"></i> Nb3
-									</div>
-								</td>
-								<td class="col-black">
-									<div class="move-entry wrong">
-										<i class="bi bi-x-circle-fill"></i> Be7
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td class="col-num">8.</td>
-								<td class="col-white">
-									<div class="move-entry wrong">
-										<i class="bi bi-x-circle-fill"></i> Bc4
-									</div>
-								</td>
-								<td class="col-black">
-									<div class="move-entry correct">
-										<i class="bi bi-check-circle-fill"></i> Be6
-									</div>
-								</td>
+								<td class="col-num"></td>
+								<td class="col-white"></td>
+								<td class="col-black">Nf6 <!-- missing --></td>
 							</tr>
 						</tbody>
 					</table>
@@ -496,15 +415,12 @@
 
 	</div>
 
-	<!-- Minimal Script for Theme Toggle Click Dummy -->
+	<!-- Interactive Dummy Logic -->
 	<script>
+		// Theme switcher logic
 		const themeToggleBtn = document.getElementById('theme-toggle-checkbox');
 		themeToggleBtn.addEventListener('change', () => {
-			if (themeToggleBtn.checked) {
-				document.body.setAttribute('data-theme', 'light');
-			} else {
-				document.body.setAttribute('data-theme', 'dark');
-			}
+			document.body.setAttribute('data-theme', themeToggleBtn.checked ? 'light' : 'dark');
 		});
 	</script>
 </body>
