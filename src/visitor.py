@@ -64,7 +64,7 @@ class PositionVisitor(BaseVisitor):
 
 	def visit_move(self, board, move) -> None:
 		if board.turn == self.colour:
-			if board.ply() and self.game_node and self.game_node.board().fen() != STARTING_FEN:
+			if board.ply():
 				saved_piece_symbol = chess.piece_symbol
 				chess.piece_symbol = i18n_piece_symbol
 				text = self.initial.variation_san(board.move_stack)
