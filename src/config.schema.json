@@ -57,7 +57,7 @@
 							"type": "array",
 							"description": "The list of imported file names",
 							"items": {
-							"type": "string"
+								"type": "string"
 							}
 						},
 						"tag": {
