@@ -265,8 +265,8 @@
 			user-select: none;
 		}
 
-		body:not(.history-missing) .col-white:hover,
-		body:not(.history-missing) .col-black:hover {
+		body:not(.history-missing) .col-white:not(.empty):hover,
+		body:not(.history-missing) .col-black:not(.empty):hover {
 			background-color: var(--bg-hover);
 		}
 
@@ -417,17 +417,17 @@
 						</tr>
 						<tr>
 							<td class="col-num"></td>
-							<td class="col-white"></td>
+							<td class="col-white empty"></td>
 							<td class="col-black"><span class="move-cell wrong">Nh6 <i class="bi bi-x-circle-fill"></i></span></td>
 						</tr>
 						<tr>
 							<td class="col-num"></td>
-							<td class="col-white"></td>
+							<td class="col-white empty"></td>
 							<td class="col-black"><span class="move-cell correct">a6 <i class="bi bi-check-circle-fill"></i></span></td>
 						</tr>
 						<tr>
 							<td class="col-num"></td>
-							<td class="col-white"></td>
+							<td class="col-white empty"></td>
 							<td class="col-black"><span class="move-cell missing">Nf6 <i class="bi bi-exclamation-circle-fill"></i></span></td>
 						</tr>
 					</tbody>
