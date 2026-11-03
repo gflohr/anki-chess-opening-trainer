@@ -152,5 +152,43 @@ class TestUpdate(unittest.TestCase):
 		got = updater.update_config(config)
 		self.assertEqual(got['imports'][str(WHITE_DECK_ID)]['tag'], 'italian_game')
 
+	@patch('src.updater.basic_names', BASIC_NAMES)
+	@patch('anki.lang.current_lang', 'en-US')
+	def test_update_v1_2_0_lichess_links(self):
+		version = sv.Version('1.2.3')
+		updater = Updater(version, self.mw_mock)
+
+		self.mw_mock.col.decks.get.return_value = {'name': 'White Deck'}
+		self.mw_mock.col.decks.cids.return_value = [101]
+
+		mock_card = MagicMock()
+		mock_note = MagicMock()
+		mock_note.fields = [
+			"Some question",
+			'<a href="https://lichess.org/analysis?fen=k7/8/8/1Q6/8/2K5/8/8 b - - 5 3"  target="_blank" rel="noopener noreferrer">'
+		]
+		mock_card.note.return_value = mock_note
+		self.mw_mock.col.get_card.return_value = mock_card
+
+		config = {
+			'version': '1.1.0',
+			'colour': 'white',
+			'decks': {'white': WHITE_DECK_ID, 'black': None},
+			'imports': {
+				str(WHITE_DECK_ID): {
+					'colour': 'white',
+					'files': ['/path/to/test.pgn'],
+				}
+			},
+			'notetype': MOCK_NOTETYPE_ID
+		}
+
+		got = updater.update_config(config)
+
+		self.assertEqual(got['version'], version)
+		expected_url = 'https://lichess.org/analysis?fen=k7/8/8/1Q6/8/2K5/8/8_b_-_-_5_3'
+		self.assertIn(expected_url, mock_note.fields[1])
+		self.mw_mock.col.update_note.assert_called_once_with(mock_note, skip_undo_entry=True)
+
 if __name__ == '__main__':
 	unittest.main()
