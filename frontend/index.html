@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Anki Chess Opening Trainer</title>
+	<!-- Bootstrap Icons CDN -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<style>
+		/* Colour Tokens for Dark (Default) & Light Themes */
+		:root {
+			--bg-app: #121418;
+			--bg-header: #1b1e24;
+			--bg-card: #1e222a;
+			--bg-card-hover: #262b35;
+			--bg-table-header: #16181d;
+			--border-color: #2d323e;
+			--text-main: #f0f2f5;
+			--text-muted: #9aa0a6;
+			--text-number: #6b7280;
+			--success-color: #2ea043;
+			--danger-color: #da3633;
+			--shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+			--badge-correct-bg: rgba(46, 160, 67, 0.15);
+			--badge-wrong-bg: rgba(218, 54, 51, 0.15);
+			--accent-active: rgba(255, 255, 255, 0.05);
+		}
+
+		[data-theme="light"] {
+			--bg-app: #f4f5f8;
+			--bg-header: #ffffff;
+			--bg-card: #ffffff;
+			--bg-card-hover: #f0f2f6;
+			--bg-table-header: #eef1f6;
+			--border-color: #d1d5db;
+			--text-main: #1f2937;
+			--text-muted: #6b7280;
+			--text-number: #9ca3af;
+			--success-color: #16a34a;
+			--danger-color: #dc2626;
+			--shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+			--badge-correct-bg: rgba(22, 163, 74, 0.12);
+			--badge-wrong-bg: rgba(220, 38, 38, 0.12);
+			--accent-active: rgba(0, 0, 0, 0.04);
+		}
+
+		/* Global Resets */
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+			background-color: var(--bg-app);
+			color: var(--text-main);
+			height: 100vh;
+			width: 100vw;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			transition: background-color 0.3s ease, color 0.3s ease;
+		}
+
+		/* Header Section */
+		header {
+			background-color: var(--bg-header);
+			padding: 0 20px;
+			height: 54px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			border-bottom: 1px solid var(--border-color);
+			flex-shrink: 0;
+			transition: background-color 0.3s ease, border-color 0.3s ease;
+		}
+
+		.brand {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			font-weight: 700;
+			font-size: 1.1rem;
+		}
+
+		.brand i {
+			font-size: 1.3rem;
+		}
+
+		/* Theme Toggle Switch */
+		.theme-toggle-wrapper {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 0.85rem;
+			color: var(--text-muted);
+		}
+
+		.theme-switch {
+			position: relative;
+			display: inline-block;
+			width: 44px;
+			height: 24px;
+		}
+
+		.theme-switch input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		.slider {
+			position: absolute;
+			cursor: pointer;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: var(--border-color);
+			transition: 0.3s;
+			border-radius: 24px;
+		}
+
+		.slider:before {
+			position: absolute;
+			content: "";
+			height: 18px;
+			width: 18px;
+			left: 3px;
+			bottom: 3px;
+			background-color: white;
+			transition: 0.3s;
+			border-radius: 50%;
+		}
+
+		input:checked + .slider {
+			background-color: #3b82f6;
+		}
+
+		input:checked + .slider:before {
+			transform: translateX(20px);
+		}
+
+		/* Main Layout Container */
+		.app-container {
+			display: flex;
+			flex: 1;
+			overflow: hidden;
+			width: 100%;
+			height: calc(100vh - 54px);
+		}
+
+		/* Landscape Mode (Desktop / Wide screen) -> Moves Section RIGHT */
+		@media (orientation: landscape) {
+			.app-container {
+				flex-direction: row;
+			}
+			.board-section {
+				flex: 1 1 65%;
+				height: 100%;
+			}
+			.moves-section {
+				width: 380px;
+				min-width: 320px;
+				max-width: 450px;
+				height: 100%;
+				border-left: 1px solid var(--border-color);
+			}
+			/* Prevent collapsing details in landscape desktop mode */
+			details.collapsible summary {
+				pointer-events: none;
+			}
+			details.collapsible summary::-webkit-details-marker,
+			details.collapsible summary .chevron-icon {
+				display: none;
+			}
+			details.collapsible[open] summary {
+				border-bottom: 1px solid var(--border-color);
+			}
+		}
+
+		/* Portrait Mode (Mobile / Narrow screen) -> Moves Section ABOVE Board */
+		@media (orientation: portrait) {
+			.app-container {
+				flex-direction: column-reverse;
+			}
+			.board-section {
+				flex: 1 1 auto;
+				width: 100%;
+			}
+			.moves-section {
+				width: 100%;
+				max-height: 50vh;
+				border-bottom: 1px solid var(--border-color);
+				overflow-y: auto;
+			}
+		}
+
+		/* Board Section */
+		.board-section {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+			background-color: var(--bg-app);
+			transition: background-color 0.3s ease;
+		}
+
+		.board-wrapper {
+			width: min(85vw, 65vh, 560px);
+			height: min(85vw, 65vh, 560px);
+			box-shadow: var(--shadow);
+			border-radius: 6px;
+			overflow: hidden;
+			background-color: var(--bg-card);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.board-wrapper img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			display: block;
+		}
+
+		/* Moves Section Layout */
+		.moves-section {
+			background-color: var(--bg-card);
+			display: flex;
+			flex-direction: column;
+			transition: background-color 0.3s ease, border-color 0.3s ease;
+		}
+
+		/* Collapsible Subsection (Move History) */
+		details.collapsible {
+			display: flex;
+			flex-direction: column;
+			border-bottom: 1px solid var(--border-color);
+		}
+
+		details.collapsible summary {
+			padding: 12px 16px;
+			font-weight: 600;
+			font-size: 0.9rem;
+			background-color: var(--bg-header);
+			cursor: pointer;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			list-style: none;
+			user-select: none;
+			transition: background-color 0.3s ease;
+		}
+
+		details.collapsible summary::-webkit-details-marker {
+			display: none;
+		}
+
+		details.collapsible summary .chevron-icon {
+			transition: transform 0.2s ease;
+			color: var(--text-muted);
+		}
+
+		details.collapsible[open] summary .chevron-icon {
+			transform: rotate(180deg);
+		}
+
+		/* Subsection Content & Table Styling */
+		.history-container,
+		.verification-container {
+			flex: 1;
+			overflow-y: auto;
+		}
+
+		.move-table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 0.88rem;
+		}
+
+		.move-table th {
+			background-color: var(--bg-table-header);
+			color: var(--text-muted);
+			font-weight: 600;
+			padding: 8px 12px;
+			text-align: left;
+			position: sticky;
+			top: 0;
+			z-index: 2;
+			border-bottom: 1px solid var(--border-color);
+		}
+
+		.move-table td {
+			padding: 8px 12px;
+			border-bottom: 1px solid var(--border-color);
+			vertical-align: middle;
+		}
+
+		.move-table tr:hover {
+			background-color: var(--accent-active);
+		}
+
+		.col-num {
+			width: 44px;
+			color: var(--text-number);
+			font-weight: 500;
+			text-align: center;
+		}
+
+		.col-white, .col-black {
+			width: calc((100% - 44px) / 2);
+		}
+
+		/* Verification Panel Specific Styling */
+		.verification-section {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			min-height: 180px;
+			background-color: var(--bg-card);
+		}
+
+		.verification-header {
+			padding: 12px 16px;
+			font-weight: 600;
+			font-size: 0.9rem;
+			background-color: var(--bg-header);
+			border-bottom: 1px solid var(--border-color);
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		/* Move Badges in Tables */
+		.move-entry {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 2px 6px;
+			border-radius: 4px;
+			font-weight: 500;
+		}
+
+		.move-entry.correct {
+			background-color: var(--badge-correct-bg);
+			color: var(--success-color);
+		}
+
+		.move-entry.wrong {
+			background-color: var(--badge-wrong-bg);
+			color: var(--danger-color);
+		}
+	</style>
+</head>
+<body data-theme="dark">
+
+	<!-- Header with Light/Dark Mode Switcher -->
+	<header>
+		<div class="brand">
+			<i class="bi bi-box-seam"></i>
+			<span>Anki Opening Trainer</span>
+		</div>
+		<div class="theme-toggle-wrapper">
+			<i class="bi bi-sun-fill"></i>
+			<label class="theme-switch">
+				<input type="checkbox" id="theme-toggle-checkbox">
+				<span class="slider"></span>
+			</label>
+			<i class="bi bi-moon-stars-fill"></i>
+		</div>
+	</header>
+
+	<!-- Responsive Main App Layout -->
+	<div class="app-container">
+
+		<!-- Chessboard Display Section -->
+		<section class="board-section">
+			<div class="board-wrapper">
+				<img src="board.svg" alt="Chessboard" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/d/d5/Chess_Board_External_Variables.svg';">
+			</div>
+		</section>
+
+		<!-- Moves Section -->
+		<section class="moves-section">
+
+			<!-- Top Subsection: Move History (Collapsible on Mobile) -->
+			<details class="collapsible" open>
+				<summary>
+					<span><i class="bi bi-list-ol" style="margin-right: 6px;"></i> Move History</span>
+					<i class="bi bi-chevron-down chevron-icon"></i>
+				</summary>
+				<div class="history-container">
+					<table class="move-table">
+						<thead>
+							<tr>
+								<th class="col-num">#</th>
+								<th class="col-white">White</th>
+								<th class="col-black">Black</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="col-num">1.</td>
+								<td class="col-white">e4</td>
+								<td class="col-black">c5</td>
+							</tr>
+							<tr>
+								<td class="col-num">2.</td>
+								<td class="col-white">Nf3</td>
+								<td class="col-black">d6</td>
+							</tr>
+							<tr>
+								<td class="col-num">3.</td>
+								<td class="col-white">d4</td>
+								<td class="col-black">cxd4</td>
+							</tr>
+							<tr>
+								<td class="col-num">4.</td>
+								<td class="col-white">Nxd4</td>
+								<td class="col-black">Nf6</td>
+							</tr>
+							<tr>
+								<td class="col-num">5.</td>
+								<td class="col-white">Nc3</td>
+								<td class="col-black">a6</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</details>
+
+			<!-- Bottom Subsection: Move Verification & Input (Never Collapsed) -->
+			<div class="verification-section">
+				<div class="verification-header">
+					<i class="bi bi-check2-square"></i>
+					<span>Move Verification</span>
+				</div>
+				<div class="verification-container">
+					<table class="move-table">
+						<thead>
+							<tr>
+								<th class="col-num">#</th>
+								<th class="col-white">White Moves</th>
+								<th class="col-black">Black Moves</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="col-num">6.</td>
+								<td class="col-white">
+									<div class="move-entry correct">
+										<i class="bi bi-check-circle-fill"></i> Be3
+									</div>
+								</td>
+								<td class="col-black">
+									<div class="move-entry correct">
+										<i class="bi bi-check-circle-fill"></i> e5
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="col-num">7.</td>
+								<td class="col-white">
+									<div class="move-entry correct">
+										<i class="bi bi-check-circle-fill"></i> Nb3
+									</div>
+								</td>
+								<td class="col-black">
+									<div class="move-entry wrong">
+										<i class="bi bi-x-circle-fill"></i> Be7
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="col-num">8.</td>
+								<td class="col-white">
+									<div class="move-entry wrong">
+										<i class="bi bi-x-circle-fill"></i> Bc4
+									</div>
+								</td>
+								<td class="col-black">
+									<div class="move-entry correct">
+										<i class="bi bi-check-circle-fill"></i> Be6
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+		</section>
+
+	</div>
+
+	<!-- Minimal Script for Theme Toggle Click Dummy -->
+	<script>
+		const themeToggleBtn = document.getElementById('theme-toggle-checkbox');
+		themeToggleBtn.addEventListener('change', () => {
+			if (themeToggleBtn.checked) {
+				document.body.setAttribute('data-theme', 'light');
+			} else {
+				document.body.setAttribute('data-theme', 'dark');
+			}
+		});
+	</script>
+</body>
+</html>
