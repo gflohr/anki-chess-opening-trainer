@@ -22,9 +22,6 @@
 			--danger-color: #da3633;
 			--warning-color: #d97706;
 			--shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-			--badge-correct-bg: rgba(46, 160, 67, 0.15);
-			--badge-wrong-bg: rgba(218, 54, 51, 0.15);
-			--badge-missing-bg: rgba(217, 119, 6, 0.15);
 		}
 
 		[data-theme="light"] {
@@ -41,9 +38,6 @@
 			--danger-color: #dc2626;
 			--warning-color: #b45309;
 			--shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-			--badge-correct-bg: rgba(22, 163, 74, 0.12);
-			--badge-wrong-bg: rgba(220, 38, 38, 0.12);
-			--badge-missing-bg: rgba(180, 83, 9, 0.12);
 		}
 
 		/* Global Resets */
@@ -261,39 +255,36 @@
 
 		/* Per-column hover & cell styling */
 		.move-cell {
-			cursor: pointer;
-			border-radius: 4px;
-			padding: 2px 4px;
-			display: inline-flex;
+			display: flex;
+			justify-content: space-between;
 			align-items: center;
-			gap: 6px;
+			width: 100%;
+			padding: 4px 6px;
+			border-radius: 4px;
+			cursor: pointer;
 			user-select: none;
 		}
 
-		body:not(.history-missing) .col-white:hover .move-cell,
-		body:not(.history-missing) .col-black:hover .move-cell {
+		body:not(.history-missing) .col-white:hover,
+		body:not(.history-missing) .col-black:hover {
 			background-color: var(--bg-hover);
 		}
 
-		body.history-missing .move-cell {
+		body.history-missing {
 			cursor: default;
 		}
 
 		/* Verification Badges inside history columns */
-		.move-cell.correct {
-			background-color: var(--badge-correct-bg);
+		.move-cell.correct .bi {
 			color: var(--success-color);
 		}
 
-		.move-cell.wrong {
-			background-color: var(--badge-wrong-bg);
+		.move-cell.wrong .bi {
 			color: var(--danger-color);
 		}
 
-		.move-cell.missing {
-			background-color: var(--badge-missing-bg);
+		.move-cell.missing .bi {
 			color: var(--warning-color);
-			border: 1px dashed var(--warning-color);
 		}
 
 		/* Toolbar Below Moves Section */
