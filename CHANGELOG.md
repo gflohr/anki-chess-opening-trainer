@@ -28,7 +28,7 @@ position, not to the analysis of the entire game.
 ### 1.0.1 - 2024-07-04
 
 * fix a crash, when decks were deleted (GitHub issue [#15]((https://github.com/gflohr/anki-chess-opening-trainer/issues/15)))
-* allow custom start position (GitHub issue [#16]((https://github.com/gflohr/anki-chess-opening-trainer/issues/16))))
+* allow custom start position (GitHub issue [#16](https://github.com/gflohr/anki-chess-opening-trainer/issues/16))
 * added Bulgarian translation
 
 ### 1.0.0 - 2024-06-12
