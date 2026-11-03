@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2024-07-04 16:38+0300\n"
+"POT-Creation-Date: 2026-11-02 15:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: ../src/__init__.py:47 ../src/dialog.py:286
+#: ../src/__init__.py:47 ../src/dialog.py:321
 msgid "Chess Opening Trainer"
 msgstr ""
 
-#: ../src/config_reader.py:26 ../src/dialog.py:38 ../src/updater.py:27
+#: ../src/answer.py:40
+msgid "Open in Lichess"
+msgstr ""
+
+#: ../src/config_reader.py:26 ../src/dialog.py:40 ../src/updater.py:27
 msgid "Cannot run without main window!"
 msgstr ""
 
@@ -30,141 +34,145 @@ msgstr ""
 msgid "Your add-on configuration is invalid, restoring defaults."
 msgstr ""
 
-#: ../src/dialog.py:45
+#: ../src/dialog.py:47
 msgid "Import PGN File"
 msgstr ""
 
-#: ../src/dialog.py:50
+#: ../src/dialog.py:57
 msgid "Color"
 msgstr ""
 
-#: ../src/dialog.py:53
+#: ../src/dialog.py:60
 msgid "White"
 msgstr ""
 
-#: ../src/dialog.py:54
+#: ../src/dialog.py:61
 msgid "Black"
 msgstr ""
 
-#: ../src/dialog.py:58
+#: ../src/dialog.py:64
 msgid "Deck"
 msgstr ""
 
-#: ../src/dialog.py:70
+#: ../src/dialog.py:75
 msgid "Input Files"
 msgstr ""
 
-#: ../src/dialog.py:73
+#: ../src/dialog.py:78
 msgid "Select files"
 msgstr ""
 
-#: ../src/dialog.py:77
+#: ../src/dialog.py:82
 msgid "Note type"
 msgstr ""
 
-#: ../src/dialog.py:89
+#: ../src/dialog.py:94
 msgid "Basic"
 msgstr ""
 
-#: ../src/dialog.py:202
+#: ../src/dialog.py:99
+msgid "Tag"
+msgstr ""
+
+#: ../src/dialog.py:236
 #, python-brace-format
 msgid "There was an error importing a file: {error}"
 msgstr ""
 
-#: ../src/dialog.py:208
+#: ../src/dialog.py:242
 msgid "No changes since last import into this deck."
 msgstr ""
 
-#: ../src/dialog.py:211
+#: ../src/dialog.py:245
 #, python-format
 msgid "%d note inserted."
 msgid_plural "%d notes inserted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:213
+#: ../src/dialog.py:247
 #, python-format
 msgid "%d note updated."
 msgid_plural "%d notes updated."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:215
+#: ../src/dialog.py:249
 #, python-format
 msgid "%d note deleted."
 msgid_plural "%d notes deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:217
+#: ../src/dialog.py:251
 #, python-format
 msgid "%d image created."
 msgid_plural "%d images created."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:219
+#: ../src/dialog.py:253
 #, python-format
 msgid "%d image deleted."
 msgid_plural "%d images deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/dialog.py:251
+#: ../src/dialog.py:286
 msgid "No input files specified!"
 msgstr ""
 
-#: ../src/dialog.py:270
+#: ../src/dialog.py:305
 msgid "An error occurred!"
 msgstr ""
 
-#: ../src/dialog.py:271
+#: ../src/dialog.py:306
 msgid ""
 "Clicking the help button will open a web page explaining how to report a bug."
 msgstr ""
 
-#: ../src/dialog.py:272
+#: ../src/dialog.py:307
 msgid "Please include the following information in your bug report:"
 msgstr ""
 
-#: ../src/dialog.py:274
+#: ../src/dialog.py:309
 msgid "Exception type:"
 msgstr ""
 
-#: ../src/dialog.py:275
+#: ../src/dialog.py:310
 msgid "Exception message:"
 msgstr ""
 
-#: ../src/dialog.py:276
+#: ../src/dialog.py:311
 msgid "Traceback:"
 msgstr ""
 
-#: ../src/dialog.py:302
+#: ../src/dialog.py:337
 msgid ""
 "https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs"
 msgstr ""
 
-#: ../src/dialog.py:316
+#: ../src/dialog.py:351
 msgid "Open PGN files"
 msgstr ""
 
-#: ../src/dialog.py:317
+#: ../src/dialog.py:352
 msgid "Portable Game Notation files (*.pgn)"
 msgstr ""
 
-#: ../src/dialog.py:337
+#: ../src/dialog.py:372
 msgid "The selected deck does not exist! Try again!"
 msgstr ""
 
-#: ../src/dialog.py:344
+#: ../src/dialog.py:379
 msgid "The selected note type does not exist! Try again!"
 msgstr ""
 
-#: ../src/importer.py:43
+#: ../src/importer.py:44
 msgid "Selected note type does not exist!"
 msgstr ""
 
-#: ../src/importer.py:48
+#: ../src/importer.py:49
 msgid "Selected deck does not exist!"
 msgstr ""
 

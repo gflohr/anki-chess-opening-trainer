@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: opening-trainer 0.1.0\n"
 "Report-Msgid-Bugs-To: Guido Flohr <guido.flohr@cantanea.com>\n"
-"POT-Creation-Date: 2024-07-04 16:38+0300\n"
+"POT-Creation-Date: 2026-11-02 15:24+0200\n"
 "PO-Revision-Date: 2024-07-04 16:40+0300\n"
 "Last-Translator: Guido Flohr <guido.flohr@cantanea.com>\n"
 "Language-Team: German\n"
@@ -18,11 +18,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.4.4\n"
 
-#: ../src/__init__.py:47 ../src/dialog.py:286
+#: ../src/__init__.py:47 ../src/dialog.py:321
 msgid "Chess Opening Trainer"
 msgstr "Schach-Eröffnungs-Trainer"
 
-#: ../src/config_reader.py:26 ../src/dialog.py:38 ../src/updater.py:27
+#: ../src/answer.py:40
+msgid "Open in Lichess"
+msgstr "In Lichess öffnen"
+
+#: ../src/config_reader.py:26 ../src/dialog.py:40 ../src/updater.py:27
 msgid "Cannot run without main window!"
 msgstr "Add-on kann ohne Hauptfenster nicht gestartet werden!"
 
@@ -30,146 +34,150 @@ msgstr "Add-on kann ohne Hauptfenster nicht gestartet werden!"
 msgid "Your add-on configuration is invalid, restoring defaults."
 msgstr "Die Add-on-Konfiguration ist ungültig, stelle Standard wieder her."
 
-#: ../src/dialog.py:45
+#: ../src/dialog.py:47
 msgid "Import PGN File"
 msgstr "PGN-Dateien importieren"
 
-#: ../src/dialog.py:50
+#: ../src/dialog.py:57
 msgid "Color"
 msgstr "Farbe"
 
-#: ../src/dialog.py:53
+#: ../src/dialog.py:60
 msgid "White"
 msgstr "Weiß"
 
-#: ../src/dialog.py:54
+#: ../src/dialog.py:61
 msgid "Black"
 msgstr "Schwarz"
 
-#: ../src/dialog.py:58
+#: ../src/dialog.py:64
 msgid "Deck"
 msgstr "Stapel"
 
-#: ../src/dialog.py:70
+#: ../src/dialog.py:75
 msgid "Input Files"
 msgstr "Eingabedateien"
 
-#: ../src/dialog.py:73
+#: ../src/dialog.py:78
 msgid "Select files"
 msgstr "Dateiauswahl"
 
-#: ../src/dialog.py:77
+#: ../src/dialog.py:82
 msgid "Note type"
 msgstr "Notiztyp"
 
-#: ../src/dialog.py:89
+#: ../src/dialog.py:94
 msgid "Basic"
 msgstr "Einfach"
 
-#: ../src/dialog.py:202
+#: ../src/dialog.py:99
+msgid "Tag"
+msgstr ""
+
+#: ../src/dialog.py:236
 #, python-brace-format
 msgid "There was an error importing a file: {error}"
 msgstr "Beim Importieren einer Datei ist ein Fehler aufgetreten: {error}"
 
-#: ../src/dialog.py:208
+#: ../src/dialog.py:242
 msgid "No changes since last import into this deck."
 msgstr "Keine Änderungen seit dem letzten Import in diesen Stapel."
 
-#: ../src/dialog.py:211
+#: ../src/dialog.py:245
 #, python-format
 msgid "%d note inserted."
 msgid_plural "%d notes inserted."
 msgstr[0] "%d Notiz eingefügt."
 msgstr[1] "%d Notizen eingefügt."
 
-#: ../src/dialog.py:213
+#: ../src/dialog.py:247
 #, python-format
 msgid "%d note updated."
 msgid_plural "%d notes updated."
 msgstr[0] "%d Notiz aktualisiert."
 msgstr[1] "%d Notizen aktualisiert."
 
-#: ../src/dialog.py:215
+#: ../src/dialog.py:249
 #, python-format
 msgid "%d note deleted."
 msgid_plural "%d notes deleted."
 msgstr[0] "%d Notiz gelöscht."
 msgstr[1] "%d Notizen gelöscht."
 
-#: ../src/dialog.py:217
+#: ../src/dialog.py:251
 #, python-format
 msgid "%d image created."
 msgid_plural "%d images created."
 msgstr[0] "%d Bild erzeugt."
 msgstr[1] "%d Bilder erzeugt."
 
-#: ../src/dialog.py:219
+#: ../src/dialog.py:253
 #, python-format
 msgid "%d image deleted."
 msgid_plural "%d images deleted."
 msgstr[0] "%d Bild gelöscht."
 msgstr[1] "%d Bilder gelöscht."
 
-#: ../src/dialog.py:251
+#: ../src/dialog.py:286
 msgid "No input files specified!"
 msgstr "Keine Eingabedateien angegeben!"
 
-#: ../src/dialog.py:270
+#: ../src/dialog.py:305
 msgid "An error occurred!"
 msgstr "Ein Fehler ist aufgetreten!"
 
-#: ../src/dialog.py:271
+#: ../src/dialog.py:306
 msgid ""
 "Clicking the help button will open a web page explaining how to report a bug."
 msgstr ""
 "Ein Klick auf den Hilfe-Button öffnet eine Webseite, die erklärt, wie man "
 "Fehler melden kann."
 
-#: ../src/dialog.py:272
+#: ../src/dialog.py:307
 msgid "Please include the following information in your bug report:"
 msgstr ""
 "Die folgenden Informationen sollten im Fehlerbericht mitgeschickt werden:"
 
-#: ../src/dialog.py:274
+#: ../src/dialog.py:309
 msgid "Exception type:"
 msgstr "Ausnahmetyp:"
 
-#: ../src/dialog.py:275
+#: ../src/dialog.py:310
 msgid "Exception message:"
 msgstr "Ausnahmemeldung:"
 
-#: ../src/dialog.py:276
+#: ../src/dialog.py:311
 msgid "Traceback:"
 msgstr "Traceback:"
 
-#: ../src/dialog.py:302
+#: ../src/dialog.py:337
 msgid ""
 "https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs"
 msgstr ""
 "https://www.guido-flohr.net/schach-eroeffnungen-mit-anki-trainieren/#bugs-"
 "melden"
 
-#: ../src/dialog.py:316
+#: ../src/dialog.py:351
 msgid "Open PGN files"
 msgstr "PGN-Dateien öffnen"
 
-#: ../src/dialog.py:317
+#: ../src/dialog.py:352
 msgid "Portable Game Notation files (*.pgn)"
 msgstr "Portable Spiel Notation (*.pgn)"
 
-#: ../src/dialog.py:337
+#: ../src/dialog.py:372
 msgid "The selected deck does not exist! Try again!"
 msgstr "Der ausgewählte Stapel existiert nicht! Bitte noch einmal versuchen!"
 
-#: ../src/dialog.py:344
+#: ../src/dialog.py:379
 msgid "The selected note type does not exist! Try again!"
 msgstr "Der ausgewählte Notiztyp existiert nicht! Bitte noch einmal versuchen!"
 
-#: ../src/importer.py:43
+#: ../src/importer.py:44
 msgid "Selected note type does not exist!"
 msgstr "Der ausgewählte Notiztyp existiert nicht!"
 
-#: ../src/importer.py:48
+#: ../src/importer.py:49
 msgid "Selected deck does not exist!"
 msgstr "Der ausgewählte Stapel existiert nicht!"
 

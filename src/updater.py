@@ -15,6 +15,7 @@ import semantic_version as sv
 import anki
 from aqt import mw
 from anki.notes import NotetypeId
+from anki.decks import DeckId
 
 from .basic_names import basic_names
 
@@ -48,10 +49,64 @@ class Updater:
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			raw = self._update_v1_0_0(raw)
 
+		if sv.Version(raw['version']) < sv.Version('1.2.0'):
+			raw = self._update_v1_2_0(raw)
+
 		raw['version'] = self.version
 
 		return raw
 
+	def _update_v1_2_0(self, raw: Any):
+		if 'imports' not in raw:
+			return raw
+
+		col = self.mw.col
+		pattern = re.compile(r'<a href="(https://lichess\.org/analysis[^"]*)"')
+
+		def replace_href(match: re.Match) -> str:
+			url = match.group(1)
+			return f'<a href="{url.replace(' ', '_').replace('%20', '_')}"'
+
+		for id in raw['imports']:
+			deck_id = DeckId(id)
+			deck = col.decks.get(deck_id)
+			if not deck:
+				continue
+
+			for cid in col.decks.cids(deck_id):
+				card = col.get_card(cid)
+				note = card.note()
+
+				if len(note.fields) <= 1:
+					continue
+
+				answer_text = note.fields[1]
+				print(answer_text)
+
+				# This will not fully migrate the Lichess links to the new
+				# version with a full analysis of the entire PGN. This is not
+				# easily possible, because it requires the entire game history,
+				# which is not present at this point.
+				#
+				# We could check if the imported files are still present, but
+				# re-importing behind the user's back, is not acceptable.
+				#
+				# We could also parse the moves, and try to recover the game
+				# history from that but that is only possible, if the original
+				# game started at the standard starting position.
+				#
+				# Long story short: It is not worth the hassle. Most people
+				# will have the PGN files on disk and can easily re-import
+				# them.
+				updated_text = pattern.sub(replace_href, answer_text)
+
+				if updated_text != answer_text:
+					note.fields[1] = updated_text
+					col.update_note(note, skip_undo_entry=True)
+
+		raw['version'] = '1.2.0'
+
+		return raw
 
 	def _update_v1_0_0(self, raw: Any):
 		raw['imports'] = {}
