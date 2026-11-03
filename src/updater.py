@@ -49,7 +49,7 @@ class Updater:
 		if sv.Version(raw['version']) < sv.Version('1.0.0'):
 			raw = self._update_v1_0_0(raw)
 
-		if sv.Version(raw['version']) < sv.Version('9.9.99'):
+		if sv.Version(raw['version']) < sv.Version('1.2.0'):
 			raw = self._update_v1_2_0(raw)
 
 		raw['version'] = self.version
