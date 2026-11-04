@@ -11,7 +11,22 @@
 	let answerImg = $derived(config.images?.answers?.[0] || '');
 </script>
 
-<main class="trainer-container">
+<main data-theme="dark">
+	<header>
+		<div class="brand">
+			<i class="bi bi-diagram-3-fill"></i>
+			<span>Chess Opening Trainer</span>
+		</div>
+		<div class="theme-toggle-wrapper">
+			<i class="bi bi-sun-fill"></i>
+			<label class="theme-switch">
+				<input type="checkbox" id="theme-toggle-checkbox">
+				<span class="slider"></span>
+			</label>
+			<i class="bi bi-moon-stars-fill"></i>
+		</div>
+	</header>
+
 	{#if questionImg}
 		<img src={questionImg} alt="Question Position" />
 	{/if}
