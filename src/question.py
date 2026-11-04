@@ -34,6 +34,9 @@ class Question(Page):
 		rendered = self.moves
 		rendered += self.extra_html(note_id)
 
+		before = self.image_path(note_id)
+		print(f'Q: {before}')
+
 		return rendered
 
 	def render_answers(self, note_id: int) -> str:

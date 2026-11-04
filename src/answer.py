@@ -67,6 +67,9 @@ class Answer(Page):
 		rendered += ' ' + self.move
 		rendered += self.extra_html(note_id)
 
+		after = self.image_path(note_id)
+		print(f'A: {after}')
+
 		return rendered
 
 	def find(self, others: list[Answer]) -> bool:
