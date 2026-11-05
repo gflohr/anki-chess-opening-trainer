@@ -3,7 +3,7 @@
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
 		"target": "es2023",
 		"lib": ["ES2023"],
-		"types": ["node"],
+		"types": ["node", "@testing-library/jest-dom"],
 		"skipLibCheck": true,
 
 		/* Bundler mode */

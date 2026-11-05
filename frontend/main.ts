@@ -1,7 +1,7 @@
 import { mount } from 'svelte';
 import './app.css';
 import App from './App.svelte';
-import { Config } from './config.js';
+import type { Config } from './config.js';
 
 // Declare global config type for TypeScript
 declare global {
