@@ -40,6 +40,21 @@
 	padding: 0;
 }
 
+/* Force native elements and containers to inherit theme text color */
+body,
+button,
+input,
+select,
+textarea,
+table,
+th,
+td,
+.app-container,
+.moves-section,
+.board-section {
+	color: var(--text-main);
+}
+
 body {
 	font-family:
 		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,

@@ -13,9 +13,9 @@
 	//let questionImg = $derived(config.images?.question || '');
 	let answerImg = $derived(config.images?.answers?.[0] || '');
 
-	// Apply the theme attribute to the body whenever `isLight` changes
+	// Apply the theme attribute to the body whenever `isLight` changes.
 	$effect(() => {
-		document.body.setAttribute('data-theme', isLight ? 'light' : 'dark');
+		document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
 	});
 </script>
 

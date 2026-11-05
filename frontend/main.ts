@@ -14,7 +14,7 @@ declare global {
 const devConfig: Config = {
 	images: {
 		question: '/question.svg',
-		answers: ['/answer.svg'],
+		answers: ['/answer1.svg', '/answer2.svg', '/answer3.svg', '/answer4.svg'],
 	},
 };
 
