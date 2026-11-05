@@ -134,7 +134,7 @@ export function translateRawConfig(input: unknown): Config {
 					? issue.path.map(p => p.key).join('.')
 					: '';
 
-				const message = `${issue.message} ('${issue.input}');`
+				const message = `${issue.message} ('${issue.input}');`;
 				return path ? `${path}: ${message}` : message;
 			})
 			.join('; ');
