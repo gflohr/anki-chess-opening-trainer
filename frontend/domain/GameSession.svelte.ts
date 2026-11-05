@@ -53,7 +53,12 @@ export class GameSession {
 	}
 
 	private nextMoveId(): number {
-		return 1 + this.game.questionMoves.length + this.game.answerMoves.length + this.game.history.length;
+		return (
+			1 +
+			this.game.questionMoves.length +
+			this.game.answerMoves.length +
+			this.game.history.length
+		);
 	}
 
 	/**

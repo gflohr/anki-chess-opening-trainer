@@ -30,6 +30,7 @@
 		"vitest": "^5.1.0"
 	},
 	"dependencies": {
-		"bootstrap-icons": "^1.13.2"
+		"bootstrap-icons": "^1.13.2",
+		"valibot": "^1.5.0"
 	}
 }
