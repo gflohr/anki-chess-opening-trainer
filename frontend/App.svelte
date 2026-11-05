@@ -1,31 +1,23 @@
 <script lang="ts">
+	import Header from './components/Header.svelte';
 	import type { Config } from './config.js';
 
-	// 1. Define component props using Svelte 5's $props() rune
-	// We use Partial<Config> because config might be empty/loading initially
 	let { config = {} }: { config?: Partial<Config> } = $props();
 
-	// 2. Safely access nested properties using optional chaining (?.)
-	// and Svelte 5's $derived rune for reactivity
+	// Theme state lives here, bound to the Header component
+	let isLight = $state(false);
+
 	let questionImg = $derived(config.images?.question || '');
 	let answerImg = $derived(config.images?.answers?.[0] || '');
+
+	// Apply the theme attribute to the body whenever `isLight` changes
+	$effect(() => {
+		document.body.setAttribute('data-theme', isLight ? 'light' : 'dark');
+	});
 </script>
 
-<main data-theme="dark">
-	<header>
-		<div class="brand">
-			<i class="bi bi-diagram-3-fill"></i>
-			<span>Chess Opening Trainer</span>
-		</div>
-		<div class="theme-toggle-wrapper">
-			<i class="bi bi-sun-fill"></i>
-			<label class="theme-switch">
-				<input type="checkbox" id="theme-toggle-checkbox">
-				<span class="slider"></span>
-			</label>
-			<i class="bi bi-moon-stars-fill"></i>
-		</div>
-	</header>
+<main>
+	<Header bind:isLight />
 
 	{#if questionImg}
 		<img src={questionImg} alt="Question Position" />

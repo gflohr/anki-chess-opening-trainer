@@ -41,7 +41,9 @@
 }
 
 body {
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+		sans-serif;
 	background-color: var(--bg-app);
 	color: var(--text-main);
 	height: 100vh;
@@ -49,7 +51,9 @@ body {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	transition: background-color 0.3s ease, color 0.3s ease;
+	transition:
+		background-color 0.3s ease,
+		color 0.3s ease;
 }
 
 /* Header Section */
@@ -242,7 +246,8 @@ input:checked + .slider:before {
 	text-align: center;
 }
 
-.col-white, .col-black {
+.col-white,
+.col-black {
 	width: calc((100% - 44px) / 2);
 }
 

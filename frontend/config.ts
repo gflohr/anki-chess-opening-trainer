@@ -1,6 +1,6 @@
 export interface Config {
 	images: {
-		question: string,
-		answers: string[]
-	},
-};
+		question: string;
+		answers: string[];
+	};
+}
