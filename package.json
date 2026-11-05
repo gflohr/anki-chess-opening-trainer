@@ -21,6 +21,7 @@
 		"@testing-library/user-event": "^14.6.8",
 		"@tsconfig/svelte": "^5.0.8",
 		"@types/node": "^24.19.2",
+		"chess.js": "^1.4.0",
 		"happy-dom": "^21.0.4",
 		"svelte": "^5.57.2",
 		"svelte-check": "^4.7.7",
