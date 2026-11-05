@@ -4,7 +4,7 @@
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 		"target": "es2023",
 		"module": "esnext",
-		"types": ["svelte", "vite/client"],
+		"types": ["svelte", "vite/client", "@testing-library/jest-dom"],
 		"allowArbitraryExtensions": true,
 		"noEmit": true,
 		"allowJs": true,
