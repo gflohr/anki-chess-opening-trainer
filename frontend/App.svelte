@@ -38,7 +38,7 @@
 	</section>
 
 	<section class="moves-section">
-		<Moves />
+		<Moves {config} />
 		<Toolbar
 			bind:isBoardHidden
 			onToggleBoard={() => isBoardHidden = !isBoardHidden}
