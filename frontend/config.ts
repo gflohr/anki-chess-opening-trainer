@@ -1,7 +1,15 @@
 import * as v from 'valibot';
 
 import { GameSession } from './domain/GameSession.svelte';
-import type { Game, Marker, MarkerColour, Move, Square } from './domain/types';
+import type {
+	Game,
+	GameNode,
+	GraphMove,
+	Marker,
+	MarkerColour,
+	Move,
+	Square,
+} from './domain/types';
 
 /**
  * Validates individual marker strings:
@@ -36,6 +44,27 @@ export const rawMoveSchema = v.object({
 type RawMove = v.InferOutput<typeof rawMoveSchema>;
 
 /**
+ * Valibot schema for raw graph moves (extends rawMoveSchema with optional target node index).
+ */
+export const rawGraphMoveSchema = v.object({
+	...rawMoveSchema.entries,
+	/** Target node index. Optional: defaults to next sequential node if omitted. */
+	n: v.optional(v.pipe(v.number(), v.minValue(1))),
+});
+
+export type RawGraphMove = v.InferOutput<typeof rawGraphMoveSchema>;
+
+/** One node in a game. Its moves lead to other nodes. */
+export const rawGameNodeSchema = v.array(rawGraphMoveSchema);
+
+export type RawGameNode = v.InferOutput<typeof rawGameNodeSchema>;
+
+/** A complete game graph. */
+export const rawGameGraphSchema = v.array(rawGameNodeSchema);
+
+export type RawGameGraph = v.InferOutput<typeof rawGameGraphSchema>;
+
+/**
  * Validates raw configuration as passed on the card body.
  */
 const rawConfigSchema = v.object({
@@ -52,8 +81,8 @@ const rawConfigSchema = v.object({
 
 	/** Game session. */
 	s: v.object({
-		/** Raw moves (optional prefix question moves). */
-		m: v.optional(v.array(rawMoveSchema), []),
+		/** Raw (question) moves (optional prefix question moves). */
+		m: v.optional(rawGameGraphSchema),
 
 		/** Raw answer moves. */
 		a: v.pipe(v.array(rawMoveSchema), v.minLength(1)),
@@ -124,6 +153,23 @@ function translateRawMove(raw: RawMove, id: number): Move {
 	return move;
 }
 
+function translateRawGraphMove(raw: RawGraphMove, id: number): GraphMove {
+	const graphMove: GraphMove = translateRawMove(raw, id);
+	if (raw.n) graphMove.next = raw.n;
+
+	return graphMove;
+}
+
+function translateRawGameNode(raw: RawGameNode, id: number): GameNode {
+	const node: GameNode = [];
+
+	for (const graphMove of raw) {
+		node.push(translateRawGraphMove(graphMove, id++));
+	}
+
+	return node;
+}
+
 export function translateRawConfig(input: unknown): Config {
 	const result = v.safeParse(rawConfigSchema, input);
 
@@ -157,7 +203,8 @@ export function translateRawConfig(input: unknown): Config {
 
 	let moveId = 0;
 	for (const m of raw.s.m ?? []) {
-		game.questionMoves.push(translateRawMove(m, ++moveId));
+		game.questionMoves.push(translateRawGameNode(m, ++moveId));
+		moveId += game.questionMoves[game.questionMoves.length - 1].length - 1;
 	}
 	for (const a of raw.s.a) {
 		game.answerMoves.push(translateRawMove(a, ++moveId));

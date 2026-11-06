@@ -3,14 +3,14 @@ import './app.css';
 import App from './App.svelte';
 import { type Config, type RawConfig, translateRawConfig } from './config.js';
 
-// Declare global config type for TypeScript
+// Declare global config type for TypeScript.
 declare global {
 	interface Window {
 		config?: Config | RawConfig;
 	}
 }
 
-// Fallback config for local development only
+// Fallback config for local development only.
 const devConfig: RawConfig = {
 	i: {
 		q: '/question.svg',

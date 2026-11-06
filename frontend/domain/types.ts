@@ -94,6 +94,21 @@ export interface Move {
 	status?: 'correct' | 'wrong' | 'missing' | 'neutral';
 }
 
+/**
+ * A move inside a game graph that has successors.
+ */
+export interface GraphMove extends Move {
+	/** The index of the node reached from here. */
+	next?: number;
+}
+
+/**
+ * A node (or leaf) in a game graph.
+ */
+export type GameNode = GraphMove[];
+
+export type GameGraph = GameNode[];
+
 export interface Game {
 	/**
 	 * The initial FEN if known.
@@ -101,7 +116,7 @@ export interface Game {
 	initial?: string;
 
 	gameAnnotations: MoveAnnotation;
-	questionMoves: Move[];
+	questionMoves: GameGraph;
 	answerMoves: Move[];
 	history: Move[];
 }
