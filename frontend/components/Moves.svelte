@@ -3,10 +3,10 @@
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
 
 	interface Props {
-		config: Config;
+		pconfig: Partial<Config>;
 	}
 
-	let { config }: Props = $props();
+	let { pconfig }: Props = $props();
 
 	interface MoveCell extends Move {
 		clickable?: boolean;
@@ -24,6 +24,8 @@
 	 * Group played history moves into pairs of (White, Black) rows.
 	 */
 	let rows = $derived.by(() => {
+		const config = pconfig as Config;
+
 		const rows: MoveRow[] = [];
 
 		// Add question moves.
