@@ -93,6 +93,9 @@ const rawConfigSchema = v.object({
 
 	/** Game comments. */
 	c: v.optional(v.array(v.string())),
+
+	/** True for questions. */
+	q: v.optional(v.boolean()),
 });
 
 export type RawConfig = v.InferOutput<typeof rawConfigSchema>;
@@ -103,6 +106,7 @@ export interface Config {
 		answers: string[];
 	};
 	session: GameSession;
+	isQuestion: boolean;
 }
 
 function translateRawMarker(raw: string): Marker {
@@ -214,6 +218,7 @@ export function translateRawConfig(input: unknown): Config {
 
 	const config: Config = {
 		session,
+		isQuestion: !!raw.q,
 	};
 
 	if (raw.i) {

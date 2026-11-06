@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { CUID2_REGEX } from 'valibot';
 	import type { Config } from '../config.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
 
@@ -11,6 +10,7 @@
 
 	interface MoveCell extends Move {
 		clickable?: boolean;
+		active?: boolean;
 	}
 
 	interface MoveRow {
@@ -43,8 +43,8 @@
 			const move: MoveCell = {
 				id: graphMove.id,
 				san: graphMove.san,
-				status: graphMove.status,
 				clickable: !graphMove.next,
+				active: config.isQuestion && !graphMove.next,
 			};
 
 			if (isWhite) {
@@ -62,6 +62,34 @@
 				node = game.questionMoves[graphMove.next];
 			} else {
 				node = undefined;
+			}
+		}
+
+		if (!config.isQuestion) {
+			let count = 0;
+			for (const move of config.session.game.answerMoves) {
+				if (!currentRow) {
+					currentRow = {
+						moveNumber,
+					};
+				}
+
+				const moveCell: MoveCell = {
+					id: move.id,
+					san: move.san,
+					clickable: true,
+					active: !count++,
+					status: 'correct',
+				};
+
+				if (isWhite) {
+					currentRow.white = moveCell;
+				} else {
+					currentRow.black = moveCell;
+				}
+
+				rows.push(currentRow);
+				currentRow = undefined;
 			}
 		}
 
@@ -99,7 +127,8 @@
 					<!-- White Move Cell -->
 					<td
 						class="col-white"
-						class:clickable={row.white?.clickable}
+						class:clickable={!row.white?.active && row.white?.clickable}
+						class:active-move={row.white?.active}
 					>
 						{#if row.white}
 							<span class="move-cell" class:correct={row.white.status === 'correct'} class:wrong={row.white.status === 'wrong'} class:missing={row.white.status === 'missing'}>
@@ -114,8 +143,8 @@
 					<!-- Black Move Cell -->
 					<td
 						class="col-black"
-						class:clickable={row.black?.clickable}
-						onclick={() => row.black}
+						class:clickable={!row.black?.active && row.black?.clickable}
+						class:active-move={row.black?.active}
 					>
 						{#if row.black}
 							<span class="move-cell" class:correct={row.black.status === 'correct'} class:wrong={row.black.status === 'wrong'} class:missing={row.black.status === 'missing'}>

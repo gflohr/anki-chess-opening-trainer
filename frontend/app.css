@@ -15,6 +15,10 @@
 	--danger-color: #da3633;
 	--warning-color: #d97706;
 	--shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+	/* Theme-independent. */
+	--bg-active-move: oklab(0.568045 -0.0482561 -0.15072 / 0.85);
+	--text-active-move: #f0f2f5;
 }
 
 [data-theme="light"] {
@@ -285,6 +289,14 @@ input:checked + .slider:before {
 .col-white.clickable:hover,
 .col-black.clickable:hover {
 	background-color: var(--bg-hover);
+}
+
+.col-white.active-move,
+.col-black.active-move,
+.col-white.active-move:hover,
+.col-black.active-move:hover {
+	background-color: var(--bg-active-move);
+	color: var(--text-active-move);
 }
 
 /* Verification Badges inside history columns */
