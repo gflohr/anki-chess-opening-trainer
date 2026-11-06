@@ -11,6 +11,7 @@
 	interface MoveCell extends Move {
 		clickable?: boolean;
 		active?: boolean;
+		image?: string;
 	}
 
 	interface MoveRow {
@@ -47,6 +48,10 @@
 				active: config.isQuestion && !graphMove.next,
 			};
 
+			if (!graphMove.next) {
+				move.image = config.images?.question;
+			}
+
 			if (isWhite) {
 				currentRow.white = move;
 			} else {
@@ -74,12 +79,14 @@
 					};
 				}
 
+				const image = config.images?.answers[count];
 				const moveCell: MoveCell = {
 					id: move.id,
 					san: move.san,
 					clickable: true,
 					active: !count++,
 					status: 'correct',
+					image,
 				};
 
 				if (isWhite) {
