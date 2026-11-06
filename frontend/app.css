@@ -274,17 +274,17 @@ input:checked + .slider:before {
 	width: 100%;
 	padding: 4px 6px;
 	border-radius: 4px;
-	cursor: pointer;
 	user-select: none;
 }
 
-body:not(.history-missing) .col-white:not(.empty):hover,
-body:not(.history-missing) .col-black:not(.empty):hover {
-	background-color: var(--bg-hover);
+.col-white.clickable,
+.col-black.clickable {
+	cursor: pointer;
 }
 
-body.history-missing {
-	cursor: default;
+.col-white.clickable:hover,
+.col-black.clickable:hover {
+	background-color: var(--bg-hover);
 }
 
 /* Verification Badges inside history columns */
