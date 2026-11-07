@@ -1,5 +1,5 @@
 // frontend/domain/GameSession.svelte.ts
-import type { Game, Move, Square } from './types.js';
+import type { Game } from './types.js';
 
 export class GameSession {
 	// Reactive State
@@ -10,7 +10,10 @@ export class GameSession {
 		history: [],
 	});
 
+	// FIXME! This is redundant.
 	isAnswerPhase = $state<boolean>(false);
+
+	// FIXME! This is redundant.
 	selectedMoveId = $state<number>(0);
 
 	// Derived State.

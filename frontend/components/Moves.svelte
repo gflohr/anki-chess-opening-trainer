@@ -8,6 +8,7 @@
 
 	let { pconfig }: Props = $props();
 
+	// Track manually clicked active cell ID (null means default initialization)
 	let selectedId = $state<number | null>(null);
 
 	interface MoveCell extends Move {
@@ -45,7 +46,7 @@
 			const graphMove: GraphMove = node[0]; // Main variation.
 			const isLeaf = !graphMove.next;
 
-			// Determine if this cell is active (either explicitly clicked, or default first leaf/answer)
+			// Determine if this cell is active
 			const isActive = selectedId !== null
 				? selectedId === graphMove.id
 				: (config.isQuestion && isLeaf);
@@ -53,7 +54,8 @@
 			const move: MoveCell = {
 				id: graphMove.id,
 				san: graphMove.san,
-				clickable: isLeaf,
+				// A move is only clickable if it's a leaf node AND it is NOT currently active
+				clickable: isLeaf && !isActive,
 				active: isActive,
 			};
 
@@ -97,7 +99,8 @@
 				const moveCell: MoveCell = {
 					id: move.id,
 					san: move.san,
-					clickable: true,
+					// Answer moves are clickable as long as they aren't already active
+					clickable: !isActive,
 					active: isActive,
 					status: 'correct',
 					image,
@@ -154,7 +157,7 @@
 					<!-- White Move Cell -->
 					<td
 						class="col-white"
-						class:clickable={!row.white?.active && row.white?.clickable}
+						class:clickable={row.white?.clickable}
 						class:active-move={row.white?.active}
 						onclick={() => handleCellClick(row.white)}
 					>
@@ -171,7 +174,7 @@
 					<!-- Black Move Cell -->
 					<td
 						class="col-black"
-						class:clickable={!row.black?.active && row.black?.clickable}
+						class:clickable={row.black?.clickable}
 						class:active-move={row.black?.active}
 						onclick={() => handleCellClick(row.black)}
 					>
