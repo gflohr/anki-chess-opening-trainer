@@ -51,8 +51,6 @@
 			const move: MoveCell = {
 				id: graphMove.id,
 				san: graphMove.san,
-				// A move is only clickable if it's a leaf node AND it is NOT currently active
-				clickable: isLeaf && !isActive,
 				active: isActive,
 			};
 
@@ -111,6 +109,22 @@
 
 		if (currentRow) {
 			rows.push(currentRow);
+		}
+
+		// Set clickable property.
+		for (const row of rows) {
+			if (row.white) {
+				const id = row.white.id;
+				if (!row.white.active && card.images && card.images[id] !== '') {
+					row.white.clickable = true;
+				}
+			}
+			if (row.black) {
+				const id = row.black.id;
+				if (!row.black.active && card.images && card.images[id] !== '') {
+					row.black.clickable = true;
+				}
+			}
 		}
 
 		return rows;
