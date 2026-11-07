@@ -4,12 +4,10 @@
 
 	interface Props {
 		pcard: Partial<Card>;
+		selectedBoardId: number | null;
 	}
 
-	let { pcard }: Props = $props();
-
-	// Track manually clicked active cell ID (null means default initialization)
-	let selectedId = $state<number | null>(null);
+	let { pcard, selectedBoardId = $bindable<number | null>(null) }: Props = $props();
 
 	interface MoveCell extends Move {
 		clickable?: boolean;
@@ -47,8 +45,8 @@
 			const isLeaf = !graphMove.next;
 
 			// Determine if this cell is active
-			const isActive = selectedId !== null
-				? selectedId === graphMove.id
+			const isActive = selectedBoardId !== null
+				? selectedBoardId === graphMove.id
 				: (card.isQuestion && isLeaf);
 
 			const move: MoveCell = {
@@ -91,8 +89,8 @@
 				}
 
 				const isFirst = count === 0;
-				const isActive = selectedId !== null
-					? selectedId === move.id
+				const isActive = selectedBoardId !== null
+					? selectedBoardId === move.id
 					: isFirst;
 
 				const image = card.images?.answers[count];
@@ -127,7 +125,7 @@
 
 	function handleCellClick(cell?: MoveCell) {
 		if (!cell || !cell.clickable) return;
-		selectedId = cell.id;
+		selectedBoardId = cell.id;
 	}
 
 	/**
