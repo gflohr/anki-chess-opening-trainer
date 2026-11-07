@@ -41,7 +41,7 @@
 			title="Settings"
 			onclick={toggleSettings}
 		>
-			<i class="bi bi-chevron-up chevron-icon"></i>
+			<i class="bi bi-sliders chevron-icon"></i>
 		</button>
 
 		<!-- Settings Dialog bound reactively via class:active -->
