@@ -34,6 +34,9 @@ export const rawMoveSchema = v.object({
 	/** SAN of the move. */
 	s: v.string(),
 
+	/** Index of the move. */
+	i: v.pipe(v.number(), v.minValue(1)),
+
 	/** Optional marker annotations. */
 	m: v.optional(v.array(rawMarkerSchema)),
 
@@ -69,15 +72,7 @@ export type RawGameGraph = v.InferOutput<typeof rawGameGraphSchema>;
  */
 const rawCardSchema = v.object({
 	/** SVG images if present. Optional. */
-	i: v.optional(
-		v.object({
-			/** Question diagram. */
-			q: v.pipe(v.string(), v.minLength(1)),
-
-			/** Answer diagrams. */
-			a: v.array(v.pipe(v.string(), v.minLength(1))),
-		}),
-	),
+	i: v.optional(v.array(v.pipe(v.string()))),
 
 	/** Game session. */
 	s: v.object({
@@ -101,10 +96,7 @@ const rawCardSchema = v.object({
 export type RawCard = v.InferOutput<typeof rawCardSchema>;
 
 export interface Card {
-	images?: {
-		question: string;
-		answers: string[];
-	};
+	images?: string[];
 	session: GameSession;
 	isQuestion: boolean;
 }
@@ -144,9 +136,9 @@ function translateRawMarker(raw: string): Marker {
 	}
 }
 
-function translateRawMove(raw: RawMove, id: number): Move {
+function translateRawMove(raw: RawMove): Move {
 	const move: Move = {
-		id,
+		id: raw.i,
 		san: raw.s,
 		annotations: {
 			markers: (raw.m ?? []).map(translateRawMarker),
@@ -157,18 +149,18 @@ function translateRawMove(raw: RawMove, id: number): Move {
 	return move;
 }
 
-function translateRawGraphMove(raw: RawGraphMove, id: number): GraphMove {
-	const graphMove: GraphMove = translateRawMove(raw, id);
+function translateRawGraphMove(raw: RawGraphMove): GraphMove {
+	const graphMove: GraphMove = translateRawMove(raw);
 	if (raw.n) graphMove.next = raw.n;
 
 	return graphMove;
 }
 
-function translateRawGameNode(raw: RawGameNode, id: number): GameNode {
+function translateRawGameNode(raw: RawGameNode): GameNode {
 	const node: GameNode = [];
 
 	for (const graphMove of raw) {
-		node.push(translateRawGraphMove(graphMove, id++));
+		node.push(translateRawGraphMove(graphMove));
 	}
 
 	return node;
@@ -205,13 +197,11 @@ export function translateRawCard(input: unknown): Card {
 		history: [],
 	} as Game;
 
-	let moveId = 0;
 	for (const m of raw.s.m ?? []) {
-		game.questionMoves.push(translateRawGameNode(m, ++moveId));
-		moveId += game.questionMoves[game.questionMoves.length - 1].length - 1;
+		game.questionMoves.push(translateRawGameNode(m));
 	}
 	for (const a of raw.s.a) {
-		game.answerMoves.push(translateRawMove(a, ++moveId));
+		game.answerMoves.push(translateRawMove(a));
 	}
 
 	const session = new GameSession(game);
@@ -222,10 +212,7 @@ export function translateRawCard(input: unknown): Card {
 	};
 
 	if (raw.i) {
-		config.images = {
-			question: raw.i.q,
-			answers: [...raw.i.a],
-		};
+		config.images = [...raw.i];
 	}
 
 	return config;

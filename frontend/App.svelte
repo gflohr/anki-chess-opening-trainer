@@ -3,11 +3,11 @@
 	import Moves from './components/Moves.svelte';
 	import Toolbar from './components/Toolbar.svelte';
 	import type { Card } from './domain/card.js';
-	import type { GameNode, GraphMove } from './domain/types';
+    import type { GameNode } from './domain/types';
 
 	let { card = {} }: { card?: Partial<Card> } = $props();
 
-	// Theme state lives here, bound to the Header component
+	// Theme state lives here, bound to the Header component.
 	let isLight = $state(false);
 	let isBoardHidden = $state(false);
 
@@ -15,50 +15,27 @@
 	let boardImg = $derived.by(() => {
 		if (selectedBoardId === null) {
 			if (card.isQuestion) {
-				return card.images?.question || '';
+				let node: GameNode | undefined = card.session?.game.questionMoves[0];
+				if (!node) return card.images?.[0] as string;
+
+				while(node) {
+					if (!node[0].next) return card.images?.[node[0].id];
+					node = card.session?.game.questionMoves[node[0].next];
+				}
 			} else {
-				return card.images?.answers[0]
+				return card.images?.[card.session?.game.answerMoves[0].id as number]
 			}
+
+			return card.images?.[0];
 		}
 
-		if (findQuestionMove(selectedBoardId)) {
-			return card.images?.question || '';
-		}
-
-		const answerIndex = card.session?.game.answerMoves.findIndex(
-			move => move.id === selectedBoardId
-		) ?? -1;
-
-		return answerIndex >= 0
-			? card.images?.answers?.[answerIndex] || ''
-			: card.images?.question || '';
+		return card.images?.[selectedBoardId];
 	});
 
 	// Apply the theme attribute to the body whenever `isLight` changes.
 	$effect(() => {
 		document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
 	});
-
-	function findQuestionMove(id: number): boolean {
-		const game = card.session?.game;
-		if (!game) return false;
-
-		let node: GameNode | undefined = game.questionMoves[0];
-
-		while (node) {
-			const graphMove: GraphMove = node[0];
-
-			if (graphMove.id === id) {
-				return true;
-			}
-
-			node = graphMove.next
-				? game.questionMoves[graphMove.next]
-				: undefined;
-		}
-
-		return false;
-	}
 </script>
 
 <Header bind:isLight />

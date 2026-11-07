@@ -102,11 +102,6 @@ class Page:
 
 	def extra_html(self, note_id: int) -> str:
 		rendered = ''
-		for comment in self.comments:
-			rendered += ' <em>' + comment + '</em>'
-
-		image_path = self.image_path(note_id)
-		rendered += f'<br><img src="{image_path}">'
 
 		rendered += f'<link rel="stylesheet" href="{self.web_path}/index.css">'
 		rendered += f'<script type="module" src="{self.web_path}/bundle.js"></script>'

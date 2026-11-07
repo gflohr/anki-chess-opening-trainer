@@ -4,13 +4,10 @@ import { type RawCard, translateRawCard } from './card.js';
 describe('translateRawCard', () => {
 	it('successfully parses a valid complete configuration', () => {
 		const input: RawCard = {
-			i: {
-				q: 'data:image/svg+xml;base64,question',
-				a: ['data:image/svg+xml;base64,answer1'],
-			},
+			i: ['a.svg', 'b.svg'],
 			s: {
-				m: [[{ s: 'e4', c: ['King pawn opening'] }]],
-				a: [{ s: 'e5', m: ['cge4', 'arg1f3'] }],
+				m: [[{ s: 'e4', i: 1, c: ['King pawn opening'] }]],
+				a: [{ s: 'e5', i: 2, m: ['cge4', 'arg1f3'] }],
 			},
 			m: ['cbd4'],
 			c: ['Opening overview'],
@@ -18,10 +15,7 @@ describe('translateRawCard', () => {
 
 		const config = translateRawCard(input);
 
-		expect(config.images).toEqual({
-			question: 'data:image/svg+xml;base64,question',
-			answers: ['data:image/svg+xml;base64,answer1'],
-		});
+		expect(config.images).toEqual(['a.svg', 'b.svg']);
 
 		// Verify game session data translation.
 		const game = config.session.game;
@@ -60,7 +54,7 @@ describe('translateRawCard', () => {
 	it('allows optional image block and optional question prefix moves', () => {
 		const input = {
 			s: {
-				a: [{ s: 'Nf3' }],
+				a: [{ s: 'Nf3', i: 1 }],
 			},
 		};
 
@@ -100,10 +94,7 @@ describe('translateRawCard', () => {
 	describe('Game graphs', () => {
 		it('should transform a game graph', async () => {
 			const input: RawCard = {
-				i: {
-					q: 'question.svg',
-					a: ['answer1.svg', 'answer2.svg'],
-				},
+				i: ['question.svg', 'answer1.svg', 'answer2.svg'],
 				s: {
 					// This game graph represents these opening transpositions:
 					//
@@ -114,64 +105,74 @@ describe('translateRawCard', () => {
 						[
 							{
 								s: 'd4',
+								i: 1,
 								c: ['Queen pawn opening'],
 								n: 1,
 							},
 							{
 								s: 'Nf3',
+								i: 2,
 								c: ['Zukertort opening'],
 								n: 5,
 							},
 						],
 						[
 							{
+								i: 3,
 								s: 'Nf6',
 								n: 2,
 							},
 						],
 						[
 							{
+								i: 4,
 								s: 'Nf3',
 								n: 3,
 							},
 						],
 						[
 							{
+								i: 5,
 								s: 'd5',
 								n: 4,
 							},
 						],
 						[
 							{
+								i: 6,
 								s: 'Nc3',
 							},
 						],
 						[
 							{
+								i: 7,
 								s: 'Nf6',
 								n: 6,
 							},
 						],
 						[
 							{
+								i: 8,
 								s: 'c4',
 								n: 7,
 							},
 						],
 						[
 							{
+								i: 9,
 								s: 'd4',
 								n: 8,
 							},
 						],
 						[
 							{
+								i: 10,
 								s: 'd5',
 								n: 4,
 							},
 						],
 					],
-					a: [{ s: 'Nf6' }, { s: 'g3' }],
+					a: [{ s: 'Nf6', i: 11 }, { s: 'g3', i: 12 }],
 				},
 			};
 

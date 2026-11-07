@@ -12,28 +12,41 @@ declare global {
 
 // Fallback card for local development only.
 const devCard: RawCard = {
-	i: {
-		q: '/question.svg',
-		a: ['/answer1.svg', '/answer2.svg', '/answer3.svg', '/answer4.svg', '/answer5.svg'],
-	},
+	i: [
+		'',
+		'',
+		'',
+		'',
+		'',
+		'',
+		'',
+		'',
+		'',
+		'/question.svg',
+		'/answer1.svg',
+		'/answer2.svg',
+		'/answer3.svg',
+		'/answer4.svg',
+		'/answer5.svg',
+	],
 	s: {
 		m: [
-			[{ s: 'e4', n: 1 }],
-			[{ s: 'e5', n: 2 }],
-			[{ s: 'Nf3', n: 3 }],
-			[{ s: 'Nc6', n: 4 }],
-			[{ s: 'Bc4', n: 5 }],
-			[{ s: 'Nf6', n: 6 }],
-			[{ s: 'Ng5', n: 7 }],
-			[{ s: 'd5', n: 8 }],
-			[{ s: 'exd5' }],
+			[{ s: 'e4', i: 1, n: 1 }],
+			[{ s: 'e5', i: 2, n: 2 }],
+			[{ s: 'Nf3', i: 3, n: 3 }],
+			[{ s: 'Nc6', i: 4, n: 4 }],
+			[{ s: 'Bc4', i: 5, n: 5 }],
+			[{ s: 'Nf6', i: 6, n: 6 }],
+			[{ s: 'Ng5', i: 7, n: 7 }],
+			[{ s: 'd5', i: 8, n: 8 }],
+			[{ s: 'exd5', i: 9 }],
 		],
 		a: [
-			{ s: 'b5' },
-			{ s: 'Na5' },
-			{ s: 'Nd4' },
-			{ s: 'Nxd5' },
-			{ s: 'Nb4' },
+			{ s: 'b5', i: 10 },
+			{ s: 'Na5', i: 11 },
+			{ s: 'Nd4', i: 12 },
+			{ s: 'Nxd5', i: 13 },
+			{ s: 'Nb4', i: 14 },
 		],
 	},
 	c: ['This is the Italian Game.', 'It is also known as Giuco Piano.'],
@@ -42,7 +55,6 @@ const devCard: RawCard = {
 const targetElement = document.getElementById('app')!;
 
 try {
-	alert('loaded')
 	// Use window.card if injected by Anki/importer, otherwise fallback to devCard
 	const rawCard = window.card || (import.meta.env.DEV ? devCard : {});
 	const card = translateRawCard(rawCard);

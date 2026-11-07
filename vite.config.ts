@@ -2,9 +2,9 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
 	plugins: [svelte()],
-	base: '/',
+	base: command === 'serve' ? '/' : '/_addons/705507113/web',
 	build: {
 		outDir: 'dist',
 		assetsDir: '.',
@@ -15,4 +15,4 @@ export default defineConfig({
 			},
 		},
 	},
-});
+}));

@@ -19,12 +19,11 @@ generated: src/version.py src/config.py src/schema.py src/basic_names.py
 dist:
 	$(PNPM) run build
 
-src/web:
+src/web: dist
 	rm -rf $@
-	mkdir $@
 	$(MAKE) dist
-	cp -r dist/* $@
-	rm $@/web/index.html $@/web/question.svg $2/web/answer*.svg
+	cp -r dist $@
+	rm $@/index.html $@/question.svg $@/answer*.svg
 
 zip: generated vendor src/web
 	$(PYTHON) -m ankiscripts.build --type package --qt all --exclude user_files/**/*
