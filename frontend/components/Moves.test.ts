@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest';
 import Moves from '../components/Moves.svelte';
 import type { Config } from '../config.js';
 
-describe('Moves.svelte', () => {
-	describe('Question side', () => {
+describe('Moves Component', () => {
+	describe('Question Side', () => {
 		const mockConfig: Partial<Config> = {
 			isQuestion: true,
 			session: {
@@ -53,7 +53,7 @@ describe('Moves.svelte', () => {
 		});
 	});
 
-	describe('Answer side', () => {
+	describe('Answer Side', () => {
 		const mockConfig: Partial<Config> = {
 			session: {
 				game: {
