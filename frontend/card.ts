@@ -67,7 +67,7 @@ export type RawGameGraph = v.InferOutput<typeof rawGameGraphSchema>;
 /**
  * Validates raw configuration as passed on the card body.
  */
-const rawConfigSchema = v.object({
+const rawCardSchema = v.object({
 	/** SVG images if present. Optional. */
 	i: v.optional(
 		v.object({
@@ -98,9 +98,9 @@ const rawConfigSchema = v.object({
 	q: v.optional(v.boolean()),
 });
 
-export type RawConfig = v.InferOutput<typeof rawConfigSchema>;
+export type RawCard = v.InferOutput<typeof rawCardSchema>;
 
-export interface Config {
+export interface Card {
 	images?: {
 		question: string;
 		answers: string[];
@@ -174,8 +174,8 @@ function translateRawGameNode(raw: RawGameNode, id: number): GameNode {
 	return node;
 }
 
-export function translateRawConfig(input: unknown): Config {
-	const result = v.safeParse(rawConfigSchema, input);
+export function translateRawCard(input: unknown): Card {
+	const result = v.safeParse(rawCardSchema, input);
 
 	if (!result.success) {
 		const errorMessage = result.issues
@@ -216,7 +216,7 @@ export function translateRawConfig(input: unknown): Config {
 
 	const session = new GameSession(game);
 
-	const config: Config = {
+	const config: Card = {
 		session,
 		isQuestion: !!raw.q,
 	};

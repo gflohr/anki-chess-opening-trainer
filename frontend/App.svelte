@@ -1,17 +1,17 @@
 <script lang="ts">
+	import type { Card } from './card.js';
 	import Header from './components/Header.svelte';
 	import Moves from './components/Moves.svelte';
 	import Toolbar from './components/Toolbar.svelte';
-	import type { Config } from './config.js';
 
-	let { config = {} }: { config?: Partial<Config> } = $props();
+	let { card = {} }: { card?: Partial<Card> } = $props();
 
 	// Theme state lives here, bound to the Header component
 	let isLight = $state(false);
 	let isBoardHidden = $state(false);
 
-	//let questionImg = $derived(config.images?.question || '');
-	let answerImg = $derived(config.images?.answers?.[0] || '');
+	//let questionImg = $derived(card.images?.question || '');
+	let answerImg = $derived(card.images?.answers?.[0] || '');
 
 	// Apply the theme attribute to the body whenever `isLight` changes.
 	$effect(() => {
@@ -38,7 +38,7 @@
 	</section>
 
 	<section class="moves-section">
-		<Moves pconfig={config} />
+		<Moves pcard={card} />
 		<Toolbar
 			bind:isBoardHidden
 			onToggleBoard={() => isBoardHidden = !isBoardHidden}

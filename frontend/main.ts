@@ -1,17 +1,17 @@
 import { mount } from 'svelte';
 import './app.css';
 import App from './App.svelte';
-import { type Config, type RawConfig, translateRawConfig } from './config.js';
+import { type Card, type RawCard, translateRawCard } from './card.js';
 
-// Declare global config type for TypeScript.
+// Declare global card type for TypeScript.
 declare global {
 	interface Window {
-		config?: Config | RawConfig;
+		card?: Card | RawCard;
 	}
 }
 
-// Fallback config for local development only.
-const devConfig: RawConfig = {
+// Fallback card for local development only.
+const devCard: RawCard = {
 	i: {
 		q: '/question.svg',
 		a: ['/answer1.svg', '/answer2.svg', '/answer3.svg', '/answer4.svg'],
@@ -36,14 +36,14 @@ const devConfig: RawConfig = {
 const targetElement = document.getElementById('app')!;
 
 try {
-	// Use window.config if injected by Anki/importer, otherwise fallback to devConfig
-	const rawConfig = window.config || (import.meta.env.DEV ? devConfig : {});
-	const config = translateRawConfig(rawConfig);
+	// Use window.card if injected by Anki/importer, otherwise fallback to devCard
+	const rawCard = window.card || (import.meta.env.DEV ? devCard : {});
+	const card = translateRawCard(rawCard);
 
 	mount(App, {
 		target: targetElement,
 		props: {
-			config,
+			card,
 		},
 	});
 } catch (error) {
@@ -75,13 +75,13 @@ try {
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
             ">
                 <h3 style="color: #da3633; margin-top: 0; margin-bottom: 12px; font-size: 1.2rem;">
-                    <i class="bi bi-exclamation-triangle-fill"></i> Configuration Error
+                    <i class="bi bi-exclamation-triangle-fill"></i> Internal Error - Corrupt Card
                 </h3>
                 <p style="color: #9aa0a6; font-size: 0.9rem; line-height: 1.5; margin: 0 0 16px 0; word-break: break-word;">
                     ${message}
                 </p>
                 <p style="color: #6b7280; font-size: 0.75rem; margin: 0;">
-                    Please check your card template or JSON data payload.
+                    Please check your card template or JSON data payload!
                 </p>
             </div>
         </div>

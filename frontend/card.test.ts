@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { type RawConfig, translateRawConfig } from './config';
+import { type RawCard, translateRawCard } from './card.js';
 
-describe('translateRawConfig', () => {
+describe('translateRawCard', () => {
 	it('successfully parses a valid complete configuration', () => {
-		const input: RawConfig = {
+		const input: RawCard = {
 			i: {
 				q: 'data:image/svg+xml;base64,question',
 				a: ['data:image/svg+xml;base64,answer1'],
@@ -16,7 +16,7 @@ describe('translateRawConfig', () => {
 			c: ['Opening overview'],
 		};
 
-		const config = translateRawConfig(input);
+		const config = translateRawCard(input);
 
 		expect(config.images).toEqual({
 			question: 'data:image/svg+xml;base64,question',
@@ -64,7 +64,7 @@ describe('translateRawConfig', () => {
 			},
 		};
 
-		const config = translateRawConfig(input);
+		const config = translateRawCard(input);
 
 		expect(config.images).toBeUndefined();
 		expect(config.session.game.questionMoves).toHaveLength(0);
@@ -79,7 +79,7 @@ describe('translateRawConfig', () => {
 			},
 		};
 
-		expect(() => translateRawConfig(input)).toThrowError(
+		expect(() => translateRawCard(input)).toThrowError(
 			/Invalid card configuration.*Invalid marker format/i,
 		);
 	});
@@ -92,14 +92,14 @@ describe('translateRawConfig', () => {
 			},
 		};
 
-		expect(() => translateRawConfig(input)).toThrowError(
+		expect(() => translateRawCard(input)).toThrowError(
 			/Invalid card configuration/i,
 		);
 	});
 
 	describe('Game graphs', () => {
 		it('should transform a game graph', async () => {
-			const input: RawConfig = {
+			const input: RawCard = {
 				i: {
 					q: 'question.svg',
 					a: ['answer1.svg', 'answer2.svg'],
@@ -175,7 +175,7 @@ describe('translateRawConfig', () => {
 				},
 			};
 
-			const config = translateRawConfig(input);
+			const config = translateRawCard(input);
 			const game = config.session.game;
 
 			expect(game.questionMoves.length).toBe(input.s.m!.length);

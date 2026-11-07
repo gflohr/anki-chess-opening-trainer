@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { Config } from '../config.js';
+	import type { Card } from '../card.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
 
 	interface Props {
-		pconfig: Partial<Config>;
+		pcard: Partial<Card>;
 	}
 
-	let { pconfig }: Props = $props();
+	let { pcard }: Props = $props();
 
 	// Track manually clicked active cell ID (null means default initialization)
 	let selectedId = $state<number | null>(null);
@@ -27,11 +27,11 @@
 	 * Group played history moves into pairs of (White, Black) rows.
 	 */
 	let rows = $derived.by(() => {
-		const config = pconfig as Config;
+		const card = pcard as Card;
 		const rows: MoveRow[] = [];
 
 		// Add question moves.
-		const game = config.session.game;
+		const game = card.session.game;
 		let node: GameNode | undefined = game.questionMoves[0];
 		let isWhite = true;
 		let moveNumber = 1;
@@ -49,7 +49,7 @@
 			// Determine if this cell is active
 			const isActive = selectedId !== null
 				? selectedId === graphMove.id
-				: (config.isQuestion && isLeaf);
+				: (card.isQuestion && isLeaf);
 
 			const move: MoveCell = {
 				id: graphMove.id,
@@ -60,7 +60,7 @@
 			};
 
 			if (isLeaf) {
-				move.image = config.images?.question;
+				move.image = card.images?.question;
 			}
 
 			if (isWhite) {
@@ -81,9 +81,9 @@
 			}
 		}
 
-		if (!config.isQuestion) {
+		if (!card.isQuestion) {
 			let count = 0;
-			for (const move of config.session.game.answerMoves) {
+			for (const move of card.session.game.answerMoves) {
 				if (!currentRow) {
 					currentRow = {
 						moveNumber,
@@ -95,7 +95,7 @@
 					? selectedId === move.id
 					: isFirst;
 
-				const image = config.images?.answers[count];
+				const image = card.images?.answers[count];
 				const moveCell: MoveCell = {
 					id: move.id,
 					san: move.san,
