@@ -29,13 +29,14 @@ WS_REGEX = re.compile('[ \t\n\v\\f]')
 
 
 class Page:
-	def __init__(self, colour: chess.Color, turn: chess.Color) -> None:
+	def __init__(self, colour: chess.Color, turn: chess.Color, web_path: str) -> None:
 		self.colour = colour
 		self.turn = turn
 		self.comments: List[str] = []
 		self.arrows: List[Arrow] = []
 		self.fills: Dict[int, str] = {}
 		self.board: Optional[Board] = None
+		self.web_path = web_path
 
 	def set_board(self, board: Board) -> None:
 		self.board = board
@@ -106,6 +107,10 @@ class Page:
 
 		image_path = self.image_path(note_id)
 		rendered += f'<br><img src="{image_path}">'
+
+		rendered += f'<link rel="stylesheet" href="{self.web_path}/index.css">'
+		rendered += f'<script type="module" src="{self.web_path}/bundle.js"></script>'
+		rendered += f'<div id="app"></div>'
 
 		return rendered
 

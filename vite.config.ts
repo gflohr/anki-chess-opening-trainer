@@ -10,8 +10,8 @@ export default defineConfig({
 		assetsDir: '.',
 		rollupOptions: {
 			output: {
-				entryFileNames: '_chess_opening_trainer_bundle.js',
-				assetFileNames: '_chess_opening_trainer_[name].[ext]',
+				entryFileNames: 'bundle.js',
+				assetFileNames: '[name].[ext]',
 			},
 		},
 	},

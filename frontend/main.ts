@@ -42,6 +42,7 @@ const devCard: RawCard = {
 const targetElement = document.getElementById('app')!;
 
 try {
+	alert('loaded')
 	// Use window.card if injected by Anki/importer, otherwise fallback to devCard
 	const rawCard = window.card || (import.meta.env.DEV ? devCard : {});
 	const card = translateRawCard(rawCard);

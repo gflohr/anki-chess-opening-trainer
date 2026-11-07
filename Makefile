@@ -23,8 +23,8 @@ src/web:
 	rm -rf $@
 	mkdir $@
 	$(MAKE) dist
-	rm dist/index.html dist/question.svg dist/answer*.svg
 	cp -r dist/* $@
+	rm $@/web/index.html $@/web/question.svg $2/web/answer*.svg
 
 zip: generated vendor src/web
 	$(PYTHON) -m ankiscripts.build --type package --qt all --exclude user_files/**/*

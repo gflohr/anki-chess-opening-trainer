@@ -269,6 +269,9 @@ class ImportDialog(QDialog):
 				notetype_id = self.config['notetype']
 				tag = record.get('tag')
 
+				addon_package = mw.addonManager.addonFromModule(__name__)
+				web_path = f"/_addons/{addon_package}/web"
+
 				importer = Importer(
 					collection=mw.col,
 					deck_id=deck_id,
@@ -276,6 +279,7 @@ class ImportDialog(QDialog):
 					filenames=filenames,
 					colour=('white' == colour),
 					tag=tag,
+					web_path=web_path
 				)
 
 				return importer.run()
