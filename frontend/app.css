@@ -390,3 +390,8 @@ body.history-missing .nav-buttons {
 .settings-dialog button:hover {
 	background-color: var(--bg-hover);
 }
+
+.icon-btn:disabled {
+	opacity: 0.35;
+	cursor: not-allowed;
+}
