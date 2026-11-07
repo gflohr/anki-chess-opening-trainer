@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 
-import { GameSession } from './domain/GameSession.svelte';
+import { GameSession } from './GameSession.svelte';
 import type {
 	Game,
 	GameNode,
@@ -9,7 +9,7 @@ import type {
 	MarkerColour,
 	Move,
 	Square,
-} from './domain/types';
+} from './types';
 
 /**
  * Validates individual marker strings:

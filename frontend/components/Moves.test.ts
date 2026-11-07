@@ -2,11 +2,11 @@ import { render, screen } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import Moves from '../components/Moves.svelte';
-import type { Config } from '../config.js';
+import type { Card } from '../domain/card.js';
 
 describe('Moves Component', () => {
 	describe('Question Side', () => {
-		const mockConfig: Partial<Config> = {
+		const mockCard: Partial<Card> = {
 			isQuestion: true,
 			session: {
 				game: {
@@ -26,10 +26,10 @@ describe('Moves Component', () => {
 				question: 'question.png',
 				answers: [],
 			},
-		} as unknown as Partial<Config>;
+		} as unknown as Partial<Card>;
 
 		it('renders question moves correctly and hides answers', () => {
-			render(Moves, { pconfig: mockConfig });
+			render(Moves, { pcard: mockCard });
 
 			expect(screen.queryByText('e4')).not.toBeNull();
 			expect(screen.queryByText('e5')).not.toBeNull();
@@ -38,7 +38,7 @@ describe('Moves Component', () => {
 		});
 
 		it('sets the final leaf as active and non-clickable by default on the question side', () => {
-			render(Moves, { pconfig: mockConfig });
+			render(Moves, { pcard: mockCard });
 
 			const e4Cell = screen.getByText('e4').closest('td');
 			const e5Cell = screen.getByText('e5').closest('td');
@@ -54,7 +54,7 @@ describe('Moves Component', () => {
 	});
 
 	describe('Answer Side', () => {
-		const mockConfig: Partial<Config> = {
+		const mockCard: Partial<Card> = {
 			session: {
 				game: {
 					gameAnnotations: { comments: [], markers: [] },
@@ -73,10 +73,10 @@ describe('Moves Component', () => {
 				question: 'question.png',
 				answers: [],
 			},
-		} as unknown as Partial<Config>;
+		} as unknown as Partial<Card>;
 
 		it('renders question and answer moves correctly', () => {
-			render(Moves, { pconfig: mockConfig });
+			render(Moves, { pcard: mockCard });
 
 			expect(screen.queryByText('e4')).not.toBeNull();
 			expect(screen.queryByText('e5')).not.toBeNull();
@@ -85,7 +85,7 @@ describe('Moves Component', () => {
 		});
 
 		it('sets the first answer as active and non-clickable by default on the answer side', () => {
-			render(Moves, { pconfig: mockConfig });
+			render(Moves, { pcard: mockCard });
 
 			const e4Cell = screen.getByText('e4').closest('td');
 			const e5Cell = screen.getByText('e5').closest('td');
@@ -110,7 +110,7 @@ describe('Moves Component', () => {
 		});
 
 		it('allows clicking the question move', async () => {
-			render(Moves, { pconfig: mockConfig });
+			render(Moves, { pcard: mockCard });
 
 			const e5Cell = screen.getByText('e5').closest('td');
 			const nf3Cell = screen.getByText('Nf3').closest('td');
@@ -132,7 +132,7 @@ describe('Moves Component', () => {
 		});
 
 		it('allows clicking the other answer move', async () => {
-			render(Moves, { pconfig: mockConfig });
+			render(Moves, { pcard: mockCard });
 
 			const e5Cell = screen.getByText('e5').closest('td');
 			const nf3Cell = screen.getByText('Nf3').closest('td');

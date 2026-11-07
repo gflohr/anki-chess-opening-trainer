@@ -1,7 +1,7 @@
 import { mount } from 'svelte';
 import './app.css';
 import App from './App.svelte';
-import { type Card, type RawCard, translateRawCard } from './card.js';
+import { type Card, type RawCard, translateRawCard } from './domain/card.js';
 
 // Declare global card type for TypeScript.
 declare global {

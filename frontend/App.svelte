@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Card } from './card.js';
 	import Header from './components/Header.svelte';
 	import Moves from './components/Moves.svelte';
 	import Toolbar from './components/Toolbar.svelte';
+	import type { Card } from './domain/card.js';
 
 	let { card = {} }: { card?: Partial<Card> } = $props();
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Card } from '../card.js';
+	import type { Card } from '../domain/card.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
 
 	interface Props {
