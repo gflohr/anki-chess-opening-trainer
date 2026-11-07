@@ -183,7 +183,10 @@
 	function hasPreviousMove(): boolean {
 		if (!rows) return false;
 
-		return !!selectedBoardId;
+		const activeRowIndex = findActiveRowIndex();
+		if (activeRowIndex === null) return false;
+
+		return true;
 	}
 
 	function hasNextMove(): boolean {
