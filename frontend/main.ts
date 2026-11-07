@@ -55,7 +55,6 @@ const devCard: RawCard = {
 const targetElement = document.getElementById('app')!;
 
 try {
-console.log(window.card);
 	const card = translateRawCard(window.card);
 	//card.isQuestion = true;
 
