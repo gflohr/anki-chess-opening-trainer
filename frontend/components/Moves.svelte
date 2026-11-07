@@ -8,6 +8,8 @@
 
 	let { pconfig }: Props = $props();
 
+	let selectedId = $state<number | null>(null);
+
 	interface MoveCell extends Move {
 		clickable?: boolean;
 		active?: boolean;
@@ -25,7 +27,6 @@
 	 */
 	let rows = $derived.by(() => {
 		const config = pconfig as Config;
-
 		const rows: MoveRow[] = [];
 
 		// Add question moves.
@@ -42,15 +43,21 @@
 				};
 			}
 			const graphMove: GraphMove = node[0]; // Main variation.
+			const isLeaf = !graphMove.next;
+
+			// Determine if this cell is active (either explicitly clicked, or default first leaf/answer)
+			const isActive = selectedId !== null
+				? selectedId === graphMove.id
+				: (config.isQuestion && isLeaf);
 
 			const move: MoveCell = {
 				id: graphMove.id,
 				san: graphMove.san,
-				clickable: !graphMove.next,
-				active: config.isQuestion && !graphMove.next,
+				clickable: isLeaf,
+				active: isActive,
 			};
 
-			if (!graphMove.next) {
+			if (isLeaf) {
 				move.image = config.images?.question;
 			}
 
@@ -81,12 +88,17 @@
 					};
 				}
 
+				const isFirst = count === 0;
+				const isActive = selectedId !== null
+					? selectedId === move.id
+					: isFirst;
+
 				const image = config.images?.answers[count];
 				const moveCell: MoveCell = {
 					id: move.id,
 					san: move.san,
 					clickable: true,
-					active: !count++,
+					active: isActive,
 					status: 'correct',
 					image,
 				};
@@ -99,6 +111,7 @@
 
 				rows.push(currentRow);
 				currentRow = undefined;
+				count++;
 			}
 		}
 
@@ -108,6 +121,11 @@
 
 		return rows;
 	});
+
+	function handleCellClick(cell?: MoveCell) {
+		if (!cell || !cell.clickable) return;
+		selectedId = cell.id;
+	}
 
 	/**
 	 * Helper to determine Bootstrap icon class based on move status.
@@ -138,6 +156,7 @@
 						class="col-white"
 						class:clickable={!row.white?.active && row.white?.clickable}
 						class:active-move={row.white?.active}
+						onclick={() => handleCellClick(row.white)}
 					>
 						{#if row.white}
 							<span class="move-cell" class:correct={row.white.status === 'correct'} class:wrong={row.white.status === 'wrong'} class:missing={row.white.status === 'missing'}>
@@ -154,6 +173,7 @@
 						class="col-black"
 						class:clickable={!row.black?.active && row.black?.clickable}
 						class:active-move={row.black?.active}
+						onclick={() => handleCellClick(row.black)}
 					>
 						{#if row.black}
 							<span class="move-cell" class:correct={row.black.status === 'correct'} class:wrong={row.black.status === 'wrong'} class:missing={row.black.status === 'missing'}>
