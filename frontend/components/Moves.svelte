@@ -192,6 +192,10 @@
 	function hasNextMove(): boolean {
 		const rowIndex = findActiveRowIndex();
 
+		if (rowIndex === null) {
+			return !!rows.length;
+		}
+
 		if (rowIndex === rows.length - 1) {
 			const lastRow = rows[rowIndex];
 			if (lastRow.white?.active && lastRow.black) {
@@ -221,7 +225,10 @@
 			if (isWhite) {
 				--rowIndex;
 			}
-			if (rowIndex < 0) goToStart();
+			if (rowIndex < 0) {
+				goToStart();
+				return;
+			}
 
 			isWhite = !isWhite;
 
