@@ -58,6 +58,11 @@ class Answer(Page):
 				f'{label}'
 				'</a>'
 			)
+		rendered += (
+			'<link rel="stylesheet" '
+			'href="/_chess_opening_trainer_index.css">'
+		)
+
 		return rendered
 
 	def render(self, note_id) -> str:
