@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { rawCheck } from 'valibot';
 	import type { Card } from '../domain/card.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
 
@@ -151,20 +152,102 @@
 		}
 	}
 
+	function findActiveRowIndex(): number | null {
+		for (let i = 0; i < rows.length; ++i) {
+			const row = rows[i];
+			if (row.white?.active) {
+				return i;
+			}
+
+			if (row.black?.active) {
+				return i;
+			}
+		}
+
+		return null;
+	}
+
 	export function previousMove() {
-		console.log('previous move requested');
+		let rowIndex = findActiveRowIndex();
+		if (rowIndex === null) return; // Already at start.
+
+		let isWhite: boolean;
+		if (rows[rowIndex].black?.active) {
+			rows[rowIndex].black!.active = false;
+			isWhite = false;
+		} else {
+			rows[rowIndex].white!.active = false;
+			isWhite = true;
+		}
+
+		while (rowIndex >= 0) {
+			if (isWhite) {
+				--rowIndex;
+			}
+			if (rowIndex < 0) break;
+
+			isWhite = !isWhite;
+
+			const row = rows[rowIndex];
+			const cell = isWhite ? row.white : row.black;
+			if (cell) {
+				selectedBoardId = cell.id;
+				return;
+			}
+		}
+
+		selectedBoardId = 0;
 	}
 
 	export function nextMove() {
-		console.log('next move requested');
+		let rowIndex = findActiveRowIndex();
+		const maxRowIndex = rows.length - 1;
+
+		if (rowIndex === maxRowIndex) {
+			goToEnd();
+			return;
+		}
+
+		let isBlack: boolean;
+		if (rowIndex === null) {
+			rowIndex = -1;
+			isBlack = true;
+		} else if (rows[rowIndex].black?.active) {
+			rows[rowIndex].black!.active = false;
+			isBlack = true;
+		} else {
+			rows[rowIndex].white!.active = false;
+			isBlack = false;
+		}
+
+		while (rowIndex < maxRowIndex) {
+			if (isBlack) {
+				++rowIndex;
+			}
+			if (rowIndex > maxRowIndex) break;
+
+			isBlack = !isBlack;
+
+			const row = rows[rowIndex];
+			const cell = isBlack ? row.black : row.white;
+			if (cell) {
+				selectedBoardId = cell.id;
+				return;
+			}
+		}
+
+		goToEnd();
 	}
 
 	export function goToStart() {
-		console.log('go to start requested');
+		selectedBoardId = 0;
 	}
 
 	export function goToEnd() {
-		console.log('go to end requested');
+		const row = rows[rows.length - 1];
+		const cell = row.white ? row.white : row.black;
+
+		selectedBoardId = cell!.id;
 	}
 </script>
 

@@ -7,6 +7,7 @@
 
 	let { card = {} }: { card?: Partial<Card> } = $props();
 
+
 	let movesComponent: Moves;
 
 	// Theme state lives here, bound to the Header component.
@@ -30,6 +31,9 @@
 
 			return card.images?.[0];
 		}
+
+console.log(`selected board id: ${selectedBoardId}`);
+console.log('images:', card.images);
 
 		return card.images?.[selectedBoardId];
 	});

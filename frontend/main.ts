@@ -10,48 +10,6 @@ declare global {
 	}
 }
 
-// Fallback card for local development only.
-const devCard: RawCard = {
-	i: [
-		'/chess-opening-trainer-initial.svg',
-		'/chess-opening-trainer-e4.svg',
-		'/chess-opening-trainer-e5.svg',
-		'/chess-opening-trainer-Nf3.svg',
-		'/chess-opening-trainer-Nc6.svg',
-		'/chess-opening-trainer-Bc4.svg',
-		'/chess-opening-trainer-Nf6.svg',
-		'/chess-opening-trainer-Ng5.svg',
-		'/chess-opening-trainer-d5.svg',
-		'/chess-opening-trainer-exd5.svg',
-		'/chess-opening-trainer-b5.svg',
-		'/chess-opening-trainer-Na5.svg',
-		'/chess-opening-trainer-Nd4.svg',
-		'/chess-opening-trainer-Nxd5.svg',
-		'/chess-opening-trainer-Nb4.svg',
-	],
-	s: {
-		m: [
-			[{ s: 'e4', i: 1, n: 1 }],
-			[{ s: 'e5', i: 2, n: 2 }],
-			[{ s: 'Nf3', i: 3, n: 3 }],
-			[{ s: 'Nc6', i: 4, n: 4 }],
-			[{ s: 'Bc4', i: 5, n: 5 }],
-			[{ s: 'Nf6', i: 6, n: 6 }],
-			[{ s: 'Ng5', i: 7, n: 7 }],
-			[{ s: 'd5', i: 8, n: 8 }],
-			[{ s: 'exd5', i: 9 }],
-		],
-		a: [
-			{ s: 'b5', i: 10 },
-			{ s: 'Na5', i: 11 },
-			{ s: 'Nd4', i: 12 },
-			{ s: 'Nxd5', i: 13 },
-			{ s: 'Nb4', i: 14 },
-		],
-	},
-	c: ['This is the Italian Game.', 'It is also known as Giuco Piano.'],
-};
-
 const targetElement = document.getElementById('app')!;
 
 try {
