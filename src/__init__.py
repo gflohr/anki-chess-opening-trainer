@@ -42,6 +42,8 @@ def init_i18n() -> None:
 	                        languages=[lang])
 	t.install(names=['_', 'ngettext'])
 
+def init_web() -> None:
+	mw.addonManager.setWebExports(__name__, r"web/.*(css|js|woff|woff2)")
 
 def add_menu_item():
 	action = QAction(_('Chess Opening Trainer'), mw)
@@ -53,6 +55,7 @@ def add_menu_item():
 
 
 
+init_web()
 init_i18n()
 DeleteHook().installHook()
 if 'pytest' not in sys.modules:

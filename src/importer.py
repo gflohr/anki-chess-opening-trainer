@@ -34,10 +34,12 @@ class Importer:
 	    colour: chess.Color,
 	    notetype_id: NotetypeId,
 	    deck_id: DeckId,
-	    tag: Optional[str] = None
+	    web_path: str,
+	    tag: Optional[str] = None,
 	) -> None:
 		self.collection = collection
 		self.colour = colour
+		self.web_path = web_path
 
 		model_data = self.collection.models.get(notetype_id)
 		if model_data is None:
@@ -49,7 +51,7 @@ class Importer:
 			raise KeyError(_('Selected deck does not exist!'))
 		self.deck = deck_data
 
-		self.visitor = PositionVisitor(colour=colour)
+		self.visitor = PositionVisitor(colour=colour, web_path=self.web_path)
 		self.filenames = filenames
 		self.tags: List[str] = []
 		if tag:

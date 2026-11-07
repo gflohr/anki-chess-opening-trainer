@@ -10,10 +10,10 @@ as well. Instructions for Windows are from hear-say only.
 
 You need:
 
-* `uv`
-* Python 3.12 or better
-* Anki
-* `make`
+- `uv`
+- Python 3.12 or better
+- Anki
+- `make`
 
 ## Setup
 
@@ -99,7 +99,7 @@ Test the setup:
 uv run anki --base ankidata-local
 ```
 
-If Anki prompts you to update to a more recent version, do *not* update.
+If Anki prompts you to update to a more recent version, do _not_ update.
 Update the Anki version by modifying the entries in `requirements/dev.txt`.
 
 Verify that the addon is listed (with its id 705507113 instead of the name)

@@ -18,12 +18,12 @@ from .page import Page
 
 
 class Answer(Page):
-	def __init__(self, move: str, board: Board, game: Game, colour: Color):
+	def __init__(self, move: str, board: Board, game: Game, colour: Color, web_path: str):
 		fullmove_number = board.fullmove_number
 		turn = not board.turn
 		self.move = move
 		self.fullmove_number = fullmove_number
-		Page.__init__(self, colour=colour, turn=turn)
+		Page.__init__(self, colour=colour, turn=turn, web_path=web_path)
 		self.set_board(board)
 		self.game = game
 
@@ -58,6 +58,7 @@ class Answer(Page):
 				f'{label}'
 				'</a>'
 			)
+
 		return rendered
 
 	def render(self, note_id) -> str:
@@ -66,6 +67,8 @@ class Answer(Page):
 			rendered += ' ...'
 		rendered += ' ' + self.move
 		rendered += self.extra_html(note_id)
+
+		print(f'A: {rendered}')
 
 		return rendered
 

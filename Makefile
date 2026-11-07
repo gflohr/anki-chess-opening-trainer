@@ -8,6 +8,7 @@ MYPY = $(UV) run mypy
 PYLINT = $(UV) run pylint
 PYTEST = $(UV) run pytest
 PYTHON = $(UV) run python
+PNPM = pnpm
 
 default: all
 
@@ -15,7 +16,17 @@ all: zip ankiweb
 
 generated: src/version.py src/config.py src/schema.py src/basic_names.py
 
-zip: generated vendor
+dist:
+	$(PNPM) run build
+
+src/web:
+	rm -rf $@
+	mkdir $@
+	$(MAKE) dist
+	cp -r dist/* $@
+	rm $@/web/index.html $@/web/question.svg $2/web/answer*.svg
+
+zip: generated vendor src/web
 	$(PYTHON) -m ankiscripts.build --type package --qt all --exclude user_files/**/*
 
 ankiweb: generated vendor build/ankiweb-description.md

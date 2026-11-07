@@ -41,7 +41,7 @@ def i18n_piece_symbol(piece_type: chess.PieceType) -> str:
 class PositionVisitor(BaseVisitor):
 
 	# pylint: disable=too-many-instance-attributes
-	def __init__(self, colour, game_node: Game = None):
+	def __init__(self, colour, web_path: str, game_node: Game = None):
 		self.colour: Color = colour
 		self.initial: Board
 		self.has_board = False
@@ -50,6 +50,7 @@ class PositionVisitor(BaseVisitor):
 		self.last_question_key = None
 		self.accumulated_comments = []
 		self.my_move = True
+		self.web_path = web_path
 
 		# Store the base game template to extract/preserve original headers
 		self.game_node = game_node
@@ -107,6 +108,7 @@ class PositionVisitor(BaseVisitor):
 				board=answer_board,
 				game=current_game,
 				colour=self.colour,
+				web_path=self.web_path
 			)
 
 			if question_key not in self.cards:
@@ -115,6 +117,7 @@ class PositionVisitor(BaseVisitor):
 					text,
 					turn=turn,
 					colour=self.colour,
+					web_path=self.web_path,
 				)
 
 				for comment in self.accumulated_comments:

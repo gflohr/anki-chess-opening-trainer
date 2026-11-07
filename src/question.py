@@ -22,10 +22,11 @@ class Question(Page):
 	    moves: str,
 	    turn: Color,
 	    colour: Color,
+	    web_path: str,
 	) -> None:
 		self.moves = moves
 		self.answers: List[Answer] = []
-		Page.__init__(self, colour=colour, turn=turn)
+		Page.__init__(self, colour=colour, turn=turn, web_path=web_path)
 
 	def add_answer(self, answer: Answer) -> None:
 		self.answers.append(answer)
@@ -33,6 +34,8 @@ class Question(Page):
 	def render(self, note_id: int) -> str:
 		rendered = self.moves
 		rendered += self.extra_html(note_id)
+
+		print(f'Q: {rendered}')
 
 		return rendered
 
