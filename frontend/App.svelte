@@ -13,6 +13,8 @@
 	// Theme state lives here, bound to the Header component.
 	let isLight = $state(false);
 	let isBoardHidden = $state(false);
+	let canGoBackwards = $state(true);
+	let canGoForward = $state(true);
 
 	let selectedBoardId = $state<number | null>(null);
 	let boardImg = $derived.by(() => {
@@ -31,9 +33,6 @@
 
 			return card.images?.[0];
 		}
-
-console.log(`selected board id: ${selectedBoardId}`);
-console.log('images:', card.images);
 
 		return card.images?.[selectedBoardId];
 	});
@@ -66,9 +65,13 @@ console.log('images:', card.images);
 			pcard={card}
 			bind:this={movesComponent}
 			bind:selectedBoardId
+			bind:canGoBackwards
+			bind:canGoForward
 		/>
 		<Toolbar
 			bind:isBoardHidden
+			{canGoBackwards}
+			{canGoForward}
 			onToggleBoard={() => isBoardHidden = !isBoardHidden}
 			onNavigate={(action) => {
 				switch (action) {

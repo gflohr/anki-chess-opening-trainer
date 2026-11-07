@@ -1,14 +1,20 @@
 <script lang="ts">
-    import { rawCheck } from 'valibot';
 	import type { Card } from '../domain/card.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
 
 	interface Props {
 		pcard: Partial<Card>;
 		selectedBoardId: number | null;
+		canGoBackwards: boolean;
+		canGoForward: boolean;
 	}
 
-	let { pcard, selectedBoardId = $bindable<number | null>(null) }: Props = $props();
+	let {
+		pcard,
+		selectedBoardId = $bindable<number | null>(null),
+		canGoBackwards = $bindable(true),
+		canGoForward = $bindable(true),
+	}: Props = $props();
 
 	interface MoveCell extends Move {
 		clickable?: boolean;
@@ -131,6 +137,13 @@
 		return rows;
 	});
 
+	$effect(() => {
+		rows;
+
+		canGoBackwards = hasPreviousMove();
+		canGoForward = hasNextMove();
+	});
+
 	function handleCellClick(cell?: MoveCell) {
 		if (!cell || !cell.clickable) return;
 		selectedBoardId = cell.id;
@@ -167,6 +180,27 @@
 		return null;
 	}
 
+	function hasPreviousMove(): boolean {
+		if (!rows) return false;
+
+		return !!selectedBoardId;
+	}
+
+	function hasNextMove(): boolean {
+		const rowIndex = findActiveRowIndex();
+
+		if (rowIndex === rows.length - 1) {
+			const lastRow = rows[rowIndex];
+			if (lastRow.white?.active && lastRow.black) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+
 	export function previousMove() {
 		let rowIndex = findActiveRowIndex();
 		if (rowIndex === null) return; // Already at start.
@@ -184,7 +218,7 @@
 			if (isWhite) {
 				--rowIndex;
 			}
-			if (rowIndex < 0) break;
+			if (rowIndex < 0) goToStart();
 
 			isWhite = !isWhite;
 
@@ -196,7 +230,7 @@
 			}
 		}
 
-		selectedBoardId = 0;
+		goToStart();
 	}
 
 	export function nextMove() {
@@ -241,6 +275,8 @@
 
 	export function goToStart() {
 		selectedBoardId = 0;
+		canGoBackwards = false;
+		canGoForward = hasNextMove();
 	}
 
 	export function goToEnd() {
@@ -248,6 +284,8 @@
 		const cell = row.white ? row.white : row.black;
 
 		selectedBoardId = cell!.id;
+		canGoForward = false;
+		canGoBackwards = hasPreviousMove();
 	}
 </script>
 
