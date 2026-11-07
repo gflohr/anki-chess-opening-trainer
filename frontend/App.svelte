@@ -7,6 +7,8 @@
 
 	let { card = {} }: { card?: Partial<Card> } = $props();
 
+	let movesComponent: Moves;
+
 	// Theme state lives here, bound to the Header component.
 	let isLight = $state(false);
 	let isBoardHidden = $state(false);
@@ -58,11 +60,28 @@
 	<section class="moves-section">
 		<Moves
 			pcard={card}
+			bind:this={movesComponent}
 			bind:selectedBoardId
 		/>
 		<Toolbar
 			bind:isBoardHidden
 			onToggleBoard={() => isBoardHidden = !isBoardHidden}
+			onNavigate={(action) => {
+				switch (action) {
+					case 'start':
+						movesComponent.goToStart();
+						break;
+					case 'previous':
+						movesComponent.previousMove();
+						break;
+					case 'next':
+						movesComponent.nextMove();
+						break;
+					case 'end':
+						movesComponent.goToEnd();
+						break;
+				}
+			}}
 		/>
 	</section>
 

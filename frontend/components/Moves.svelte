@@ -150,6 +150,22 @@
 				return null;
 		}
 	}
+
+	export function previousMove() {
+		console.log('previous move requested');
+	}
+
+	export function nextMove() {
+		console.log('next move requested');
+	}
+
+	export function goToStart() {
+		console.log('go to start requested');
+	}
+
+	export function goToEnd() {
+		console.log('go to end requested');
+	}
 </script>
 
 <div class="history-container">

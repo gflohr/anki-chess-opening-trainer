@@ -1,12 +1,19 @@
 <script lang="ts">
+	type NavigationAction = 'start' | 'previous' | 'next' | 'end';
+
 	interface Props {
 		isBoardHidden: boolean;
 		onToggleBoard: () => void;
+		onNavigate: (action: NavigationAction) => void;
 	}
 
-	let { isBoardHidden = $bindable(false), onToggleBoard }: Props = $props();
+	let {
+		isBoardHidden = $bindable(false),
+		onToggleBoard,
+		onNavigate,
+	 }: Props = $props();
 
-	// Reactive state to track whether the settings popover is open
+	// Reactive state to track whether the settings popover is open.
 	let showSettings = $state(false);
 
 	function toggleSettings(e: MouseEvent) {
@@ -14,7 +21,7 @@
 		showSettings = !showSettings;
 	}
 
-	// Close settings when clicking anywhere outside the container
+	// Close settings when clicking anywhere outside the container.
 	function closeSettings() {
 		showSettings = false;
 	}
@@ -25,10 +32,10 @@
 <!-- Toolbar Below Moves -->
 <div class="moves-toolbar">
 	<div class="nav-buttons">
-		<button class="icon-btn" title="Go to start"><i class="bi bi-skip-backward"></i></button>
-		<button class="icon-btn" title="Previous move"><i class="bi bi-rewind"></i></button>
-		<button class="icon-btn" title="Next move"><i class="bi bi-fast-forward"></i></button>
-		<button class="icon-btn" title="Go to end"><i class="bi bi-skip-forward"></i></button>
+		<button class="icon-btn" title="Go to start" onclick={() => onNavigate('start')}><i class="bi bi-skip-backward"></i></button>
+		<button class="icon-btn" title="Previous move" onclick={() => onNavigate('previous')}><i class="bi bi-rewind"></i></button>
+		<button class="icon-btn" title="Next move" onclick={() => onNavigate('next')}><i class="bi bi-fast-forward"></i></button>
+		<button class="icon-btn" title="Go to end" onclick={() => onNavigate('end')}><i class="bi bi-skip-forward"></i></button>
 	</div>
 
 	<!-- Wrapper that stops propagation so clicking inside the settings menu doesn't trigger the window closer -->
