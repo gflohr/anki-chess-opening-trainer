@@ -144,6 +144,34 @@
 		canGoForward = hasNextMove();
 	});
 
+	$effect(() => {
+		function handleKeydown(event: KeyboardEvent) {
+			if (event.target instanceof HTMLInputElement ||
+				event.target instanceof HTMLTextAreaElement) {
+				return;
+			}
+
+			switch (event.key) {
+				case 'ArrowLeft':
+					if (canGoBackwards) previousMove();
+					break;
+				case 'ArrowRight':
+					if (canGoForward) nextMove();
+					break;
+				case 'Home':
+					goToStart();
+					break;
+				case 'End':
+					goToEnd();
+					break;
+			}
+		}
+
+		window.addEventListener('keydown', handleKeydown);
+
+		return () => window.removeEventListener('keydown', handleKeydown);
+	});
+
 	function handleCellClick(cell?: MoveCell) {
 		if (!cell || !cell.clickable) return;
 		selectedBoardId = cell.id;
