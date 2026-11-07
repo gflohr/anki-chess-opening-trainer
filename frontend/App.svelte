@@ -11,8 +11,26 @@
 	let isLight = $state(false);
 	let isBoardHidden = $state(false);
 
-	let boardImg = $derived(card.images?.answers?.[0] || '');
 	let selectedBoardId = $state<number | null>(null);
+	let boardImg = $derived.by(() => {
+		if (card.isQuestion) {
+			return card.images?.question || '';
+		}
+
+		if (selectedBoardId === null || findQuestionMove(selectedBoardId)) {
+			return card.images?.question || '';
+		}
+
+		const answerIndex = card.session?.game.answerMoves.findIndex(
+			move => move.id === selectedBoardId
+		) ?? -1;
+
+		const image = answerIndex >= 0
+			? card.images?.answers?.[answerIndex] || ''
+			: card.images?.question || '';
+
+		return image;
+	});
 
 	// Apply the theme attribute to the body whenever `isLight` changes.
 	$effect(() => {
@@ -45,11 +63,6 @@
 
 <!-- App Container -->
 <main class="app-container">
-	<p>Selected board id: {selectedBoardId}</p>
-	<p>
-		Is question move: {selectedBoardId !== null && findQuestionMove(selectedBoardId)}
-	</p>
-
 	<!-- Chessboard Display Section -->
 	<section class="board-section">
 		{#if !isBoardHidden}

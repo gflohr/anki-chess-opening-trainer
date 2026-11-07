@@ -14,7 +14,7 @@ declare global {
 const devCard: RawCard = {
 	i: {
 		q: '/question.svg',
-		a: ['/answer1.svg', '/answer2.svg', '/answer3.svg', '/answer4.svg'],
+		a: ['/answer1.svg', '/answer2.svg', '/answer3.svg', '/answer4.svg', '/answer5.svg'],
 	},
 	s: {
 		m: [
@@ -28,7 +28,13 @@ const devCard: RawCard = {
 			[{ s: 'd5', n: 8 }],
 			[{ s: 'exd5' }],
 		],
-		a: [{ s: 'b5' }, { s: 'Na5' }],
+		a: [
+			{ s: 'b5' },
+			{ s: 'Na5' },
+			{ s: 'Nd4' },
+			{ s: 'Nxd5' },
+			{ s: 'Nb4' },
+		],
 	},
 	c: ['This is the Italian Game.', 'It is also known as Giuco Piano.'],
 };
