@@ -55,9 +55,8 @@ const devCard: RawCard = {
 const targetElement = document.getElementById('app')!;
 
 try {
-	// Use window.card if injected by Anki/importer, otherwise fallback to devCard
-	const rawCard = window.card || (import.meta.env.DEV ? devCard : {});
-	const card = translateRawCard(rawCard);
+console.log(window.card);
+	const card = translateRawCard(window.card);
 	//card.isQuestion = true;
 
 	mount(App, {
