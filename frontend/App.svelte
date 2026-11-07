@@ -13,11 +13,15 @@
 
 	let selectedBoardId = $state<number | null>(null);
 	let boardImg = $derived.by(() => {
-		if (card.isQuestion) {
-			return card.images?.question || '';
+		if (selectedBoardId === null) {
+			if (card.isQuestion) {
+				return card.images?.question || '';
+			} else {
+				return card.images?.answers[0]
+			}
 		}
 
-		if (selectedBoardId === null || findQuestionMove(selectedBoardId)) {
+		if (findQuestionMove(selectedBoardId)) {
 			return card.images?.question || '';
 		}
 
@@ -25,11 +29,9 @@
 			move => move.id === selectedBoardId
 		) ?? -1;
 
-		const image = answerIndex >= 0
+		return answerIndex >= 0
 			? card.images?.answers?.[answerIndex] || ''
 			: card.images?.question || '';
-
-		return image;
 	});
 
 	// Apply the theme attribute to the body whenever `isLight` changes.
