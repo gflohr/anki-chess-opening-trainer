@@ -12,8 +12,6 @@
 	interface MoveCell extends Move {
 		clickable?: boolean;
 		active?: boolean;
-		// FIXME! Do we need this?
-		image?: string;
 	}
 
 	interface MoveRow {
@@ -58,10 +56,6 @@
 				active: isActive,
 			};
 
-			if (card.images && move.id < card.images.length && card.images[move.id] !== '') {
-				move.image = card.images[move.id];
-			}
-
 			if (isWhite) {
 				currentRow.white = move;
 			} else {
@@ -94,9 +88,6 @@
 					? selectedBoardId === move.id
 					: isFirst;
 
-				const image = card.images && move.id < card.images.length && card.images[move.id] !== ''
-					? card.images[move.id] : undefined;
-
 				const moveCell: MoveCell = {
 					id: move.id,
 					san: move.san,
@@ -104,7 +95,6 @@
 					clickable: !isActive,
 					active: isActive,
 					status: 'correct',
-					image,
 				};
 
 				if (isWhite) {

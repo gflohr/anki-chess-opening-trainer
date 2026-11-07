@@ -30,6 +30,7 @@ node_modules
 dist
 dist-ssr
 *.local
+src/web
 
 # Editor directories and files
 .vscode/*
