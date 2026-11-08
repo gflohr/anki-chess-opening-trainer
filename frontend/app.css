@@ -166,6 +166,11 @@ header {
 	mask-size: contain;
 }
 
+.social-links a.disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
 /* Theme Toggle Switch */
 .theme-toggle-wrapper {
 	display: flex;

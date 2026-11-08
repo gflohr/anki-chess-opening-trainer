@@ -7,6 +7,7 @@
 		selectedBoardId: number | null;
 		canGoBackwards: boolean;
 		canGoForward: boolean;
+		analyseLink: string | null;
 	}
 
 	let {
@@ -14,6 +15,7 @@
 		selectedBoardId = $bindable<number | null>(null),
 		canGoBackwards = $bindable(true),
 		canGoForward = $bindable(true),
+		analyseLink = $bindable(null)
 	}: Props = $props();
 
 	interface MoveCell extends Move {

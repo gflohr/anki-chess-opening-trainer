@@ -15,6 +15,7 @@
 	let isBoardHidden = $state(false);
 	let canGoBackwards = $state(true);
 	let canGoForward = $state(true);
+	let analyseLink = $state(null);
 
 	let selectedBoardId = $state<number | null>(null);
 	let boardImg = $derived.by(() => {
@@ -43,7 +44,9 @@
 	});
 </script>
 
-<Header bind:isLight />
+<Header
+	bind:isLight
+/>
 
 <!-- App Container -->
 <main class="app-container">
@@ -67,6 +70,7 @@
 			bind:selectedBoardId
 			bind:canGoBackwards
 			bind:canGoForward
+			bind:analyseLink
 		/>
 		<Toolbar
 			bind:isBoardHidden
