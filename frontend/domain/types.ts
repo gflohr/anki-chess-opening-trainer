@@ -1,3 +1,4 @@
+// FIXME! Get rid of this file. This belongs into Card.
 export type MarkerColour = 'red' | 'green' | 'blue' | 'yellow';
 
 export type Square =
@@ -108,7 +109,6 @@ export interface GraphMove extends Move {
 export type GameNode = GraphMove[];
 
 export type GameGraph = GameNode[];
-
 export interface Game {
 	/**
 	 * The initial FEN if known.

@@ -172,7 +172,10 @@ describe('translateRawCard', () => {
 							},
 						],
 					],
-					a: [{ s: 'Nf6', i: 11 }, { s: 'g3', i: 12 }],
+					a: [
+						{ s: 'Nf6', i: 11 },
+						{ s: 'g3', i: 12 },
+					],
 				},
 			};
 

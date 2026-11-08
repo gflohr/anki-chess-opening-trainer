@@ -160,8 +160,8 @@ header {
 	width: 1em;
 	height: 1em;
 	background-color: currentColor; /* Inherits text color from parent <a>. */
-	-webkit-mask: url('/assets/images/lichess.svg') no-repeat center;
-	mask: url('/assets/images/lichess.svg') no-repeat center;
+	-webkit-mask: url("/assets/images/lichess.svg") no-repeat center;
+	mask: url("/assets/images/lichess.svg") no-repeat center;
 	-webkit-mask-size: contain;
 	mask-size: contain;
 }

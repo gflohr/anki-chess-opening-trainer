@@ -22,13 +22,7 @@ describe('Moves Component', () => {
 					history: [],
 				},
 			},
-			images: [
-				'',
-				'',
-				'question.svg',
-				'answer1.svg',
-				'answer2.svg',
-			],
+			images: ['', '', 'question.svg', 'answer1.svg', 'answer2.svg'],
 		} as unknown as Partial<Card>;
 
 		it('renders question moves correctly and hides answers', () => {
@@ -72,13 +66,7 @@ describe('Moves Component', () => {
 					history: [],
 				},
 			},
-			images: [
-				'',
-				'',
-				'question.svg',
-				'answer1.svg',
-				'answer2.svg',
-			],
+			images: ['', '', 'question.svg', 'answer1.svg', 'answer2.svg'],
 		} as unknown as Partial<Card>;
 
 		it('renders question and answer moves correctly', () => {

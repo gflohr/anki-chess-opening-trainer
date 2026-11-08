@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { createDataTransfer } from '@testing-library/user-event/dist/cjs/utils/index.js';
 	import type { Card } from '../domain/card.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
 
@@ -187,7 +188,8 @@
 
 	function handleCellClick(cell?: MoveCell) {
 		if (!cell || !cell.clickable) return;
-		selectedBoardId = cell.id;
+
+		selectMove(cell.id);
 	}
 
 	/**
@@ -247,6 +249,42 @@
 		} else {
 			return true;
 		}
+	}
+
+	function selectMove(id: number) {
+		selectedBoardId = id;
+
+		const card = pcard as Card;
+		if (card.isQuestion) {
+			analyseLink = null;
+
+			return;
+		}
+
+
+	}
+
+	/**
+	 * Find the node id of a move in the game history. If this is an answer
+	 * move, or the current position is the initial position, -1 is returned.
+	 *
+	 * @param id the move id
+	 * @returns the node id or -1 if not found.
+	 */
+	function findMove(id: number): number {
+		const card = pcard as Card;
+
+		for (let n = 0; n < card.session.game.questionMoves.length; ++n) {
+			const node = card.session.game.questionMoves[n];
+
+			for (let m = 0; m < node.length; ++m) {
+				if (node[m].id === id) {
+					return n;
+				}
+			}
+		}
+
+		return -1;
 	}
 
 	export function previousMove() {

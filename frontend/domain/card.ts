@@ -71,6 +71,10 @@ export type RawGameGraph = v.InferOutput<typeof rawGameGraphSchema>;
  * Validates raw configuration as passed on the card body.
  */
 const rawCardSchema = v.object({
+	// FIXME! The properties f and i must be mutually exclusive!
+	/** Initial FEN. */
+	f: v.optional(v.pipe(v.string(), v.minLength(20))),
+
 	/** SVG images if present. Optional. */
 	i: v.optional(v.array(v.pipe(v.string()))),
 
@@ -96,6 +100,7 @@ const rawCardSchema = v.object({
 export type RawCard = v.InferOutput<typeof rawCardSchema>;
 
 export interface Card {
+	fen?: string;
 	images?: string[];
 	session: GameSession;
 	isQuestion: boolean;
@@ -206,14 +211,18 @@ export function translateRawCard(input: unknown): Card {
 
 	const session = new GameSession(game);
 
-	const config: Card = {
+	const card: Card = {
 		session,
 		isQuestion: !!raw.q,
 	};
 
-	if (raw.i) {
-		config.images = [...raw.i];
+	if (raw.f) {
+		card.fen = raw.f;
 	}
 
-	return config;
+	if (raw.i) {
+		card.images = [...raw.i];
+	}
+
+	return card;
 }
