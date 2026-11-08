@@ -119,4 +119,10 @@ export interface Game {
 	questionMoves: GameGraph;
 	answerMoves: Move[];
 	history: Move[];
+
+	/**
+	 * A PGN representation of the game graphp. This is only used for creating
+	 * links to Lichess.
+	 */
+	pgn?: string;
 }

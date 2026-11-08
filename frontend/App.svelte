@@ -15,7 +15,6 @@
 	let isBoardHidden = $state(false);
 	let canGoBackwards = $state(true);
 	let canGoForward = $state(true);
-	let analyseLink = $state(null);
 
 	let selectedBoardId = $state<number | null>(null);
 	let boardImg = $derived.by(() => {
@@ -38,6 +37,18 @@
 		return card.images?.[selectedBoardId];
 	});
 
+	let analyseLink = $derived.by(() => {
+		console.log(card);
+
+		if (card.isQuestion) return null;
+
+		if (card.session?.game?.pgn) {
+			return `https://lichess.org/analysis/pgn/${card.session.game.pgn}`;
+		} else {
+			return null;
+		}
+	})
+
 	// Apply the theme attribute to the body whenever `isLight` changes.
 	$effect(() => {
 		document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
@@ -46,6 +57,7 @@
 
 <Header
 	bind:isLight
+	bind:analyseLink
 />
 
 <!-- App Container -->
@@ -70,7 +82,6 @@
 			bind:selectedBoardId
 			bind:canGoBackwards
 			bind:canGoForward
-			bind:analyseLink
 		/>
 		<Toolbar
 			bind:isBoardHidden

@@ -10,6 +10,7 @@ import type {
 	Move,
 	Square,
 } from './types';
+import { gameToPgn } from './game-to-pgn';
 
 /**
  * Validates individual marker strings:
@@ -222,6 +223,12 @@ export function translateRawCard(input: unknown): Card {
 
 	if (raw.i) {
 		card.images = [...raw.i];
+	}
+
+	try {
+		game.pgn = gameToPgn(game);
+	} catch(e) {
+		console.error('Error generating PGN from game graph:', e);
 	}
 
 	return card;
