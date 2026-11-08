@@ -100,6 +100,41 @@ header {
 	color: #3b82f6;
 }
 
+/* Right-side group wrapper */
+.header-right {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+/* Social Icons Layout */
+.social-links {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.social-links a {
+	color: var(--text-muted);
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+.social-links a {
+	font-size: 0.9rem;
+}
+
+.social-links a i {
+	font-size: 1.15rem;
+	margin-right: 0.5rem;
+}
+
+.social-links a:hover {
+	color: #3b82f6; /* Matches your active checkbox / accent color */
+}
+
 /* Theme Toggle Switch */
 .theme-toggle-wrapper {
 	display: flex;

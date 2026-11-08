@@ -153,10 +153,21 @@
 
 			switch (event.key) {
 				case 'ArrowLeft':
-					if (canGoBackwards) previousMove();
+					event.preventDefault();
+					if (event.shiftKey) {
+						if (canGoBackwards) goToStart();
+					} else if (canGoBackwards) {
+						previousMove();
+					}
 					break;
+
 				case 'ArrowRight':
-					if (canGoForward) nextMove();
+					event.preventDefault();
+					if (event.shiftKey) {
+						if (canGoForward) goToEnd();
+					} else if (canGoForward) {
+						nextMove();
+					}
 					break;
 				case 'Home':
 					goToStart();
