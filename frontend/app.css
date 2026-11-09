@@ -5,11 +5,12 @@
 	--bg-app: #121418;
 	--bg-header: #1b1e24;
 	--bg-card: #1e222a;
+	--bg-movenum: rgba(255, 255, 255, 0.06);
 	--bg-hover: rgba(255, 255, 255, 0.08);
 	--bg-table-header: #16181d;
 	--border-color: #2d323e;
-	--text-main: #f0f2f5;
-	--text-muted: #9aa0a6;
+	--text-main: #bababa;
+	--text-muted: #787c81;
 	--text-number: #6b7280;
 	--success-color: #2ea043;
 	--danger-color: #da3633;
@@ -25,10 +26,11 @@
 	--bg-app: #f4f5f8;
 	--bg-header: #ffffff;
 	--bg-card: #ffffff;
+	--bg-movenum: rgba(0, 0, 0, 0.12);
 	--bg-hover: rgba(0, 0, 0, 0.06);
 	--bg-table-header: #eef1f6;
 	--border-color: #d1d5db;
-	--text-main: #1f2937;
+	--text-main: rgb(77, 77, 77);
 	--text-muted: #6b7280;
 	--text-number: #9ca3af;
 	--success-color: #16a34a;
@@ -308,14 +310,14 @@ input:checked + .slider:before {
 .move-table {
 	width: 100%;
 	border-collapse: collapse;
-	font-size: 0.88rem;
+	font-size: 1.03rem;
 }
 
 .move-table th {
 	background-color: var(--bg-table-header);
 	color: var(--text-muted);
 	font-weight: 600;
-	padding: 8px 12px;
+	padding: 6px 12px;
 	text-align: left;
 	position: sticky;
 	top: 0;
@@ -324,7 +326,6 @@ input:checked + .slider:before {
 }
 
 .move-table td {
-	padding: 6px 12px;
 	border-bottom: 1px solid var(--border-color);
 	vertical-align: middle;
 }
@@ -332,6 +333,7 @@ input:checked + .slider:before {
 .col-num {
 	width: 44px;
 	color: var(--text-number);
+	background-color: var(--bg-movenum);
 	font-weight: 500;
 	text-align: center;
 }
@@ -339,6 +341,10 @@ input:checked + .slider:before {
 .col-white,
 .col-black {
 	width: calc((100% - 44px) / 2);
+	padding-left: 0.5rem;
+	padding-right: 0.3rem;
+	padding-top: 0.4rem;
+	padding-bottom: 0.4rem;
 }
 
 /* Per-column hover & cell styling */
@@ -347,7 +353,6 @@ input:checked + .slider:before {
 	justify-content: space-between;
 	align-items: center;
 	width: 100%;
-	padding: 4px 6px;
 	border-radius: 4px;
 	user-select: none;
 }
