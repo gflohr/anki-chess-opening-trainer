@@ -226,7 +226,6 @@ export function translateRawCard(input: unknown): Card {
 	}
 
 	try {
-		console.dir(game, { depth: null });
 		game.pgn = gameToPgn(game);
 	} catch (e) {
 		console.error('Error generating PGN from game graph:', e);

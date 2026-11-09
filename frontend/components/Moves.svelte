@@ -147,85 +147,11 @@
 	let navLookups = $derived.by(() => {
 		const card = pcard as Card;
 
-		const nodes = card.session.game.questionMoves;
-
-		// The indices are move IDs, not node ids!
-		const lookups: NavLookup[] = [];
-
-		// Board/Move id 0 is the initial position. It never has a previous
-		// position.
-		if (nodes.length) {
-			lookups[0] = {
-				prev: null,
-				next: nodes[0]?.[0]?.id,
-			};
-
-			for (const move of nodes[0]) {
-				lookups[move.id] = { prev: 0, next: null };
-			}
-		} else if (card.isQuestion) {
-			lookups[0] = {
-				prev: null,
-				next: null,
-			}; // Nowhere to go to for a question.
+		if (card.isQuestion) {
+			return graphService.navigationLookup();
 		} else {
-			const answerMoveId = card.session.game.answerMoves[0].id;
-			lookups[0] = {
-				prev: null,
-				next: card.session.game.answerMoves[0].id,
-			}
-			lookups[answerMoveId] = {
-				prev: 0,
-				next: null, // Will be filled later.
-			};
+			return graphService.navigationLookup(card.session.game.answerMoves);
 		}
-
-		// Build up the rest of the table.
-		for (let n = 0; n < nodes.length; ++n) {
-			const node = nodes[n];
-
-			// The previous position is the same for all moves from this
-			// node. It is always the main variation of the predecessor.
-			for (const move of node) {
-				lookups[move.id] ??= { prev: null, next: null };
-
-				if (move.next) {
-					const nextNode = nodes[move.next];
-					lookups[move.id].next = nextNode[0].id;
-
-					for (const nextMove of nextNode) {
-						lookups[nextMove.id] ??= { prev: null, next: null };
-						lookups[nextMove.id].prev = move.id;
-					}
-				} else if (!card.isQuestion) {
-					const answerMoveId = card.session.game.answerMoves[0].id;
-					lookups[move.id].next = answerMoveId;
-
-					lookups[answerMoveId] ??= { prev: null, next: null };
-					lookups[answerMoveId].prev ??= move.id;
-				}
-			}
-		}
-
-		if (!card.isQuestion) {
-			const answerMoves = card.session.game.answerMoves;
-			for (let i = 0; i < answerMoves.length; ++i) {
-				const move = answerMoves[i];
-				lookups[move.id] ??= { prev: null, next: null };
-
-				if (i > 0) {
-					const prevMove = answerMoves[i - 1];
-					lookups[move.id].prev = prevMove.id;
-				}
-
-				if (i < answerMoves.length - 1) {
-					const nextMove = answerMoves[i + 1];
-					lookups[move.id].next = nextMove.id;
-				}
-			}
-		}
-
-		return lookups;
 	});
 
 	$effect(() => {
@@ -343,79 +269,42 @@
 		selectedBoardId = id;
 	}
 
-	export function previousMove() {
-		let rowIndex = findActiveRowIndex();
-		if (rowIndex === null) return; // Already at start.
+	function initialBoardId(): number | null {
+		const card = pcard as Card;
 
-		let isWhite: boolean;
-		if (rows[rowIndex].black?.active) {
-			rows[rowIndex].black!.active = false;
-			isWhite = false;
+		if (card.isQuestion) {
+			return graphService.findLeaf()?.id ?? null;
 		} else {
-			rows[rowIndex].white!.active = false;
-			isWhite = true;
+			return card.session.game.answerMoves[0].id;
+		}
+	}
+
+	export function previousMove() {
+		if (selectedBoardId === null) {
+			selectedBoardId = initialBoardId();
+			if (selectedBoardId === null) return;
 		}
 
-		while (rowIndex >= 0) {
-			if (isWhite) {
-				--rowIndex;
-			}
-			if (rowIndex < 0) {
-				goToStart();
-				return;
-			}
-
-			isWhite = !isWhite;
-
-			const row = rows[rowIndex];
-			const cell = isWhite ? row.white : row.black;
-			if (cell) {
-				selectedBoardId = cell.id;
-				return;
-			}
+		selectedBoardId = navLookups[selectedBoardId].prev;
+		if (selectedBoardId === null || navLookups[selectedBoardId].prev === null) {
+			canGoBackwards = false;
+		} else {
+			canGoBackwards = true;
 		}
-
-		goToStart();
 	}
 
 	export function nextMove() {
-		let rowIndex = findActiveRowIndex();
-		const maxRowIndex = rows.length - 1;
-
-		if (rowIndex === maxRowIndex) {
-			goToEnd();
-			return;
+		if (selectedBoardId === null) {
+			selectedBoardId = initialBoardId();
+			if (selectedBoardId === null) return;
 		}
 
-		let isBlack: boolean;
-		if (rowIndex === null) {
-			rowIndex = -1;
-			isBlack = true;
-		} else if (rows[rowIndex].black?.active) {
-			rows[rowIndex].black!.active = false;
-			isBlack = true;
+		selectedBoardId = navLookups[selectedBoardId].next;
+		if (selectedBoardId === null || navLookups[selectedBoardId].next === null) {
+			canGoForward = false;
 		} else {
-			rows[rowIndex].white!.active = false;
-			isBlack = false;
+			canGoForward = true;
 		}
-
-		while (rowIndex < maxRowIndex) {
-			if (isBlack) {
-				++rowIndex;
-			}
-			if (rowIndex > maxRowIndex) break;
-
-			isBlack = !isBlack;
-
-			const row = rows[rowIndex];
-			const cell = isBlack ? row.black : row.white;
-			if (cell) {
-				selectedBoardId = cell.id;
-				return;
-			}
-		}
-
-		goToEnd();
 	}
 
 	export function goToStart() {
@@ -435,7 +324,6 @@
 </script>
 
 <div class="history-container">
-navLookups: {navLookups}
 	<table class="move-table">
 		<tbody>
 			{#each rows as row}
