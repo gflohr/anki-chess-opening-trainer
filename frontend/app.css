@@ -324,7 +324,7 @@ input:checked + .slider:before {
 .move-table {
 	width: 100%;
 	border-collapse: collapse;
-	font-size: 1.03rem;
+	font-size: 1.1rem;
 }
 
 .move-table th {
