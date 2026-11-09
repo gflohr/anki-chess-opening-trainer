@@ -66,7 +66,7 @@ describe('Game to PGN', () => {
 						id: 7,
 						san: 'Nf3',
 						next: 6,
-					}
+					},
 				],
 				// Node 1
 				[

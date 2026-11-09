@@ -1,7 +1,9 @@
 <script lang="ts">
+    import { rawCheck } from 'valibot';
 	import type { Card } from '../domain/card.js';
-    import { GameGraphService, type NavLookup } from '../domain/game-graph-service.js';
+    import { GameGraphService, type MoveCell, type MoveRow, type NavLookup } from '../domain/game-graph-service.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
+    import { createDataTransfer } from '@testing-library/user-event/dist/cjs/utils/index.js';
 
 	interface Props {
 		pcard: Partial<Card>;
@@ -17,17 +19,6 @@
 		canGoForward = $bindable(true),
 	}: Props = $props();
 
-	interface MoveCell extends Move {
-		clickable?: boolean;
-		active?: boolean;
-	}
-
-	interface MoveRow {
-		moveNumber: number | null;
-		white?: MoveCell;
-		black?: MoveCell;
-	}
-
 	let graphService = $derived.by(() => {
 		const card = pcard as Card;
 		const game = card?.session?.game;
@@ -39,107 +30,9 @@
 	 */
 	let rows = $derived.by(() => {
 		const card = pcard as Card;
-		const rows: MoveRow[] = [];
-
-		// Add question moves.
-		const game = card.session.game;
-		let node: GameNode | undefined = game.questionMoves[0];
-		let isWhite = true;
-		let moveNumber = 1;
-		let currentRow: MoveRow | undefined;
-
-		while(node) {
-			if (!currentRow) {
-				currentRow = {
-					moveNumber,
-				};
-			}
-			const graphMove: GraphMove = node[0]; // Main variation.
-			const isLeaf = !graphMove.next;
-
-			// Determine if this cell is active
-			const isActive = selectedBoardId !== null
-				? selectedBoardId === graphMove.id
-				: (card.isQuestion && isLeaf);
-
-			const move: MoveCell = {
-				id: graphMove.id,
-				san: graphMove.san,
-				active: isActive,
-			};
-
-			if (isWhite) {
-				currentRow.white = move;
-			} else {
-				currentRow.black = move;
-
-				rows.push(currentRow);
-				currentRow = undefined;
-				++moveNumber;
-			}
-
-			isWhite = !isWhite;
-			if (graphMove.next) {
-				node = game.questionMoves[graphMove.next];
-			} else {
-				node = undefined;
-			}
-		}
-
-		if (!card.isQuestion) {
-			let count = 0;
-			for (const move of card.session.game.answerMoves) {
-				if (!currentRow) {
-					currentRow = {
-						moveNumber,
-					};
-				}
-
-				const isFirst = count === 0;
-				const isActive = selectedBoardId !== null
-					? selectedBoardId === move.id
-					: isFirst;
-
-				const moveCell: MoveCell = {
-					id: move.id,
-					san: move.san,
-					// Answer moves are clickable as long as they aren't already active
-					clickable: !isActive,
-					active: isActive,
-					status: 'correct',
-				};
-
-				if (isWhite) {
-					currentRow.white = moveCell;
-				} else {
-					currentRow.black = moveCell;
-				}
-
-				rows.push(currentRow);
-				currentRow = undefined;
-				count++;
-			}
-		}
-
-		if (currentRow) {
-			rows.push(currentRow);
-		}
-
-		// Set clickable property.
-		for (const row of rows) {
-			if (row.white) {
-				const id = row.white.id;
-				if (!row.white.active && card.images && card.images[id] !== '') {
-					row.white.clickable = true;
-				}
-			}
-			if (row.black) {
-				const id = row.black.id;
-				if (!row.black.active && card.images && card.images[id] !== '') {
-					row.black.clickable = true;
-				}
-			}
-		}
+		const rows = card.isQuestion
+			? graphService.generateMoveRows(selectedBoardId, card.images)
+			: graphService.generateMoveRows(selectedBoardId, card.images, card.session.game.answerMoves);
 
 		return rows;
 	});
@@ -155,7 +48,7 @@
 	});
 
 	$effect(() => {
-		const card = pcard as Card;
+		rows;
 
 		canGoBackwards = hasPreviousMove();
 		canGoForward = hasNextMove();
@@ -222,46 +115,39 @@
 		}
 	}
 
-	function findActiveRowIndex(): number | null {
-		for (let i = 0; i < rows.length; ++i) {
-			const row = rows[i];
-			if (row.white?.active) {
-				return i;
-			}
+	function hasPreviousMove(): boolean {
+		const card = pcard as Card;
 
-			if (row.black?.active) {
-				return i;
+		if (selectedBoardId === null) {
+			if (card.isQuestion) {
+				return !!card.session.game.questionMoves.length;
+			} else {
+				return true;
 			}
 		}
 
-		return null;
-	}
-
-	function hasPreviousMove(): boolean {
-		if (!rows) return false;
-
-		const activeRowIndex = findActiveRowIndex();
-		if (activeRowIndex === null) return false;
-
-		return true;
+		if (navLookups[selectedBoardId].prev !== null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	function hasNextMove(): boolean {
-		const rowIndex = findActiveRowIndex();
+		const card = pcard as Card;
 
-		if (rowIndex === null) {
-			return !!rows.length;
-		}
-
-		if (rowIndex === rows.length - 1) {
-			const lastRow = rows[rowIndex];
-			if (lastRow.white?.active && lastRow.black) {
-				return true;
-			} else {
+		if (selectedBoardId === null) {
+			if (card.isQuestion) {
 				return false;
+			} else {
+				return card.session.game.answerMoves.length > 0;
 			}
-		} else {
+		};
+
+		if (navLookups[selectedBoardId].next !== null) {
 			return true;
+		} else {
+			return false;
 		}
 	}
 

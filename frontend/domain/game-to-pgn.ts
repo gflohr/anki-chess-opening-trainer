@@ -130,8 +130,10 @@ function serializeNode(
 function doMove(chess: Chess, move: Move) {
 	try {
 		chess.move(move.san);
-	} catch(e) {
-		throw new Error(`Applying move id '${move.id}' failed from position '${chess.fen()}': ${e}`);
+	} catch (e) {
+		throw new Error(
+			`Applying move id '${move.id}' failed from position '${chess.fen()}': ${e}`,
+		);
 	}
 }
 
