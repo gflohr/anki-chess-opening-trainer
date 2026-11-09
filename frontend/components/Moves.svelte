@@ -2,6 +2,7 @@
     import { createDataTransfer } from '@testing-library/user-event/dist/cjs/utils/index.js';
 	import type { Card } from '../domain/card.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
+    import { GameGraphService } from '../domain/game-graph-service.js';
 
 	interface Props {
 		pcard: Partial<Card>;
@@ -27,6 +28,12 @@
 		white?: MoveCell;
 		black?: MoveCell;
 	}
+
+	let graphService = $derived.by(() => {
+		const card = pcard as Card;
+		const game = card?.session?.game;
+		return new GameGraphService(game.questionMoves ?? []);
+    });
 
 	/**
 	 * Group played history moves into pairs of (White, Black) rows.
@@ -228,7 +235,15 @@
 	});
 
 	$effect(() => {
-		rows;
+		console.log('called');
+
+		const card = pcard as Card;
+
+		if (card.isQuestion) {
+			selectedBoardId = graphService.findLeaf()?.id ?? null;
+		} else {
+			selectedBoardId = card.session.game.answerMoves[0].id;
+		}
 
 		canGoBackwards = hasPreviousMove();
 		canGoForward = hasNextMove();

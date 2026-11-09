@@ -14,7 +14,7 @@ const targetElement = document.getElementById('app')!;
 
 try {
 	const card = translateRawCard(window.card);
-	card.isQuestion = true;
+	//card.isQuestion = true;
 
 	mount(App, {
 		target: targetElement,
