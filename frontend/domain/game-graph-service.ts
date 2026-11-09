@@ -3,9 +3,9 @@ import type { GameGraph, GraphMove } from './types';
 export class GameGraphService {
 	constructor(private readonly graph: GameGraph) {}
 
-	findLeaf(): GraphMove {
+	findLeaf(): GraphMove | null {
 		if (!this.graph.length) {
-			throw new Error('Game graph is empty!');
+			return null;
 		}
 
 		let node = this.graph[0];

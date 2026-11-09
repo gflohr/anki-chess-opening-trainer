@@ -66,9 +66,9 @@ describe('Game graph service', () => {
 			expect(service.findLeaf()).toStrictEqual({ san: 'e3', id: 11 });
 		});
 
-		it('should throw an exception for empty game graphs', () => {
+		it('should return null for empty game graphs', () => {
 			const service = new GameGraphService([]);
-			expect(() => service.findLeaf()).toThrow('Game graph is empty!');
+			expect(service.findLeaf()).toBeNull;
 		});
 
 		it('should throw an exception for game graphs with multiple leaves', () => {
