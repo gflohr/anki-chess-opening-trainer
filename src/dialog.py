@@ -16,7 +16,7 @@ from typing import List, Literal, Union
 from aqt import mw, AnkiQt
 from aqt.operations import QueryOp
 # pylint: disable=no-name-in-module
-from aqt.qt import (QComboBox, QCompleter, QDialog, # type: ignore[attr-defined]
+from aqt.qt import (QCheckBox, QComboBox, QCompleter, QDialog, # type: ignore[attr-defined]
                     QDialogButtonBox, QFileDialog, # type: ignore[attr-defined]
                     QGridLayout, QLabel, QLineEdit, # type: ignore[attr-defined]
                     QListWidget, QListWidgetItem, # type: ignore[attr-defined]
@@ -52,7 +52,6 @@ class ImportDialog(QDialog):
 		self.dirty = {
 			'colour': False,
 			'deck': False,
-
 		}
 		layout.addWidget(QLabel(_('Color')), 0, 0)
 		self.colour_combo = QComboBox()
@@ -106,14 +105,18 @@ class ImportDialog(QDialog):
 			self.tag_edit.setCompleter(completer)
 		layout.addWidget(self.tag_edit, 4, 1)
 
+		layout.addWidget(QLabel(_('Drop variations')), 5, 0)
+		self.drop_variations_checkbox = QCheckBox()
+		layout.addWidget(self.drop_variations_checkbox, 5, 1)
+
 		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
 		self.button_box = QDialogButtonBox(btn)
 		layout.addWidget(self.button_box,
-		                 5,
-		                 0,
-		                 1,
-		                 3,
-		                 alignment=Qt.AlignmentFlag.AlignRight)
+						 6,
+						 0,
+						 1,
+						 3,
+						 alignment=Qt.AlignmentFlag.AlignRight)
 		self.button_box.accepted.connect(self.accept)
 		self.button_box.rejected.connect(self.reject)
 		self._fill_dialog()
@@ -153,8 +156,10 @@ class ImportDialog(QDialog):
 				for filename in record['files']:
 					self.file_list.addItem(filename)
 				self.tag_edit.setText(record.get('tag', ''))
+				self.drop_variations_checkbox.setChecked(record.get('drop-variations', False))
 			else:
 				self.tag_edit.clear()
+				self.drop_variations_checkbox.setChecked(False)
 
 		self.updating = False
 
@@ -175,8 +180,10 @@ class ImportDialog(QDialog):
 			for filename in record['files']:
 				self.file_list.addItem(filename)
 			self.tag_edit.setText(record.get('tag', ''))
+			self.drop_variations_checkbox.setChecked(record.get('drop-variations', False))
 		else:
 			self.tag_edit.clear()
+			self.drop_variations_checkbox.setChecked(False)
 
 		self.updating = False
 
@@ -213,8 +220,10 @@ class ImportDialog(QDialog):
 				for filename in record['files']:
 					self.file_list.addItem(filename)
 				self.tag_edit.setText(record.get('tag', ''))
+				self.drop_variations_checkbox.setChecked(record.get('drop-variations', False))
 			else:
 				self.tag_edit.clear()
+				self.drop_variations_checkbox.setChecked(False)
 
 		if config['notetype'] is not None:
 			notetype_id = config['notetype']
@@ -268,6 +277,7 @@ class ImportDialog(QDialog):
 				filenames = record['files']
 				notetype_id = self.config['notetype']
 				tag = record.get('tag')
+				drop_variations = record.get('drop-variations', False)
 
 				addon_package = mw.addonManager.addonFromModule(__name__)
 				web_path = f"/_addons/{addon_package}/web"
@@ -279,6 +289,7 @@ class ImportDialog(QDialog):
 					filenames=filenames,
 					colour=('white' == colour),
 					tag=tag,
+					drop_variations=drop_variations,
 					web_path=web_path
 				)
 
@@ -352,14 +363,14 @@ class ImportDialog(QDialog):
 		else:
 			directory = None
 		selection = QFileDialog.getOpenFileNames(
-		    self, _('Open PGN files'), directory,
-		    _('Portable Game Notation files (*.pgn)'))
+			self, _('Open PGN files'), directory,
+			_('Portable Game Notation files (*.pgn)'))
 		filenames = selection[0]
 
 		if len(filenames):
 			self.file_list.clear()
 			self.file_list.addItems(
-			    [str(Path(filename)) for filename in filenames])
+				[str(Path(filename)) for filename in filenames])
 
 	def _save_config(self) -> bool:
 		colour_index = self.colour_combo.currentIndex()
@@ -390,6 +401,7 @@ class ImportDialog(QDialog):
 				files.append(item.text())
 
 		tag = self.tag_edit.text().strip()
+		drop_variations = self.drop_variations_checkbox.isChecked()
 
 		self.config['colour'] = colour
 		self.config['decks'][colour] = deck_id
@@ -397,6 +409,7 @@ class ImportDialog(QDialog):
 		import_record = {
 			'colour': colour,
 			'files': files,
+			'drop-variations': drop_variations,
 		}
 		if tag:
 			import_record['tag'] = tag

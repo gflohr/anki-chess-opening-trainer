@@ -63,6 +63,10 @@
 						"tag": {
 							"type": "string",
 							"description": "Optional tag for notes in this opening"
+						},
+						"drop-varations": {
+							"type": "boolean",
+							"description": "True if only mainlines should be imported"
 						}
 					},
 					"required": ["colour", "files"]
