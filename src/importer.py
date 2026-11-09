@@ -36,6 +36,8 @@ class Importer:
 	    deck_id: DeckId,
 	    web_path: str,
 	    tag: Optional[str] = None,
+	    drop_white_variations: Optional[bool] = False,
+	    drop_black_variations: Optional[bool] = False,
 	) -> None:
 		self.collection = collection
 		self.colour = colour

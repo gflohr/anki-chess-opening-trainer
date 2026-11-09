@@ -22,7 +22,7 @@ from aqt.qt import (QCheckBox, QComboBox, QCompleter, QDialog, # type: ignore[at
                     QListWidget, QListWidgetItem, # type: ignore[attr-defined]
                     QPushButton, Qt, QMessageBox, # type: ignore[attr-defined]
                     QDesktopServices, QUrl, # type: ignore[attr-defined]
-                    QApplication, # type: ignore[attr-defined]
+                    QApplication, QHBoxLayout, # type: ignore[attr-defined]
 ) # type: ignore[attr-defined]
 from aqt.utils import show_critical, show_info, show_warning
 from anki.utils import no_bundled_libs
@@ -105,9 +105,17 @@ class ImportDialog(QDialog):
 			self.tag_edit.setCompleter(completer)
 		layout.addWidget(self.tag_edit, 4, 1)
 
+		# Row 5: Drop variations checkboxes side-by-side
 		layout.addWidget(QLabel(_('Drop variations')), 5, 0)
-		self.drop_variations_checkbox = QCheckBox()
-		layout.addWidget(self.drop_variations_checkbox, 5, 1)
+
+		drop_layout = QHBoxLayout()
+		self.drop_white_checkbox = QCheckBox(_('for white'))
+		self.drop_black_checkbox = QCheckBox(_('for black'))
+		drop_layout.addWidget(self.drop_white_checkbox)
+		drop_layout.addWidget(self.drop_black_checkbox)
+		drop_layout.addStretch() # Keeps them neatly aligned to the left
+
+		layout.addLayout(drop_layout, 5, 1)
 
 		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
 		self.button_box = QDialogButtonBox(btn)
@@ -156,10 +164,12 @@ class ImportDialog(QDialog):
 				for filename in record['files']:
 					self.file_list.addItem(filename)
 				self.tag_edit.setText(record.get('tag', ''))
-				self.drop_variations_checkbox.setChecked(record.get('drop-variations', False))
+				self.drop_white_checkbox.setChecked(record.get('drop-white-variations', False))
+				self.drop_black_checkbox.setChecked(record.get('drop-black-variations', False))
 			else:
 				self.tag_edit.clear()
-				self.drop_variations_checkbox.setChecked(False)
+				self.drop_white_checkbox.setChecked(False)
+				self.drop_black_checkbox.setChecked(False)
 
 		self.updating = False
 
@@ -180,10 +190,12 @@ class ImportDialog(QDialog):
 			for filename in record['files']:
 				self.file_list.addItem(filename)
 			self.tag_edit.setText(record.get('tag', ''))
-			self.drop_variations_checkbox.setChecked(record.get('drop-variations', False))
+			self.drop_white_checkbox.setChecked(record.get('drop-white-variations', False))
+			self.drop_black_checkbox.setChecked(record.get('drop-black-variations', False))
 		else:
 			self.tag_edit.clear()
-			self.drop_variations_checkbox.setChecked(False)
+			self.drop_white_checkbox.setChecked(False)
+			self.drop_black_checkbox.setChecked(False)
 
 		self.updating = False
 
@@ -220,10 +232,12 @@ class ImportDialog(QDialog):
 				for filename in record['files']:
 					self.file_list.addItem(filename)
 				self.tag_edit.setText(record.get('tag', ''))
-				self.drop_variations_checkbox.setChecked(record.get('drop-variations', False))
+				self.drop_white_checkbox.setChecked(record.get('drop-white-variations', False))
+				self.drop_black_checkbox.setChecked(record.get('drop-black-variations', False))
 			else:
 				self.tag_edit.clear()
-				self.drop_variations_checkbox.setChecked(False)
+				self.drop_white_checkbox.setChecked(False)
+				self.drop_black_checkbox.setChecked(False)
 
 		if config['notetype'] is not None:
 			notetype_id = config['notetype']
@@ -277,7 +291,8 @@ class ImportDialog(QDialog):
 				filenames = record['files']
 				notetype_id = self.config['notetype']
 				tag = record.get('tag')
-				drop_variations = record.get('drop-variations', False)
+				drop_white_variations = record.get('drop-white-variations', False)
+				drop_black_variations = record.get('drop-black-variations', False)
 
 				addon_package = mw.addonManager.addonFromModule(__name__)
 				web_path = f"/_addons/{addon_package}/web"
@@ -289,7 +304,8 @@ class ImportDialog(QDialog):
 					filenames=filenames,
 					colour=('white' == colour),
 					tag=tag,
-					drop_variations=drop_variations,
+					drop_white_variations=drop_white_variations,
+					drop_black_variations=drop_black_variations,
 					web_path=web_path
 				)
 
@@ -401,7 +417,8 @@ class ImportDialog(QDialog):
 				files.append(item.text())
 
 		tag = self.tag_edit.text().strip()
-		drop_variations = self.drop_variations_checkbox.isChecked()
+		drop_white_variations = self.drop_white_checkbox.isChecked()
+		drop_black_variations = self.drop_black_checkbox.isChecked()
 
 		self.config['colour'] = colour
 		self.config['decks'][colour] = deck_id
@@ -409,7 +426,8 @@ class ImportDialog(QDialog):
 		import_record = {
 			'colour': colour,
 			'files': files,
-			'drop-variations': drop_variations,
+			'drop-white-variations': drop_white_variations,
+			'drop-black-variations': drop_black_variations,
 		}
 		if tag:
 			import_record['tag'] = tag

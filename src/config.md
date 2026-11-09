@@ -14,7 +14,8 @@ only.
 	- [`imports.ID.colour`](#importsidcolour)
 	- [`imports.ID.files`](#importsidfiles)
 	- [`imports.ID.tag`](#importsidtag)
-	- [`imports.ID.drop-variations`](#importsiddrop-variations)
+	- [`imports.ID.drop-white-variations`](#importsiddrop-white-variations)
+	- [`imports.ID.drop-black-variations`](#importsiddrop-black-variations)
 - [`notetype`](#notetype)
 
 
@@ -58,10 +59,15 @@ This list of imported filenames.
 
 An optional tag that is added to all notes in this opening.
 
-### `imports.ID.drop-variations`
+### `imports.ID.drop-white-variations`
 
-Boolean flag that controls whether variations should be dropped, and only
-the main line of each game be imported.
+Boolean flag that controls whether variations for white should be dropped, and
+only the main line of each game be imported.
+
+### `imports.ID.drop-black-variations`
+
+Boolean flag that controls whether variations for black should be dropped, and
+only the main line of each game be imported.
 
 ## `notetype`
 
