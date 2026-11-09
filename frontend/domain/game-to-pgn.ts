@@ -164,9 +164,7 @@ export function gameToPgn(game: Game): string {
 	const [mainAnswer, ...variations] = game.answerMoves;
 	const moveNumber = chess.moveNumber();
 	const isWhite = chess.turn() === 'w';
-	const movePrefix = isWhite
-		? `${moveNumber}. `
-		: '';
+	const movePrefix = isWhite ? `${moveNumber}. ` : '';
 
 	pgnBody += ` ${movePrefix}${mainAnswer.san}${formatAnnotation(mainAnswer.annotations)}`;
 

@@ -111,6 +111,8 @@ describe('Game to PGN', () => {
 
 		const pgn = gameToPgn(game);
 
-		await expect(pgn).toMatchFileSnapshot('__snapshots__/london_transpositions.snap');
+		await expect(pgn).toMatchFileSnapshot(
+			'__snapshots__/london_transpositions.snap',
+		);
 	});
 });

@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 
 import { GameSession } from './GameSession.svelte';
+import { gameToPgn } from './game-to-pgn';
 import type {
 	Game,
 	GameNode,
@@ -10,7 +11,6 @@ import type {
 	Move,
 	Square,
 } from './types';
-import { gameToPgn } from './game-to-pgn';
 
 /**
  * Validates individual marker strings:
@@ -227,7 +227,7 @@ export function translateRawCard(input: unknown): Card {
 
 	try {
 		game.pgn = gameToPgn(game);
-	} catch(e) {
+	} catch (e) {
 		console.error('Error generating PGN from game graph:', e);
 	}
 
