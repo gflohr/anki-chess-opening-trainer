@@ -363,6 +363,7 @@ input:checked + .slider:before {
 
 /* Per-column hover & cell styling */
 .move-cell {
+	font-family: 'Noto Chess', sans-serif;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
