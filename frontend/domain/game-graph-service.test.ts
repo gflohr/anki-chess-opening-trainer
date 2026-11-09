@@ -72,13 +72,84 @@ describe('Game graph service', () => {
 		});
 
 		it('should throw an exception for game graphs with multiple leaves', () => {
-			const graph = [
-				[{ san: 'd4', id: 1, next: 1}],
-				[{ san: 'd5', id: 2, next: 2}],
-				[{ san: 'Bf4', id: 3}, { san: 'c4', id: 4 }],
+			const graph: GameGraph = [
+				[{ san: 'd4', id: 1, next: 1 }],
+				[{ san: 'd5', id: 2, next: 2 }],
+				[
+					{ san: 'Bf4', id: 3 },
+					{ san: 'c4', id: 4 },
+				],
 			];
 			const service = new GameGraphService(graph);
-			expect(() => service.findLeaf()).toThrow('Game graph has more than one leaf!');
+			expect(() => service.findLeaf()).toThrow(
+				'Game graph has more than one leaf!',
+			);
+		});
+	});
+
+	describe('Navigation Lookup', () => {
+		it('should build the navigation lookup table for the question side', () => {
+			const graph: GameGraph = [
+				[{ san: 'd4', id: 1, next: 1 }],
+				[{ san: 'd5', id: 2 }],
+			];
+
+			const service = new GameGraphService(graph);
+			expect(service.navigationLookup()).toStrictEqual([
+				{
+					prev: null,
+					next: 1,
+				},
+				{
+					prev: 0,
+					next: 2,
+				},
+				{
+					prev: 1,
+					next: null,
+				},
+			]);
+		});
+
+		it('should build the navigation lookup table for the question side', () => {
+			const graph: GameGraph = [
+				[{ san: 'd4', id: 1, next: 1 }],
+				[{ san: 'd5', id: 2 }],
+			];
+
+			const service = new GameGraphService(graph);
+
+			const answerMoves = [
+				{ san: 'Bf4', id: 3 },
+				{ san: 'c4', id: 4 },
+				{ san: 'Nf3', id: 5 },
+			];
+			expect(service.navigationLookup(answerMoves)).toStrictEqual([
+				{
+					prev: null,
+					next: 1,
+				},
+				{
+					prev: 0,
+					next: 2,
+				},
+				{
+					prev: 1,
+					next: 3,
+				},
+				{
+					prev: 2,
+					next: 4,
+				},
+				{
+					prev: 3,
+					next: 5,
+				},
+				{
+					prev: 4,
+					next: null,
+				},
+			]);
 		});
 	});
 });

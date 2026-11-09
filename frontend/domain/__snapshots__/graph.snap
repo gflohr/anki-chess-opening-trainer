@@ -22,6 +22,7 @@
     "markers": [],
   },
   "history": [],
+  "pgn": "1. d4 { Queen pawn opening } (1. Nf3 { Zukertort opening } d5 2. d4 Nf6 3. c4 e6) 1... d5 2. Nf3 Nf6 3. c4 e6 4. Nf6 (4. g3) *",
   "questionMoves": [
     [
       {
@@ -42,8 +43,8 @@
           ],
           "markers": [],
         },
-        "id": 2,
-        "next": 5,
+        "id": 7,
+        "next": 6,
         "san": "Nf3",
       },
     ],
@@ -53,9 +54,9 @@
           "comments": [],
           "markers": [],
         },
-        "id": 3,
+        "id": 2,
         "next": 2,
-        "san": "Nf6",
+        "san": "d5",
       },
     ],
     [
@@ -64,7 +65,7 @@
           "comments": [],
           "markers": [],
         },
-        "id": 4,
+        "id": 3,
         "next": 3,
         "san": "Nf3",
       },
@@ -75,9 +76,20 @@
           "comments": [],
           "markers": [],
         },
-        "id": 5,
+        "id": 4,
         "next": 4,
-        "san": "d5",
+        "san": "Nf6",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 5,
+        "next": 5,
+        "san": "c4",
       },
     ],
     [
@@ -87,18 +99,7 @@
           "markers": [],
         },
         "id": 6,
-        "san": "Nc3",
-      },
-    ],
-    [
-      {
-        "annotations": {
-          "comments": [],
-          "markers": [],
-        },
-        "id": 7,
-        "next": 6,
-        "san": "Nf6",
+        "san": "e6",
       },
     ],
     [
@@ -109,7 +110,7 @@
         },
         "id": 8,
         "next": 7,
-        "san": "c4",
+        "san": "d5",
       },
     ],
     [
@@ -131,7 +132,7 @@
         },
         "id": 10,
         "next": 4,
-        "san": "d5",
+        "san": "Nf6",
       },
     ],
   ],

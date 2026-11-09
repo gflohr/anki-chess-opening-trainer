@@ -46,6 +46,113 @@ describe('Game to PGN', () => {
 		);
 	});
 
+	it('should render a game with simple transpositions', async () => {
+		const game: Game = {
+			gameAnnotations: { comments: [], markers: [] },
+			// This game graph represents these opening transpositions:
+			//
+			// 1. d4 d5 2. Nf3 Nf6 -\
+			//                       -> 3. c4 e6
+			// 1. Nf3 d5 2. d4 Nf6 -/
+			questionMoves: [
+				// Node 0
+				[
+					{
+						id: 1,
+						san: 'd4',
+						next: 1,
+					},
+					{
+						id: 7,
+						san: 'Nf3',
+						next: 6,
+					}
+				],
+				// Node 1
+				[
+					{
+						id: 2,
+						san: 'd5',
+						next: 2,
+					},
+				],
+				// Node 2
+				[
+					{
+						id: 3,
+						san: 'Nf3',
+						next: 3,
+					},
+				],
+				// Node 3
+				[
+					{
+						id: 4,
+						san: 'Nf6',
+						next: 4,
+					},
+				],
+				// Node 4
+				[
+					{
+						id: 5,
+						san: 'c4',
+						next: 5,
+					},
+				],
+				// Node 5
+				[
+					{
+						id: 6,
+						san: 'e6',
+					},
+				],
+				// Node 6
+				[
+					{
+						id: 8,
+						san: 'd5',
+						next: 7,
+					},
+				],
+				// Node 7
+				[
+					{
+						id: 9,
+						san: 'd4',
+						next: 8,
+					},
+				],
+				// Node 8
+				[
+					{
+						id: 10,
+						san: 'Nf6',
+						next: 4,
+					},
+				],
+			],
+			answerMoves: [
+				{
+					id: 11,
+					san: 'Nc3',
+				},
+				{
+					id: 12,
+					san: 'g3',
+				},
+			],
+			history: [],
+		};
+
+		const pgn = gameToPgn(game);
+		//console.log(pgn);
+
+		await expect(pgn).toMatchFileSnapshot(
+			'__snapshots__/simple-transpositions.snap',
+		);
+	});
+
 	it('should render a game with London System transpositions', async () => {
 		// Base line: 1. d4 d5 2. Bf4 Nf6 3. Nf3 e6 4. e3 Bd6
 		// Encode all transpositions between 1. d4 and 4. e3.
@@ -112,7 +219,7 @@ describe('Game to PGN', () => {
 		const pgn = gameToPgn(game);
 
 		await expect(pgn).toMatchFileSnapshot(
-			'__snapshots__/london_transpositions.snap',
+			'__snapshots__/london-transpositions.snap',
 		);
 	});
 });

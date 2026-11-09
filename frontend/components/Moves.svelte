@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { createDataTransfer } from '@testing-library/user-event/dist/cjs/utils/index.js';
 	import type { Card } from '../domain/card.js';
+    import { GameGraphService, type NavLookup } from '../domain/game-graph-service.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
-    import { GameGraphService } from '../domain/game-graph-service.js';
 
 	interface Props {
 		pcard: Partial<Card>;
@@ -145,11 +144,6 @@
 		return rows;
 	});
 
-	interface NavLookup {
-		prev: number | null;
-		next: number | null;
-	};
-
 	let navLookups = $derived.by(() => {
 		const card = pcard as Card;
 
@@ -235,15 +229,7 @@
 	});
 
 	$effect(() => {
-		console.log('called');
-
 		const card = pcard as Card;
-
-		if (card.isQuestion) {
-			selectedBoardId = graphService.findLeaf()?.id ?? null;
-		} else {
-			selectedBoardId = card.session.game.answerMoves[0].id;
-		}
 
 		canGoBackwards = hasPreviousMove();
 		canGoForward = hasNextMove();

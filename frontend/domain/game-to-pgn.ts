@@ -100,7 +100,7 @@ function serializeNode(
 		let altSubStr = `${altPrefix}${altMove.san}${formatAnnotation(altMove.annotations)}`;
 
 		if (altMove.next !== undefined && graph[altMove.next]) {
-			altChess.move(altMove.san);
+			doMove(altChess, altMove);
 			const subNext = serializeNode(graph, altMove.next, altChess, true);
 			if (subNext) altSubStr += ` ${subNext}`;
 		}
@@ -110,7 +110,7 @@ function serializeNode(
 
 	// 2. Advance main line and serialize child nodes
 	const primaryChess = new Chess(chess.fen());
-	primaryChess.move(primaryMove.san);
+	doMove(primaryChess, primaryMove);
 
 	if (primaryMove.next !== undefined && graph[primaryMove.next]) {
 		// If altMoves were printed, the next main line move needs a move number re-established
@@ -125,6 +125,14 @@ function serializeNode(
 	}
 
 	return result;
+}
+
+function doMove(chess: Chess, move: Move) {
+	try {
+		chess.move(move.san);
+	} catch(e) {
+		throw new Error(`Applying move id '${move.id}' failed from position '${chess.fen()}': ${e}`);
+	}
 }
 
 export function gameToPgn(game: Game): string {
@@ -156,7 +164,7 @@ export function gameToPgn(game: Game): string {
 			game.questionMoves[currNodeIdx]?.[0]
 		) {
 			const m: GraphMove = game.questionMoves[currNodeIdx][0];
-			chess.move(m.san);
+			doMove(chess, m);
 			currNodeIdx = m.next;
 		}
 	}

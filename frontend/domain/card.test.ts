@@ -98,9 +98,9 @@ describe('translateRawCard', () => {
 				s: {
 					// This game graph represents these opening transpositions:
 					//
-					// 1. d4 d5 2. c4 e6 3. Nf3  -\
-					//                             -> Nc3
-					// 1. Nf3 Nf6 2. c4 e6 3. d5 -/
+					// 1. d4 d5 2. Nf3 Nf6 -\
+					//                       -> 3. c4 e6
+					// 1. Nf3 d5 2. d4 Nf6 -/
 					m: [
 						[
 							{
@@ -111,49 +111,49 @@ describe('translateRawCard', () => {
 							},
 							{
 								s: 'Nf3',
-								i: 2,
+								i: 7,
 								c: ['Zukertort opening'],
-								n: 5,
+								n: 6,
 							},
 						],
 						[
 							{
-								i: 3,
-								s: 'Nf6',
+								i: 2,
+								s: 'd5',
 								n: 2,
 							},
 						],
 						[
 							{
-								i: 4,
+								i: 3,
 								s: 'Nf3',
 								n: 3,
 							},
 						],
 						[
 							{
-								i: 5,
-								s: 'd5',
+								i: 4,
+								s: 'Nf6',
 								n: 4,
 							},
 						],
 						[
 							{
-								i: 6,
-								s: 'Nc3',
+								i: 5,
+								s: 'c4',
+								n: 5,
 							},
 						],
 						[
 							{
-								i: 7,
-								s: 'Nf6',
-								n: 6,
+								i: 6,
+								s: 'e6',
 							},
 						],
 						[
 							{
 								i: 8,
-								s: 'c4',
+								s: 'd5',
 								n: 7,
 							},
 						],
@@ -167,7 +167,7 @@ describe('translateRawCard', () => {
 						[
 							{
 								i: 10,
-								s: 'd5',
+								s: 'Nf6',
 								n: 4,
 							},
 						],
@@ -189,29 +189,29 @@ describe('translateRawCard', () => {
 
 			expect(nodes[0].length).toBe(2);
 			expect(nodes[0][0].next).toBe(1);
-			expect(nodes[0][1].next).toBe(5);
+			expect(nodes[0][1].next).toBe(6);
 			expect(nodes[0][0].id).toBe(1);
-			expect(nodes[0][1].id).toBe(2);
+			expect(nodes[0][1].id).toBe(7);
 
 			expect(nodes[1].length).toBe(1);
 			expect(nodes[1][0].next).toBe(2);
-			expect(nodes[1][0].id).toBe(3);
+			expect(nodes[1][0].id).toBe(2);
 
 			expect(nodes[2].length).toBe(1);
 			expect(nodes[2][0].next).toBe(3);
-			expect(nodes[2][0].id).toBe(4);
+			expect(nodes[2][0].id).toBe(3);
 
 			expect(nodes[3].length).toBe(1);
 			expect(nodes[3][0].next).toBe(4);
-			expect(nodes[3][0].id).toBe(5);
+			expect(nodes[3][0].id).toBe(4);
 
 			expect(nodes[4].length).toBe(1);
-			expect(nodes[4][0].next).not.toBeDefined();
-			expect(nodes[4][0].id).toBe(6);
+			expect(nodes[4][0].next).toBe(5);
+			expect(nodes[4][0].id).toBe(5);
 
 			expect(nodes[5].length).toBe(1);
-			expect(nodes[5][0].next).toBe(6);
-			expect(nodes[5][0].id).toBe(7);
+			expect(nodes[5][0].next).not.toBeDefined();
+			expect(nodes[5][0].id).toBe(6);
 
 			expect(nodes[6].length).toBe(1);
 			expect(nodes[6][0].next).toBe(7);
