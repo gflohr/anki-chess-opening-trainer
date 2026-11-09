@@ -38,8 +38,6 @@
 	});
 
 	let analyseLink = $derived.by(() => {
-		console.log(card);
-
 		if (card.isQuestion) return null;
 
 		if (card.session?.game?.pgn) {

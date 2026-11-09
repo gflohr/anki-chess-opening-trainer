@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { createDataTransfer } from '@testing-library/user-event/dist/cjs/utils/index.js';
 	import type { Card } from '../domain/card.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
 
@@ -135,6 +136,95 @@
 		}
 
 		return rows;
+	});
+
+	interface NavLookup {
+		prev: number | null;
+		next: number | null;
+	};
+
+	let navLookups = $derived.by(() => {
+		const card = pcard as Card;
+
+		const nodes = card.session.game.questionMoves;
+
+		// The indices are move IDs, not node ids!
+		const lookups: NavLookup[] = [];
+
+		// Board/Move id 0 is the initial position. It never has a previous
+		// position.
+		if (nodes.length) {
+			lookups[0] = {
+				prev: null,
+				next: nodes[0]?.[0]?.id,
+			};
+
+			for (const move of nodes[0]) {
+				lookups[move.id] = { prev: 0, next: null };
+			}
+		} else if (card.isQuestion) {
+			lookups[0] = {
+				prev: null,
+				next: null,
+			}; // Nowhere to go to for a question.
+		} else {
+			const answerMoveId = card.session.game.answerMoves[0].id;
+			lookups[0] = {
+				prev: null,
+				next: card.session.game.answerMoves[0].id,
+			}
+			lookups[answerMoveId] = {
+				prev: 0,
+				next: null, // Will be filled later.
+			};
+		}
+
+		// Build up the rest of the table.
+		for (let n = 0; n < nodes.length; ++n) {
+			const node = nodes[n];
+
+			// The previous position is the same for all moves from this
+			// node. It is always the main variation of the predecessor.
+			for (const move of node) {
+				lookups[move.id] ??= { prev: null, next: null };
+
+				if (move.next) {
+					const nextNode = nodes[move.next];
+					lookups[move.id].next = nextNode[0].id;
+
+					for (const nextMove of nextNode) {
+						lookups[nextMove.id] ??= { prev: null, next: null };
+						lookups[nextMove.id].prev = move.id;
+					}
+				} else if (!card.isQuestion) {
+					const answerMoveId = card.session.game.answerMoves[0].id;
+					lookups[move.id].next = answerMoveId;
+
+					lookups[answerMoveId] ??= { prev: null, next: null };
+					lookups[answerMoveId].prev ??= move.id;
+				}
+			}
+		}
+
+		if (!card.isQuestion) {
+			const answerMoves = card.session.game.answerMoves;
+			for (let i = 0; i < answerMoves.length; ++i) {
+				const move = answerMoves[i];
+				lookups[move.id] ??= { prev: null, next: null };
+
+				if (i > 0) {
+					const prevMove = answerMoves[i - 1];
+					lookups[move.id].prev = prevMove.id;
+				}
+
+				if (i < answerMoves.length - 1) {
+					const nextMove = answerMoves[i + 1];
+					lookups[move.id].next = nextMove.id;
+				}
+			}
+		}
+
+		return lookups;
 	});
 
 	$effect(() => {
@@ -344,6 +434,7 @@
 </script>
 
 <div class="history-container">
+navLookups: {navLookups}
 	<table class="move-table">
 		<tbody>
 			{#each rows as row}
