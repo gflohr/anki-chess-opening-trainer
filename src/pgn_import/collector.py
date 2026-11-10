@@ -1,12 +1,12 @@
 from chess import Color
 import chess.pgn
-from typing import Dict
+from typing import Dict, Optional
 
 
 class Collector:
-	'''Collects and aggregates PGN chess games for Anki note generation.'''
+	'''Collector and aggregator for PGN chess games for Anki note generation.'''
 
-	def __init__(self, colour: Color):
+	def __init__(self, colour: Color) -> None:
 		if colour == chess.WHITE:
 			self._colour = 'White'
 		else:
@@ -15,6 +15,8 @@ class Collector:
 		# The minimum (full) move number seen for each normalised FEN. We
 		# assume that a lower move number is more accurate.
 		self._move_numbers: Dict[str, int] = {}
+		# Tracks the last active game node during building
+		self._current_node: Optional[chess.pgn.GameNode] = None
 
 	def games(self) -> Dict[str, chess.pgn.Game]:
 		'''Get all collected games.
@@ -37,33 +39,38 @@ class Collector:
 		game with that start position, it is merged into the existing game
 		instead.
 
-		Returns the id of the created or merged game.
-
 		Args:
 			initial_fen: The initial position as a FEN.
 
 		Returns:
-			The id of the game.
+			The id (normalised FEN) of the game.
 		'''
 		fen = self._normalise_fen(initial_fen)
-		if not fen in self._games:
-			starting_fen = self._normalise_fen(initial_fen)
-			if fen == starting_fen:
+		board = chess.Board(initial_fen)
+		move_number = board.fullmove_number
+
+		if fen not in self._games:
+			if initial_fen == chess.STARTING_FEN:
 				self._games[fen] = chess.pgn.Game({
-					'Colour': self._colour
+					'Colour': self._colour,
 				})
-				self._move_numbers[fen] = 1
 			else:
 				self._games[fen] = chess.pgn.Game({
 					'Colour': self._colour,
-					'Setup': '1',
+					'SetUp': '1',
 					'FEN': initial_fen,
 				})
-				# Remember the "best" full move number for the position.
-				move_number = self._games[fen].board().fullmove_number
-				if move_number < self._move_numbers[fen]:
-					self._move_numbers[fen] = move_number
+				self._games[fen].setup(board)
+			self._move_numbers[fen] = move_number
+		else:
+			if move_number < self._move_numbers[fen]:
+				self._move_numbers[fen] = move_number
+				if initial_fen != chess.STARTING_FEN:
+					self._games[fen].headers['SetUp'] = '1'
+					self._games[fen].headers['FEN'] = initial_fen
+					self._games[fen].setup(board)
 
+		self._current_node = self._games[fen]
 		return fen
 
 	def add_move(self, game_id: str, move: str, fen_before: str, fen_after: str) -> str:
@@ -76,34 +83,42 @@ class Collector:
 			fen_after: The FEN after the move.
 
 		Returns:
-			The id of the game to continue with. This may differ from the
-			original game id.
+			The id of the game to continue with.
 		'''
-		pass
+		if self._current_node is None:
+			raise RuntimeError('Cannot add move without an active game context.')
+
+		chess_move = chess.Move.from_uci(move)
+
+		# Check if the child node already exists (transposition/merging)
+		existing_node = None
+		for child in self._current_node.variations:
+			if child.board().fen() == fen_after:
+				existing_node = child
+				break
+
+		if existing_node:
+			self._current_node = existing_node
+		else:
+			self._current_node = self._current_node.add_variation(chess_move)
+
+		return game_id
 
 	def add_comment(self, comment: str) -> None:
-		'''Add a comment to the last added move.
-
-		Args:
-			comment: The textual comment
-		'''
-		pass
+		'''Add a comment to the last added move.'''
+		if self._current_node:
+			self._current_node.comment = comment
 
 	def add_nag(self, nag: int) -> None:
-		'''Add a NAG to the last added move.
-
-		Args:
-			nag: The id (1-255)
-		'''
-		pass
+		'''Add a NAG to the last added move.'''
+		if self._current_node:
+			self._current_node.nags.add(nag)
 
 	def add_variation_comment(self, comment: str) -> None:
-		'''Add a comment to the last added game or variation.
-
-		Args:
-			comment: The textual comment
-		'''
-		pass
+		'''Add a comment to the last added game or variation header.'''
+		if self._current_node:
+			# Attach pre-comment or root comment depending on node state
+			self._current_node.comment = comment
 
 	def _normalise_fen(self, fen: str) -> str:
 		return ' '.join(fen.split()[:4])
