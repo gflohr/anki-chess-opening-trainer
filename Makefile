@@ -68,7 +68,7 @@ pylint:
 lint: mypy pylint
 
 test: generated vendor
-	$(PYTHON) -m  pytest -s --cov=src --cov-config=.coveragerc
+	$(PYTHON) -m  pytest -s --cov=src --cov-config=.coveragerc --cov-report=term --cov-report=html
 
 sourcedist:
 	$(PYTHON) -m ankiscripts.sourcedist

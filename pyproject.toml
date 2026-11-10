@@ -18,11 +18,13 @@ dev = [
     "yapf",
     "isort",
     "mypy",
-	"pip",
+    "pip",
     "pylint",
     "pytest==9.2.0",
     "pytest-cov==7.1.0",
     "datamodel-code-generator==0.87.0",
+    "pytest-describe>=3.2.0",
+    "pytest-sugar>=1.1.1",
 ]
 
 [tool.uv.sources]
