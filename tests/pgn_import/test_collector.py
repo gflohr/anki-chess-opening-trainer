@@ -27,6 +27,7 @@ def test_collector_loads_simple_pgn() -> None:
 
 			collector.add_game(game)
 			game_count += 1
+			print(game.board().fen())
 
 		assert game_count is 1
 
