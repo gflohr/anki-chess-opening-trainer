@@ -25,6 +25,7 @@ dev = [
     "datamodel-code-generator==0.87.0",
     "pytest-describe>=3.2.0",
     "pytest-sugar>=1.1.1",
+    "pytest-watch>=4.2.0",
 ]
 
 [tool.uv.sources]
