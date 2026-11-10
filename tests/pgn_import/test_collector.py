@@ -5,10 +5,10 @@ from src.pgn_import.collector import Collector
 
 def test_collector_initialization() -> None:
 	'''Test that the Collector initializes with an empty games dictionary.'''
-	collector = Collector()
+	collector = Collector(colour=chess.WHITE)
 
-	assert isinstance(collector.games, dict)
-	assert len(collector.games) == 0
+	assert isinstance(collector.games(), dict)
+	assert len(collector.games()) == 0
 
 def test_collector_loads_simple_pgn() -> None:
 	# Resolve the path to the fixture relative to this test file
@@ -16,7 +16,7 @@ def test_collector_loads_simple_pgn() -> None:
 
 	assert fixture_path.exists(), f'Fixture not found at {fixture_path}'
 
-	collector = Collector()
+	collector = Collector(colour=chess.WHITE)
 
 	with open(fixture_path, 'r', encoding='utf-8') as f:
 		game_count = 0
@@ -32,4 +32,4 @@ def test_collector_loads_simple_pgn() -> None:
 		assert game_count == 3
 
 		# One has a redundant initial FEN (starting position).
-		assert len(collector.games) == 2
+		assert len(collector.games()) == 2

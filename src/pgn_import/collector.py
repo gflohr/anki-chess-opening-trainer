@@ -1,13 +1,13 @@
 from chess import Color
 import chess.pgn
-from typing import Any, Dict
+from typing import Dict
 
 
 class Collector:
 	'''Collects and aggregates PGN chess games for Anki note generation.'''
 
 	def __init__(self, colour: Color):
-		if colour == chess.WHITE
+		if colour == chess.WHITE:
 			self._colour = 'White'
 		else:
 			self._colour = 'Black'
@@ -15,6 +15,22 @@ class Collector:
 		# The minimum (full) move number seen for each normalised FEN. We
 		# assume that a lower move number is more accurate.
 		self._move_numbers: Dict[str, int] = {}
+
+	def games(self) -> Dict[str, chess.pgn.Game]:
+		'''Get all collected games.
+
+		Games are distinguished by their normalised starting position (ignoring
+		the move number and halfmove count). The returned dictionary keys are
+		reconstructed FENs including the halfmove count (0) and the minimum
+		move number recorded for that position.
+
+		Returns:
+			A dictionary mapping the reconstructed FEN keys to the collected games.
+		'''
+		return {
+			f'{fen} 0 {self._move_numbers[fen]}': game
+			for fen, game in self._games.items()
+		}
 
 	def add_game(self, initial_fen: str) -> str:
 		'''Add a new game with the given start position. If there is already a
@@ -31,13 +47,13 @@ class Collector:
 		'''
 		fen = self._normalise_fen(initial_fen)
 		if not fen in self._games:
-			starting_fen = self.normalise_fen(initial_fen)
+			starting_fen = self._normalise_fen(initial_fen)
 			if fen == starting_fen:
 				self._games[fen] = chess.pgn.Game({
 					'Colour': self._colour
 				})
 				self._move_numbers[fen] = 1
-			else
+			else:
 				self._games[fen] = chess.pgn.Game({
 					'Colour': self._colour,
 					'Setup': '1',
