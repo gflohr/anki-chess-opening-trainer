@@ -27,9 +27,12 @@ def test_collector_loads_simple_pgn() -> None:
 
 			collector.add_game(game)
 			game_count += 1
-			print(game.board().fen())
 
-		assert game_count is 1
+		# The collectdion contains 3 games.
+		assert game_count == 3
+
+		# One has a redundant initial FEN (starting position).
+		assert len(collector.games) == 2
 
 def test_normalise_fen() -> None:
 	collector = Collector()

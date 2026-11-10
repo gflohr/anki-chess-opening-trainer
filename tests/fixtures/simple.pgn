@@ -1,3 +1,17 @@
-[Event "???"]
+[Event "Open Game"]
 
-1. e4 e5
+1. e4 e5 *
+
+
+[Event "Closed Game"]
+[Variant "From Position"]
+[FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"]
+
+1. d4 d5 *
+
+
+[Event "Accelerated London System"]
+[Variant "From Position"]
+[FEN "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1"]
+
+1. Bf4 Nf6 2. e3 *
