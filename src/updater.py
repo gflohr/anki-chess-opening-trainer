@@ -81,7 +81,6 @@ class Updater:
 					continue
 
 				answer_text = note.fields[1]
-				print(answer_text)
 
 				# This will not fully migrate the Lichess links to the new
 				# version with a full analysis of the entire PGN. This is not
