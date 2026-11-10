@@ -1,3 +1,4 @@
+from chess import Color
 import chess.pgn
 from typing import Any, Dict
 
@@ -5,8 +6,15 @@ from typing import Any, Dict
 class Collector:
 	'''Collects and aggregates PGN chess games for Anki note generation.'''
 
-	def __init__(self):
-		self.games: Dict[str, chess.pgn.Game] = {}
+	def __init__(self, colour: Color):
+		if colour == chess.WHITE
+			self._colour = 'White'
+		else:
+			self._colour = 'Black'
+		self._games: Dict[str, chess.pgn.Game] = {}
+		# The minimum (full) move number seen for each normalised FEN. We
+		# assume that a lower move number is more accurate.
+		self._move_numbers: Dict[str, int] = {}
 
 	def add_game(self, initial_fen: str) -> str:
 		'''Add a new game with the given start position. If there is already a
@@ -22,8 +30,23 @@ class Collector:
 			The id of the game.
 		'''
 		fen = self._normalise_fen(initial_fen)
-		if not fen in self.games:
-			self.games[fen] = chess.pgn.Game()
+		if not fen in self._games:
+			starting_fen = self.normalise_fen(initial_fen)
+			if fen == starting_fen:
+				self._games[fen] = chess.pgn.Game({
+					'Colour': self._colour
+				})
+				self._move_numbers[fen] = 1
+			else
+				self._games[fen] = chess.pgn.Game({
+					'Colour': self._colour,
+					'Setup': '1',
+					'FEN': initial_fen,
+				})
+				# Remember the "best" full move number for the position.
+				move_number = self._games[fen].board().fullmove_number
+				if move_number < self._move_numbers[fen]:
+					self._move_numbers[fen] = move_number
 
 		return fen
 
