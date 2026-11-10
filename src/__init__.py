@@ -55,7 +55,8 @@ def add_menu_item():
 
 
 
-init_web()
+if mw is not None:
+	init_web()
 init_i18n()
 DeleteHook().installHook()
 if 'pytest' not in sys.modules:
