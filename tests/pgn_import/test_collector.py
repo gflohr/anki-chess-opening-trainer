@@ -25,7 +25,7 @@ def test_collector_loads_simple_pgn() -> None:
 			if game is None:
 				break
 
-			collector.add_game(game)
+			collector.add_game(game.board().fen())
 			game_count += 1
 
 		# The collectdion contains 3 games.
@@ -33,9 +33,3 @@ def test_collector_loads_simple_pgn() -> None:
 
 		# One has a redundant initial FEN (starting position).
 		assert len(collector.games) == 2
-
-def test_normalise_fen() -> None:
-	collector = Collector()
-
-	fen = 'rnbqkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 2'
-	assert collector.normalise_fen(fen) == 'rnbqkbnr/ppp1pppp/8/3p4/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq -'

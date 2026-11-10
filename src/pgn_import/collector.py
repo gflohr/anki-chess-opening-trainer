@@ -8,11 +8,11 @@ class Collector:
 	def __init__(self):
 		self.games: Dict[str, chess.pgn.Game] = {}
 
-	def add_game(self, game: chess.pgn.Game) -> None:
+	def add_game(self, full_fen: str) -> None:
 		'''Process a parsed PGN game.'''
-		fen = self.normalise_fen(game.board().fen())
+		fen = self._normalise_fen(full_fen)
 		if not fen in self.games:
-			self.games[fen] = game
+			self.games[fen] = chess.pgn.Game()
 
-	def normalise_fen(self, fen: str) -> str:
+	def _normalise_fen(self, fen: str) -> str:
 		return ' '.join(fen.split()[:4])
