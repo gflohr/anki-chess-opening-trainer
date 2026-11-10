@@ -42,5 +42,21 @@ class Collector:
 		'''
 		pass
 
+	def add_comment(self, comment: str) -> None:
+		'''Add a comment to the last added move.
+
+		Args:
+			comment: The textual comment
+		'''
+		pass
+
+	def add_nag(self, nag: int) -> None:
+		'''Add a NAG to the last added move.
+
+		Args:
+			nag: The id (1-255)
+		'''
+		pass
+
 	def _normalise_fen(self, fen: str) -> str:
 		return ' '.join(fen.split()[:4])

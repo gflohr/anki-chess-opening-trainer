@@ -73,6 +73,12 @@ class Visitor(BaseVisitor):
 
 		return None
 
+	def visit_comment(self, comment: str):
+		self._collector.add_comment(comment)
+
+	def visit_nag(self, nag: int):
+		self._collector.add_nag(nag)
+
 	def handle_error(self, error: Exception):
 		self._errors.append({
 			'gameno': self._gameno,
