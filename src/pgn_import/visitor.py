@@ -19,19 +19,32 @@ class Visitor(BaseVisitor):
 		super().__init__()
 
 		self._collector = collector
-		self._startpos: str = None
+		self._game_id: str = None
 		self._gameno = 0
 		self._errors: List[str] = []
+		self._fen_before: str = None
+		self._last_move: str = None
+		self._fen_after: str = None
 
 	def begin_game(self):
-		self._startpos = None
+		self._game_id = None
 
 	def visit_board(self, board):
-		if self._startpos is None:
+		self._fen_after = board.fen()
+		if self._game_id is None:
 			# There is no need to normalise the fen. We keep the start position
 			# merely as an indicator that we are inside of a game.
-			self._startpos = board.fen()
-			self._collector.add_game(board.fen())
+			self._game_id = self._collector.add_game(board.fen())
+		else:
+			self._game_id = self._collector.add_move(
+				game_id=self._game_id,
+				move=self._last_move,
+				fen_before=self._fen_before,
+				fen_after=self._fen_after)
+
+	def visit_move(self, board, move):
+		self._fen_before = board.fen()
+		self._last_move = move.uci()
 
 	def handle_error(self, error: Exception):
 		self._errors.append({
