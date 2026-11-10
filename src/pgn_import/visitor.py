@@ -36,15 +36,19 @@ class Visitor(BaseVisitor):
 		self._drop_black = drop_black_variations
 
 		self._turn: Color = None
+		# This is also an indicator that there is an active game.
 		self._game_id: str = None
 		self._gameno = 0
 		self._errors: List[str] = []
 		self._fen_before: str = None
+		# This is also an indicator that we are not at the beginning of a
+		# variation.
 		self._last_move: str = None
 		self._fen_after: str = None
 
 	def begin_game(self):
 		self._game_id = None
+		self._last_move = None
 
 	def visit_board(self, board):
 		self._turn = board.turn
@@ -65,6 +69,7 @@ class Visitor(BaseVisitor):
 		self._last_move = move.uci()
 
 	def begin_variation(self):
+		self._last_move = None
 		if self._drop_white and self._turn == chess.BLACK:
 			return SKIP
 
@@ -74,7 +79,10 @@ class Visitor(BaseVisitor):
 		return None
 
 	def visit_comment(self, comment: str):
-		self._collector.add_comment(comment)
+		if self._last_move is None:
+			self._collector.add_variation_comment(comment)
+		else:
+			self._collector.add_comment(comment)
 
 	def visit_nag(self, nag: int):
 		self._collector.add_nag(nag)

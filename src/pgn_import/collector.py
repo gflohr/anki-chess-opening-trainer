@@ -58,5 +58,13 @@ class Collector:
 		'''
 		pass
 
+	def add_variation_comment(self, comment: str) -> None:
+		'''Add a comment to the last added game or variation.
+
+		Args:
+			comment: The textual comment
+		'''
+		pass
+
 	def _normalise_fen(self, fen: str) -> str:
 		return ' '.join(fen.split()[:4])
