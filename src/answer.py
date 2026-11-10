@@ -68,8 +68,6 @@ class Answer(Page):
 		rendered += ' ' + self.move
 		rendered += self.extra_html(note_id)
 
-		print(f'A: {rendered}')
-
 		return rendered
 
 	def find(self, others: list[Answer]) -> bool:

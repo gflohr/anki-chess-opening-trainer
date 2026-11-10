@@ -35,8 +35,6 @@ class Question(Page):
 		rendered = self.moves
 		rendered += self.extra_html(note_id)
 
-		print(f'Q: {rendered}')
-
 		return rendered
 
 	def render_answers(self, note_id: int) -> str:
