@@ -70,6 +70,18 @@ schema = {
 							'type': 'string',
 							'description':
 							'Optional tag for notes in this opening'
+						},
+						'drop-white-varations': {
+							'type':
+							'boolean',
+							'description':
+							'True if only mainlines for white should be imported'
+						},
+						'drop-black-varations': {
+							'type':
+							'boolean',
+							'description':
+							'True if only mainlines for black should be imported'
 						}
 					},
 					'required': ['colour', 'files']
@@ -84,3 +96,4 @@ schema = {
 		}
 	}
 }
+
