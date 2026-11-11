@@ -67,6 +67,8 @@ class Visitor(BaseVisitor):
 	def visit_move(self, board, move):
 		self._fen_before = board.fen()
 		self._last_move = move.uci()
+		# Do not call the add_move method of the collector here. We wait for
+		# visit_board(), so that the FEN is already created.
 
 	def begin_variation(self):
 		self._last_move = None
