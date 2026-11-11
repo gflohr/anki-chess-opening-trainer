@@ -43,7 +43,7 @@ class Visitor(BaseVisitor):
 		self._fen_before: str = None
 		# This is also an indicator that we are not at the beginning of a
 		# variation.
-		self._last_move: str = None
+		self._last_move: chess.Move = None
 		self._fen_after: str = None
 
 	def begin_game(self):
@@ -66,7 +66,7 @@ class Visitor(BaseVisitor):
 
 	def visit_move(self, board, move):
 		self._fen_before = board.fen()
-		self._last_move = move.uci()
+		self._last_move = move
 		# Do not call the add_move method of the collector here. We wait for
 		# visit_board(), so that the FEN is already created.
 
