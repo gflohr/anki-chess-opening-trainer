@@ -1,0 +1,10 @@
+[Event "???"]
+
+1. d4 d5 2. Bf4 (2. Nc3 Nf6 (2... e6 3. Bf4 Nf6) 3. Bf4 e6 4. e3) 2... Nf6
+3. e3 e6 4. Nc3 *
+
+[Event "???"]
+[SetUp "1"]
+[FEN "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1"]
+
+1. Nc3 d5 2. d4 e6 3. Bf4
