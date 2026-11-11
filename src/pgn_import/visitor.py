@@ -76,7 +76,19 @@ class Visitor(BaseVisitor):
 		if self._drop_black and self._turn == chess.WHITE:
 			return SKIP
 
+		self._collector.begin_variation()
+
 		return None
+
+	def end_variation(self):
+		# Do not notify, when the variation was skipped.
+		if self._drop_white and self._turn == chess.BLACK:
+			return
+
+		if self._drop_black and self._turn == chess.WHITE:
+			return
+
+		self._collector.end_variation()
 
 	def visit_comment(self, comment: str):
 		if self._last_move is None:

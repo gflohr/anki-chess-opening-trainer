@@ -1,6 +1,6 @@
 from chess import Color
 import chess.pgn
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 
 class Collector:
@@ -15,8 +15,21 @@ class Collector:
 		# The minimum (full) move number seen for each normalised FEN. We
 		# assume that a lower move number is more accurate.
 		self._move_numbers: Dict[str, int] = {}
-		# Tracks the last active game node during building
-		self._current_node: Optional[chess.pgn.GameNode] = None
+		# Tracks the active game node stack during building per variation.
+		self._vstack: List[chess.pgn.GameNode] = []
+
+	@property
+	def _current_node(self) -> Optional[chess.pgn.GameNode]:
+		'''Return the current active node at the top of the variation stack.'''
+		return self._vstack[-1] if self._vstack else None
+
+	@_current_node.setter
+	def _current_node(self, node: chess.pgn.GameNode) -> None:
+		'''Set or replace the current active node at the top of the stack.'''
+		if not self._vstack:
+			self._vstack.append(node)
+		else:
+			self._vstack[-1] = node
 
 	def games(self) -> Dict[str, chess.pgn.Game]:
 		'''Get all collected games.
@@ -70,7 +83,8 @@ class Collector:
 					self._games[fen].headers['FEN'] = initial_fen
 					self._games[fen].setup(board)
 
-		self._current_node = self._games[fen]
+		# Reset the stack for the new game context
+		self._vstack = [self._games[fen]]
 		return fen
 
 	def add_move(self, game_id: str, move: str, fen_before: str, fen_after: str) -> str:
@@ -85,40 +99,58 @@ class Collector:
 		Returns:
 			The id of the game to continue with.
 		'''
-		if self._current_node is None:
+		current = self._current_node
+		if current is None:
 			raise RuntimeError('Cannot add move without an active game context.')
 
 		chess_move = chess.Move.from_uci(move)
 
 		# Check if the child node already exists (transposition/merging)
 		existing_node = None
-		for child in self._current_node.variations:
+		for child in current.variations:
 			if child.board().fen() == fen_after:
 				existing_node = child
 				break
 
 		if existing_node:
-			self._current_node = existing_node
+			node = existing_node
 		else:
-			self._current_node = self._current_node.add_variation(chess_move)
+			node = current.add_variation(chess_move)
 
+		# Advance the tip of the current variation stack branch
+		self._current_node = node
 		return game_id
 
 	def add_comment(self, comment: str) -> None:
 		'''Add a comment to the last added move.'''
-		if self._current_node:
-			self._current_node.comment = comment
+		current = self._current_node
+		if current:
+			current.comment = comment
 
 	def add_nag(self, nag: int) -> None:
 		'''Add a NAG to the last added move.'''
-		if self._current_node:
-			self._current_node.nags.add(nag)
+		current = self._current_node
+		if current:
+			current.nags.add(nag)
 
 	def add_variation_comment(self, comment: str) -> None:
 		'''Add a comment to the last added game or variation header.'''
-		if self._current_node:
-			# Attach pre-comment or root comment depending on node state
-			self._current_node.comment = comment
+		current = self._current_node
+		if current:
+			current.comment = comment
+
+	def begin_variation(self) -> None:
+		'''Called before a new variation (not a game!) begins.'''
+		if self._vstack:
+			# Duplicate the parent node reference onto the stack so that
+			# upcoming moves branch off the same point of divergence.
+			parent = self._vstack[-2] if len(self._vstack) > 1 else self._vstack[0]
+			self._vstack.append(parent)
+
+	def end_variation(self) -> None:
+		'''Called after a variation ends.'''
+		if len(self._vstack) > 1:
+			self._vstack.pop()
 
 	def _normalise_fen(self, fen: str) -> str:
 		return ' '.join(fen.split()[:4])
