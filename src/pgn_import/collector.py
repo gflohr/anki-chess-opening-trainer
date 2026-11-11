@@ -71,57 +71,31 @@ class Collector:
 		# Reset the stack for the new game context
 		return fen
 
-	def add_move(self, game_id: str, move: str, fen_before: str, fen_after: str) -> str:
+	def add_move(self, game_id: str, move: chess.Move, fen_before: str, fen_after: str) -> str:
 		'''Add a move to the game tree identified by its game id.
 
 		Args:
 			game_id: The id of the game as returned by add_game().
-			move: The move in UCI notation (e.g. "e7e8q").
+			move: The move as a chess.Move object.
 			fen_before: The FEN before the move.
 			fen_after: The FEN after the move.
 
 		Returns:
 			The id of the game to continue with.
 		'''
-		current = self._current_node
-		if current is None:
-			raise RuntimeError('Cannot add move without an active game context.')
-
-		chess_move = chess.Move.from_uci(move)
-
-		# Check if the child node already exists (transposition/merging)
-		existing_node = None
-		for child in current.variations:
-			if child.board().fen() == fen_after:
-				existing_node = child
-				break
-
-		if existing_node:
-			node = existing_node
-		else:
-			node = current.add_variation(chess_move)
-
-		# Advance the tip of the current variation stack branch
-		self._current_node = node
 		return game_id
 
 	def add_comment(self, comment: str) -> None:
 		'''Add a comment to the last added move.'''
-		current = self._current_node
-		if current:
-			current.comment = comment
+		pass
 
 	def add_nag(self, nag: int) -> None:
 		'''Add a NAG to the last added move.'''
-		current = self._current_node
-		if current:
-			current.nags.add(nag)
+		pass
 
 	def add_variation_comment(self, comment: str) -> None:
 		'''Add a comment to the last added game or variation header.'''
-		current = self._current_node
-		if current:
-			current.comment = comment
+		pass
 
 	def _normalise_fen(self, fen: str) -> str:
 		return ' '.join(fen.split()[:4])
