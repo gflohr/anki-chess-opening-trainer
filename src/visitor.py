@@ -11,7 +11,7 @@ import typing
 from typing import Dict, Literal, cast
 
 import chess
-from chess import Color, Board, STARTING_FEN
+from chess import Board, Color
 from chess.pgn import BaseVisitor, Game
 
 from .answer import Answer
@@ -39,7 +39,6 @@ def i18n_piece_symbol(piece_type: chess.PieceType) -> str:
 
 
 class PositionVisitor(BaseVisitor):
-
 	# pylint: disable=too-many-instance-attributes
 	def __init__(self, colour, web_path: str, game_node: Game = None):
 		self.colour: Color = colour
@@ -73,7 +72,7 @@ class PositionVisitor(BaseVisitor):
 			else:
 				text = ''
 
-			question_key = " ".join(board.fen().split()[:4])
+			question_key = ' '.join(board.fen().split()[:4])
 
 			# Construct PGN representation leading up to the current move.
 			current_game = Game()
@@ -108,7 +107,7 @@ class PositionVisitor(BaseVisitor):
 				board=answer_board,
 				game=current_game,
 				colour=self.colour,
-				web_path=self.web_path
+				web_path=self.web_path,
 			)
 
 			if question_key not in self.cards:
@@ -135,7 +134,9 @@ class PositionVisitor(BaseVisitor):
 			self.my_move = False
 
 	def visit_comment(self, comment: str) -> None:
-		if self.last_question_key and isinstance(self.cards[self.last_question_key], Question):
+		if self.last_question_key and isinstance(
+			self.cards[self.last_question_key], Question
+		):
 			question: Question = cast(Question, self.cards[self.last_question_key])
 			if self.my_move:
 				question.answers[-1].add_comment(comment)

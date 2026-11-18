@@ -11,24 +11,23 @@ import os
 import re
 from pathlib import Path
 from typing import Any, Union
-import semantic_version as sv
+
 import anki
-from aqt import mw
-from anki.notes import NotetypeId
+import semantic_version as sv
 from anki.decks import DeckId
+from anki.notes import NotetypeId
+from aqt import mw
 
 from .basic_names import basic_names
 
+
 class Updater:
-
-
 	# pylint: disable=too-few-public-methods
 	def __init__(self, version: sv.Version, anki_mw=mw):
 		if anki_mw is None:
 			raise RuntimeError(_('Cannot run without main window!'))
 		self.mw = anki_mw
 		self.version = version
-
 
 	def update_config(self, old: Any) -> Any:
 		config = self._update(old)
@@ -65,7 +64,7 @@ class Updater:
 
 		def replace_href(match: re.Match) -> str:
 			url = match.group(1)
-			return f'<a href="{url.replace(' ', '_').replace('%20', '_')}"'
+			return f'<a href="{url.replace(" ", "_").replace("%20", "_")}"'
 
 		for id in raw['imports']:
 			deck_id = DeckId(id)
@@ -117,7 +116,7 @@ class Updater:
 				if deck_id:
 					raw['imports'][str(deck_id)] = {
 						'colour': 'white',
-						'files': raw['files']['white']
+						'files': raw['files']['white'],
 					}
 					raw['decks']['white'] = deck_id
 			if 'black' in decks:
@@ -125,7 +124,7 @@ class Updater:
 				if deck_id:
 					raw['imports'][str(deck_id)] = {
 						'colour': 'black',
-						'files': raw['files']['black']
+						'files': raw['files']['black'],
 					}
 					raw['decks']['black'] = deck_id
 
@@ -138,10 +137,10 @@ class Updater:
 
 		return raw
 
-	def _patch_notes_v1_0_0(self, config:Any):
+	def _patch_notes_v1_0_0(self, config: Any):
 		# pylint: disable=too-many-locals
 		col = self.mw.col
-		mm  = col.media
+		mm = col.media
 		media_dir = mm.dir()
 
 		for _, deck_id in config.get('decks', {}).items():
@@ -150,7 +149,9 @@ class Updater:
 					card = col.get_card(cid)
 					note = card.note()
 
-					pattern = r'<img src="(chess-opening-trainer-[wb]-([0-9a-f]{40})\.svg)">'
+					pattern = (
+						r'<img src="(chess-opening-trainer-[wb]-([0-9a-f]{40})\.svg)">'
+					)
 					text = note.fields[0] + note.fields[1]
 					for match in re.finditer(pattern, text):
 						old_name = match.group(1)
@@ -200,7 +201,11 @@ class Updater:
 		if 'imports' not in raw:
 			raw['imports'] = {}
 
-		if 'notetype' not in raw or raw['notetype'] is None or isinstance(raw['notetype'], str):
+		if (
+			'notetype' not in raw
+			or raw['notetype'] is None
+			or isinstance(raw['notetype'], str)
+		):
 			raw['notetype'] = self._get_basic_notetype()
 
 		return raw

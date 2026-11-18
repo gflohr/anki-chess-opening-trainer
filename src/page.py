@@ -16,14 +16,16 @@ from chess import Board
 from chess.svg import Arrow
 
 ARROWS_REGEX = re.compile(
-    r"""
+	r"""
 	(?P<prefix>[ \t\n\v\f\r]*?)
 	\[%(?P<type>c[as]l)\s(?P<arrows>
 		[RGYB]?[a-h][1-8](?:[a-h][1-8])?
 		(?:[ \t\n\v\f\r]*,[ \t\n\v\f\r]*[RGYB]?[a-h][1-8](?:[a-h][1-8])?)*
 	)\]
 	(?P<postfix>[ \t\n\v\f\r]*?)
-	""", re.VERBOSE)
+	""",
+	re.VERBOSE,
+)
 
 WS_REGEX = re.compile('[ \t\n\v\\f]')
 
@@ -42,6 +44,7 @@ class Page:
 		self.board = board
 
 	def process_arrows(self, comment: str) -> str:
+
 		def purge_arrows(match):
 			arrow_type = match.group('type')
 			specs = match.group('arrows')
@@ -50,8 +53,7 @@ class Page:
 			if 'cal' == arrow_type:
 				for spec in specs.split(','):
 					try:
-						self.arrows.append(
-						    Arrow.from_pgn(re.sub(WS_REGEX, '', spec)))
+						self.arrows.append(Arrow.from_pgn(re.sub(WS_REGEX, '', spec)))
 					except ValueError:
 						# Ignore!
 						pass
@@ -59,12 +61,7 @@ class Page:
 				for spec in specs.split(','):
 					# %csl takes just a square.  Ignore the rest of the string
 					# if two squares had been given.
-					colors = {
-					    'R': 'red',
-					    'G': 'green',
-					    'Y': 'yellow',
-					    'B': 'blue'
-					}
+					colors = {'R': 'red', 'G': 'green', 'Y': 'yellow', 'B': 'blue'}
 					color = 'green'
 					if spec[0] in colors:
 						color = colors[spec[0]]
@@ -105,7 +102,7 @@ class Page:
 
 		rendered += f'<link rel="stylesheet" href="{self.web_path}/index.css">'
 		rendered += f'<script type="module" src="{self.web_path}/bundle.js"></script>'
-		rendered += f'<div id="app"></div>'
+		rendered += '<div id="app"></div>'
 
 		return rendered
 
@@ -127,11 +124,13 @@ class Page:
 
 		for square, side in self.fills.items():
 			arrows.append(Arrow(tail=square, head=square, color=side))
-		svg = chess.svg.board(self.board,
-		                      lastmove=lastmove,
-		                      orientation=self.colour,
-		                      arrows=arrows,
-		                      check=check)
+		svg = chess.svg.board(
+			self.board,
+			lastmove=lastmove,
+			orientation=self.colour,
+			arrows=arrows,
+			check=check,
+		)
 
 		with open(path, 'w', encoding='cp1252') as file:
 			file.write(svg)

@@ -1,7 +1,7 @@
-from chess import Board, Color
-import chess.pgn
 from typing import Dict
 
+import chess.pgn
+from chess import Board, Color
 
 # FIXME! The code raises exception if internal assumptions fail. However, these
 # exception will not be helpful at all when presented to the user. Define
@@ -9,8 +9,9 @@ from typing import Dict
 # being applied so that a post-mortem analysis can produce better error
 # messages.
 
+
 class Collector:
-	'''Collector and aggregator for PGN chess games for Anki note generation.'''
+	"""Collector and aggregator for PGN chess games for Anki note generation."""
 
 	def __init__(self, colour: Color) -> None:
 		if colour == chess.WHITE:
@@ -26,7 +27,7 @@ class Collector:
 		self._starting_fen = self._normalise_fen(chess.STARTING_FEN)
 
 	def games(self) -> Dict[str, chess.pgn.Game]:
-		'''Get all collected games.
+		"""Get all collected games.
 
 		Games are distinguished by their normalised starting position (ignoring
 		the move number and halfmove count). The returned dictionary keys are
@@ -35,14 +36,14 @@ class Collector:
 
 		Returns:
 			A dictionary mapping the reconstructed FEN keys to the collected games.
-		'''
+		"""
 		return {
 			f'{fen} 0 {self._move_numbers[fen]}': game
 			for fen, game in self._games.items()
 		}
 
 	def add_game(self, board: Board) -> str:
-		'''Add a new game with the given start position. If there is already a
+		"""Add a new game with the given start position. If there is already a
 		game with that start position, it is merged into the existing game
 		instead.
 
@@ -51,7 +52,7 @@ class Collector:
 
 		Returns:
 			The id (normalised FEN) of the game.
-		'''
+		"""
 		initial_fen = board.fen()
 		fen = self._normalise_fen(initial_fen)
 		move_number = board.fullmove_number
@@ -63,15 +64,19 @@ class Collector:
 
 		if fen not in self._games:
 			if fen == self._starting_fen:
-				self._games[fen] = chess.pgn.Game({
-					'Colour': self._colour,
-				})
+				self._games[fen] = chess.pgn.Game(
+					{
+						'Colour': self._colour,
+					}
+				)
 			else:
-				self._games[fen] = chess.pgn.Game({
-					'Colour': self._colour,
-					'SetUp': '1',
-					'FEN': initial_fen,
-				})
+				self._games[fen] = chess.pgn.Game(
+					{
+						'Colour': self._colour,
+						'SetUp': '1',
+						'FEN': initial_fen,
+					}
+				)
 				self._games[fen].setup(board)
 			self._seen[fen] = self._games[fen]
 			self._move_numbers[fen] = move_number
@@ -83,8 +88,10 @@ class Collector:
 
 		return fen
 
-	def add_move(self, game_id: str, move: chess.Move, fen_before: str, fen_after: str) -> str:
-		'''Add a move to the game tree identified by its game id.
+	def add_move(
+		self, game_id: str, move: chess.Move, fen_before: str, fen_after: str
+	) -> str:
+		"""Add a move to the game tree identified by its game id.
 
 		Args:
 			game_id: The id of the game as returned by add_game().
@@ -94,9 +101,9 @@ class Collector:
 
 		Returns:
 			The id of the game to continue with.
-		'''
+		"""
 		fen = self._normalise_fen(fen_before)
-		if not fen in self._seen:
+		if fen not in self._seen:
 			raise Exception('Corrupted state, parent position not found!')
 
 		parent = self._seen[fen]
@@ -113,15 +120,15 @@ class Collector:
 		return new_game_id
 
 	def add_comment(self, comment: str) -> None:
-		'''Add a comment to the last added move.'''
+		"""Add a comment to the last added move."""
 		pass
 
 	def add_nag(self, nag: int) -> None:
-		'''Add a NAG to the last added move.'''
+		"""Add a NAG to the last added move."""
 		pass
 
 	def add_variation_comment(self, comment: str) -> None:
-		'''Add a comment to the last added game or variation header.'''
+		"""Add a comment to the last added game or variation header."""
 		pass
 
 	def begin_variation(self) -> None:
@@ -136,7 +143,7 @@ class Collector:
 	def _find_game_id(self, node: chess.pgn.GameNode) -> str:
 		game_id = self._normalise_fen(node.root().board().fen())
 
-		if not game_id in self._games:
+		if game_id not in self._games:
 			raise Exception('Game graph corrupt! Root position not found!')
 
 		return game_id

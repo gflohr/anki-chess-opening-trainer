@@ -1,33 +1,33 @@
 from typing import List, TypedDict
 
-from chess import Color
 import chess
+from chess import Color
 from chess.pgn import SKIP, BaseVisitor
 
 from pgn_import.collector import Collector
 
 
 class PGNError(TypedDict):
+	"""Stores an error message with a game number."""
 
-	'''Stores an error message with a game number.'''
 	error: str
 	gameno: int
 
 
 class Visitor(BaseVisitor):
-
-	'''Collects moves and comments.
+	"""Collects moves and comments.
 
 	Args:
 		collector: The Collector to interact with.
 		drop_white_variations: True if only white mainlines should be used.
 		drop_black_variations: True if only black mainlines should be used.
-	'''
+	"""
+
 	def __init__(
-			self,
-			collector: Collector,
-			drop_white_variations: bool = False,
-			drop_black_variations: bool = False,
+		self,
+		collector: Collector,
+		drop_white_variations: bool = False,
+		drop_black_variations: bool = False,
 	):
 		super().__init__()
 
@@ -64,7 +64,8 @@ class Visitor(BaseVisitor):
 				game_id=self._game_id,
 				move=self._last_move,
 				fen_before=self._fen_before,
-				fen_after=self._fen_after)
+				fen_after=self._fen_after,
+			)
 
 	def visit_move(self, board, move):
 		self._fen_before = board.fen()
@@ -104,10 +105,7 @@ class Visitor(BaseVisitor):
 		self._collector.add_nag(nag)
 
 	def handle_error(self, error: Exception):
-		self._errors.append({
-			'gameno': self._gameno,
-			'error': str(error)
-		})
+		self._errors.append({'gameno': self._gameno, 'error': str(error)})
 
 	def result(self) -> List[PGNError]:
 		return self._errors

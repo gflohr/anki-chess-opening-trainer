@@ -53,10 +53,6 @@ src/basic_names.py:
 vendor:
 	$(PYTHON) -m ankiscripts.vendor
 
-fix:
-	$(PYTHON) -m yapf src --recursive --in-place
-	$(PYTHON) -m isort src
-
 mypy:
 	# See https://github.com/python/mypy/issues/8727
 	-$(PYTHON) -m mypy src --exclude=src/vendor --exclude=src/forms \

@@ -1,7 +1,9 @@
-import unittest
 import copy
-import semantic_version as sv
+import unittest
 from unittest.mock import MagicMock, patch
+
+import semantic_version as sv
+
 from src.updater import Updater
 
 WHITE_DECK_NAME = 'Chess::Opening::White'
@@ -44,6 +46,7 @@ class TestUpdate(unittest.TestCase):
 			elif name == BLACK_DECK_NAME:
 				return BLACK_DECK_ID
 			return None
+
 		mock_mw.col.decks.id_for_name.side_effect = id_for_deck_name
 
 		# Default empty loop return for card search sequences.
@@ -54,6 +57,7 @@ class TestUpdate(unittest.TestCase):
 			if name in BASIC_NAMES.values():
 				return MOCK_NOTETYPE_ID
 			return None
+
 		mock_mw.col.models.id_for_name.side_effect = id_for_model_name
 
 	@patch('src.updater.basic_names', BASIC_NAMES)
@@ -80,14 +84,8 @@ class TestUpdate(unittest.TestCase):
 		# Simulated legacy pre-1.0.0 configurations.
 		legacy_config = {
 			'version': '0.5.0',
-			'decks': {
-				'white': WHITE_DECK_NAME,
-				'black': BLACK_DECK_NAME
-			},
-			'files': {
-				'white': ['/path/to/white.pgn'],
-				'black': ['/path/to/black.pgn']
-			}
+			'decks': {'white': WHITE_DECK_NAME, 'black': BLACK_DECK_NAME},
+			'files': {'white': ['/path/to/white.pgn'], 'black': ['/path/to/black.pgn']},
 		}
 
 		got = updater.update_config(legacy_config)
@@ -98,7 +96,9 @@ class TestUpdate(unittest.TestCase):
 		self.assertEqual(got['decks']['black'], BLACK_DECK_ID)
 
 		self.assertIn(str(WHITE_DECK_ID), got['imports'])
-		self.assertEqual(got['imports'][str(WHITE_DECK_ID)]['files'], ['/path/to/white.pgn'])
+		self.assertEqual(
+			got['imports'][str(WHITE_DECK_ID)]['files'], ['/path/to/white.pgn']
+		)
 		self.assertNotIn('files', got)  # Top level 'files' key should be deleted
 
 	@patch('src.updater.basic_names', BASIC_NAMES)
@@ -113,7 +113,7 @@ class TestUpdate(unittest.TestCase):
 			'colour': 'black',
 			'decks': {'white': 111, 'black': 222},
 			'imports': {},
-			'notetype': MOCK_NOTETYPE_ID
+			'notetype': MOCK_NOTETYPE_ID,
 		}
 
 		# Stash copy to verify it didn't change mutate properties
@@ -127,6 +127,7 @@ class TestUpdate(unittest.TestCase):
 	def test_config_with_tag(self):
 		"""Tests that config with tag field in imports validates and is preserved."""
 		from jsonschema import validate
+
 		from src.schema import schema
 
 		version = sv.Version('1.2.3')
@@ -140,10 +141,10 @@ class TestUpdate(unittest.TestCase):
 				str(WHITE_DECK_ID): {
 					'colour': 'white',
 					'files': ['/path/to/italian.pgn'],
-					'tag': 'italian_game'
+					'tag': 'italian_game',
 				}
 			},
-			'notetype': MOCK_NOTETYPE_ID
+			'notetype': MOCK_NOTETYPE_ID,
 		}
 
 		# Verify it passes jsonschema validation
@@ -164,8 +165,8 @@ class TestUpdate(unittest.TestCase):
 		mock_card = MagicMock()
 		mock_note = MagicMock()
 		mock_note.fields = [
-			"Some question",
-			'<a href="https://lichess.org/analysis?fen=k7/8/8/1Q6/8/2K5/8/8%20b%20-%20- 5 3"  target="_blank" rel="noopener noreferrer">'
+			'Some question',
+			'<a href="https://lichess.org/analysis?fen=k7/8/8/1Q6/8/2K5/8/8%20b%20-%20- 5 3"  target="_blank" rel="noopener noreferrer">',
 		]
 		mock_card.note.return_value = mock_note
 		self.mw_mock.col.get_card.return_value = mock_card
@@ -180,7 +181,7 @@ class TestUpdate(unittest.TestCase):
 					'files': ['/path/to/test.pgn'],
 				}
 			},
-			'notetype': MOCK_NOTETYPE_ID
+			'notetype': MOCK_NOTETYPE_ID,
 		}
 
 		got = updater.update_config(config)
@@ -188,7 +189,10 @@ class TestUpdate(unittest.TestCase):
 		self.assertEqual(got['version'], version)
 		expected_url = 'https://lichess.org/analysis?fen=k7/8/8/1Q6/8/2K5/8/8_b_-_-_5_3'
 		self.assertIn(expected_url, mock_note.fields[1])
-		self.mw_mock.col.update_note.assert_called_once_with(mock_note, skip_undo_entry=True)
+		self.mw_mock.col.update_note.assert_called_once_with(
+			mock_note, skip_undo_entry=True
+		)
+
 
 if __name__ == '__main__':
 	unittest.main()

@@ -11,14 +11,16 @@ from __future__ import annotations
 
 from urllib import parse
 
-from chess import Board, Color, STARTING_FEN
+from chess import STARTING_FEN, Board, Color
 from chess.pgn import Game, StringExporter
 
 from .page import Page
 
 
 class Answer(Page):
-	def __init__(self, move: str, board: Board, game: Game, colour: Color, web_path: str):
+	def __init__(
+		self, move: str, board: Board, game: Game, colour: Color, web_path: str
+	):
 		fullmove_number = board.fullmove_number
 		turn = not board.turn
 		self.move = move
@@ -72,9 +74,11 @@ class Answer(Page):
 
 	def find(self, others: list[Answer]) -> bool:
 		for answer in others:
-			if (answer.move == self.move
-			    and answer.fullmove_number == self.fullmove_number
-			    and answer.turn == self.turn):
+			if (
+				answer.move == self.move
+				and answer.fullmove_number == self.fullmove_number
+				and answer.turn == self.turn
+			):
 				return True
 
 		return False

@@ -27,32 +27,27 @@ dev = [
     "pytest-sugar>=1.1.1",
     "pytest-watch>=4.2.0",
     "pytest-testmon>=2.3.0",
+    "ruff>=0.17.5",
 ]
 
 [tool.uv.sources]
 ankiscripts = { git = "https://github.com/abdnh/ankiscripts", rev = "ed96ad699fe9dd52e6baec92e4619664fe28fd15" }
 
-[tool.yapf]
-based_on_style = "pep8"
+[tool.ruff]
+# Register translation functions as builtins globally to prevent F821 errors
+builtins = ["_", "ngettext"]
 
-# See https://lea.verou.me/blog/2012/01/why-tabs-are-clearly-superior/.
-use_tabs = "True"
-
-i18n_comment = "# TRANSLATORS:"
-i18n_function_call = ["_", "ngettext"]
-
-
-[tool.yapfignore]
-ignore_patterns = [
-	"src/forms/**/*",
-	"src/vendor/**/*"
+exclude = [
+    "src/forms/**",
+    "src/vendor/**",
 ]
 
-[tool.isort]
-skip = [
-	"src/forms/**/*",
-	"src/vendor/**/*"
-]
+[tool.ruff.format]
+indent-style = "tab"
+quote-style = "single"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
 
 [tool.pylint.main]
 # This module is not meant to be reused.  For the time being, I do not

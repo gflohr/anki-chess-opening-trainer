@@ -1,7 +1,6 @@
 schema = {
 	'$schema': 'http://json-schema.org/draft-07/schema#',
-	'$id':
-	'https://www.guido-flohr.net/schema/anki-chess-opening-trainer.json',
+	'$id': 'https://www.guido-flohr.net/schema/anki-chess-opening-trainer.json',
 	'title': 'Config',
 	'description': 'Configuration for the Anki Chess Opening Trainer Add-On',
 	'type': 'object',
@@ -9,19 +8,15 @@ schema = {
 	'required': ['version', 'colour', 'decks', 'imports', 'notetype'],
 	'properties': {
 		'version': {
-			'description':
-			'The add-on version that has generated this configuration',
-			'type':
-			'string',
-			'pattern':
-			'^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$'
+			'description': 'The add-on version that has generated this configuration',
+			'type': 'string',
+			'pattern': '^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$',
 		},
 		'colour': {
-			'description':
-			'The side (black or white) that this game collection contains good moves for.',
+			'description': 'The side (black or white) that this game collection contains good moves for.',
 			'type': 'string',
 			'enum': ['white', 'black'],
-			'default': 'white'
+			'default': 'white',
 		},
 		'decks': {
 			'description': 'The currently selected deck for each colour.',
@@ -33,15 +28,15 @@ schema = {
 					'description': 'Currently selected deck for white',
 					'type': ['integer', 'null'],
 					'default': None,
-					'minimum': 1
+					'minimum': 1,
 				},
 				'black': {
 					'description': 'Currently selected deck for black',
 					'type': ['integer', 'null'],
 					'default': None,
-					'minimum': 1
-				}
-			}
+					'minimum': 1,
+				},
+			},
 		},
 		'imports': {
 			'type': 'object',
@@ -55,45 +50,36 @@ schema = {
 					'properties': {
 						'colour': {
 							'type': 'string',
-							'description':
-							'The colour (either black or white)',
-							'enum': ['black', 'white']
+							'description': 'The colour (either black or white)',
+							'enum': ['black', 'white'],
 						},
 						'files': {
 							'type': 'array',
 							'description': 'The list of imported file names',
-							'items': {
-								'type': 'string'
-							}
+							'items': {'type': 'string'},
 						},
 						'tag': {
 							'type': 'string',
-							'description':
-							'Optional tag for notes in this opening'
+							'description': 'Optional tag for notes in this opening',
 						},
 						'drop-white-varations': {
-							'type':
-							'boolean',
-							'description':
-							'True if only mainlines for white should be imported'
+							'type': 'boolean',
+							'description': 'True if only mainlines for white should be imported',
 						},
 						'drop-black-varations': {
-							'type':
-							'boolean',
-							'description':
-							'True if only mainlines for black should be imported'
-						}
+							'type': 'boolean',
+							'description': 'True if only mainlines for black should be imported',
+						},
 					},
-					'required': ['colour', 'files']
+					'required': ['colour', 'files'],
 				}
-			}
+			},
 		},
 		'notetype': {
 			'description': 'The notetype to use for card generation.',
 			'type': ['integer', 'null'],
 			'default': None,
-			'minimum': 1
-		}
-	}
+			'minimum': 1,
+		},
+	},
 }
-

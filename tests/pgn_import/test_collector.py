@@ -1,17 +1,20 @@
 from pathlib import Path
+
 import chess
 import chess.pgn
 import pytest
+
 from src.pgn_import.collector import Collector
 from src.pgn_import.visitor import Visitor
 
 
 def test_collector_initialization() -> None:
-	'''Test that the Collector initializes with an empty games dictionary.'''
+	"""Test that the Collector initializes with an empty games dictionary."""
 	collector = Collector(colour=chess.WHITE)
 
 	assert isinstance(collector.games(), dict)
 	assert len(collector.games()) == 0
+
 
 def test_collector_loads_simple_pgn() -> None:
 	fixture_path = Path(__file__).parent.parent / 'fixtures' / 'simple.pgn'
@@ -34,8 +37,9 @@ def test_collector_loads_simple_pgn() -> None:
 		assert game_count == 3
 		assert len(collector.games()) == 2
 
+
 def test_collector_black_deck() -> None:
-	'''Test that Collector properly sets colour headers for a Black repertoire deck.'''
+	"""Test that Collector properly sets colour headers for a Black repertoire deck."""
 	collector = Collector(colour=chess.BLACK)
 
 	collector.add_game(chess.Board())
@@ -47,12 +51,12 @@ def test_collector_black_deck() -> None:
 
 
 def test_collector_custom_starting_position() -> None:
-	'''Test that Collector correctly handles custom non-standard starting positions and move numbers.'''
+	"""Test that Collector correctly handles custom non-standard starting positions and move numbers."""
 	collector = Collector(colour=chess.WHITE)
 
 	# Custom position after 1. e4 e5 (Fullmove 2)
 	custom_fen = 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/5PPP/RNBQKBNR w KQkq - 0 2'
-	game_id = collector.add_game(chess.Board(custom_fen))
+	collector.add_game(chess.Board(custom_fen))
 
 	games = collector.games()
 	assert len(games) == 1
@@ -67,12 +71,15 @@ def test_collector_custom_starting_position() -> None:
 	assert stored_game.headers['FEN'] == custom_fen
 	assert stored_game.board().fullmove_number == 2
 
+
 def describe_london_system_variations():
 
 	@pytest.fixture
 	def collector() -> Collector:
-		'''Fixture that loads london-variations.pgn and parses it into a collector.'''
-		fixture_path = Path(__file__).parent.parent / 'fixtures' / 'london-variations.pgn'
+		"""Fixture that loads london-variations.pgn and parses it into a collector."""
+		fixture_path = (
+			Path(__file__).parent.parent / 'fixtures' / 'london-variations.pgn'
+		)
 		assert fixture_path.exists(), f'Fixture not found at {fixture_path}'
 
 		collector = Collector(colour=chess.WHITE)
@@ -85,7 +92,7 @@ def describe_london_system_variations():
 			def get_visitor() -> chess.pgn.BaseVisitor:
 				return visitor
 
-			while not chess.pgn.read_game(study_pgn, Visitor=get_visitor) == None:
+			while chess.pgn.read_game(study_pgn, Visitor=get_visitor) is not None:
 				game_count += 1
 
 			# Assert that two games were processed.

@@ -1,7 +1,10 @@
 from unittest.mock import MagicMock
+
 import chess
 from chess.pgn import SKIP
+
 from pgn_import.visitor import Visitor
+
 
 def describe_basic_functionality():
 
@@ -19,7 +22,6 @@ def describe_basic_functionality():
 
 		collector.add_game.assert_called_once_with(board)
 
-
 	def visitor_collects_and_returns_errors() -> None:
 		collector = MagicMock()
 		visitor = Visitor(collector)
@@ -30,10 +32,7 @@ def describe_basic_functionality():
 		res = visitor.result()
 
 		# Assert output behavior
-		assert res == [{
-			'gameno': 2,
-			'error': 'Invalid PGN syntax'
-		}]
+		assert res == [{'gameno': 2, 'error': 'Invalid PGN syntax'}]
 
 	def visitor_adds_moves() -> None:
 		collector = MagicMock()
@@ -58,10 +57,7 @@ def describe_basic_functionality():
 		visitor.visit_board(board)
 
 		collector.add_move.assert_called_once_with(
-			game_id=game_id,
-			move=move,
-			fen_before=initial,
-			fen_after=after_white
+			game_id=game_id, move=move, fen_before=initial, fen_after=after_white
 		)
 
 		collector.add_move.reset_mock()
@@ -69,23 +65,23 @@ def describe_basic_functionality():
 		move = chess.Move.from_uci('d7d5')
 		visitor.visit_move(board, move)
 		board.push(move)
-		after_black=board.fen()
+		after_black = board.fen()
 		visitor.visit_board(board)
 
 		collector.add_move.assert_called_once_with(
 			game_id=new_game_id,
 			move=move,
 			fen_before=after_white,
-			fen_after=after_black
+			fen_after=after_black,
 		)
+
 
 def describe_variation_skipping():
 	def skips_white_variations_when_requested() -> None:
 		collector = MagicMock()
 		visitor = Visitor(
-			collector,
-			drop_white_variations=True,
-			drop_black_variations=False)
+			collector, drop_white_variations=True, drop_black_variations=False
+		)
 
 		board = chess.Board()
 		board.push_uci('d2d4')
@@ -102,9 +98,8 @@ def describe_variation_skipping():
 	def skips_black_variations_when_requested() -> None:
 		collector = MagicMock()
 		visitor = Visitor(
-			collector,
-			drop_white_variations=False,
-			drop_black_variations=True)
+			collector, drop_white_variations=False, drop_black_variations=True
+		)
 
 		board = chess.Board()
 		board.push_uci('d2d4')
@@ -121,9 +116,7 @@ def describe_variation_skipping():
 
 	def skips_not_white_variations_by_default() -> None:
 		collector = MagicMock()
-		visitor = Visitor(
-			collector,
-			drop_black_variations=True)
+		visitor = Visitor(collector, drop_black_variations=True)
 
 		board = chess.Board()
 		board.push_uci('d2d4')
@@ -139,9 +132,7 @@ def describe_variation_skipping():
 
 	def skips_not_black_variations_by_default() -> None:
 		collector = MagicMock()
-		visitor = Visitor(
-			collector,
-			drop_white_variations=True)
+		visitor = Visitor(collector, drop_white_variations=True)
 
 		board = chess.Board()
 		board.push_uci('d2d4')
@@ -190,6 +181,7 @@ def describe_variation_skipping():
 		visitor.end_variation()
 		collector.end_variation.assert_called_once()
 
+
 def describe_comments_nags():
 	def it_should_add_move_comments() -> None:
 
@@ -202,7 +194,7 @@ def describe_comments_nags():
 		visitor.visit_board(board)
 		board.push_uci('d2d4')
 		visitor.visit_move(board, chess.Move.from_uci('d2d4'))
-		comment = 'Queen\'s Pawn Opening'
+		comment = "Queen's Pawn Opening"
 		visitor.visit_comment(comment)
 
 		collector.add_comment.assert_called_once_with(comment)
