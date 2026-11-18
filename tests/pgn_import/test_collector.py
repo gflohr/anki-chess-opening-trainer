@@ -113,9 +113,7 @@ def describe_comment_handling():
 	@pytest.fixture
 	def collector() -> Collector:
 		"""Fixture that loads comments.pgn and parses it into a collector."""
-		fixture_path = (
-			Path(__file__).parent.parent / 'fixtures' / 'comments.pgn'
-		)
+		fixture_path = Path(__file__).parent.parent / 'fixtures' / 'comments.pgn'
 		assert fixture_path.exists(), f'Fixture not found at {fixture_path}'
 
 		collector = Collector(colour=chess.WHITE)
@@ -133,7 +131,7 @@ def describe_comment_handling():
 
 	def it_should_add_move_comments(collector: Collector):
 		games = collector.games()
-		assert(len(games)) == 1
+		assert (len(games)) == 1
 
 		game = list(games.values())[0]
 		assert game.variations
@@ -142,3 +140,18 @@ def describe_comment_handling():
 		node.comment
 
 		assert node.comment == 'Open Game.'
+
+	def it_should_merge_move_comments(collector: Collector):
+		games = collector.games()
+		assert (len(games)) == 1
+
+		game = list(games.values())[0]
+		assert game.variations
+
+		# Traverse the mainline down to ply 2 (1... e5)
+		node = game
+		for _ in range(2):
+			assert node.variations, 'Expected a move variation at this ply.'
+			node = node.variation(0)
+
+		assert node.comment == "Black mirror's White's move.{}Controls the centre."
