@@ -168,3 +168,11 @@ def describe_comment_handling():
 			node = node.variation(0)
 
 		assert node.comment == "Attacks black's pawn."
+
+	def it_should_add_game_comments(collector: Collector):
+		games = collector.games()
+		assert (len(games)) == 1
+
+		game = list(games.values())[0]
+
+		assert game.starting_comment == 'Opening repertoire for white.'

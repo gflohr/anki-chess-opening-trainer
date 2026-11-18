@@ -142,7 +142,17 @@ class Collector:
 
 	def add_variation_comment(self, comment: str) -> None:
 		"""Add a comment to the last added game or variation header."""
-		pass
+		if not self._current_node:
+			return
+
+		current = self._current_node.starting_comment
+		if not current:
+			self._current_node.starting_comment = comment
+		else:
+			# Split existing concatenated comments using {} as the separator.
+			comments = current.split('{}')
+			if comment not in comments:
+				self._current_node.starting_comment = self._current_node.starting_comment + '{}' + comment
 
 	def begin_variation(self) -> None:
 		pass
