@@ -215,9 +215,8 @@ export class GameGraphService {
 			}
 		}
 
-		const activeId = selectedBoardId ??
-			answerMoves?.[0].id
-			?? this.findLeaf()?.id;
+		const activeId =
+			selectedBoardId ?? answerMoves?.[0].id ?? this.findLeaf()?.id;
 		if (typeof activeId !== 'undefined') {
 			for (const row of rows) {
 				if (row.white?.id === activeId) {

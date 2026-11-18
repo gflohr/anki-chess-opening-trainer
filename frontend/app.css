@@ -62,23 +62,23 @@ td,
 }
 
 @font-face {
-	font-family: 'Noto Sans';
-	src: url('/fonts/noto-sans-latin.woff2') format('woff2');
+	font-family: "Noto Sans";
+	src: url("/fonts/noto-sans-latin.woff2") format("woff2");
 	font-weight: 400;
 	font-style: normal;
 	font-display: swap;
 }
 
 @font-face {
-	font-family: 'Noto Chess';
-	src: url('/fonts/lichess-chess.woff2') format('woff2');
+	font-family: "Noto Chess";
+	src: url("/fonts/lichess-chess.woff2") format("woff2");
 	font-weight: 400;
 	font-style: normal;
 	font-display: swap;
 }
 
 body {
-	font-family: 'Noto Sans', sans-serif;
+	font-family: "Noto Sans", sans-serif;
 	background-color: var(--bg-app);
 	color: var(--text-main);
 	height: 100vh;
@@ -363,7 +363,7 @@ input:checked + .slider:before {
 
 /* Per-column hover & cell styling */
 .move-cell {
-	font-family: 'Noto Chess', sans-serif;
+	font-family: "Noto Chess", sans-serif;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

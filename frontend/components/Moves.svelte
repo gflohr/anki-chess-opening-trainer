@@ -1,9 +1,9 @@
 <script lang="ts">
+    import { createDataTransfer } from '@testing-library/user-event/dist/cjs/utils/index.js';
     import { rawCheck } from 'valibot';
 	import type { Card } from '../domain/card.js';
     import { GameGraphService, type MoveCell, type MoveRow, type NavLookup } from '../domain/game-graph-service.js';
 	import type { GameNode, GraphMove, Move } from '../domain/types.js';
-    import { createDataTransfer } from '@testing-library/user-event/dist/cjs/utils/index.js';
 
 	interface Props {
 		pcard: Partial<Card>;
