@@ -138,7 +138,10 @@ class Collector:
 
 	def add_nag(self, nag: int) -> None:
 		"""Add a NAG to the last added move."""
-		pass
+		if not self._current_node:
+			return
+
+		self._current_node.nags.add(nag)
 
 	def add_variation_comment(self, comment: str) -> None:
 		"""Add a comment to the last added game or variation header."""

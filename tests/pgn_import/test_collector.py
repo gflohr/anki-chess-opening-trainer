@@ -176,3 +176,18 @@ def describe_comment_handling():
 		game = list(games.values())[0]
 
 		assert game.starting_comment == 'Opening repertoire for white.'
+
+	def it_should_add_nags(collector: Collector):
+		games = collector.games()
+		assert (len(games)) == 1
+
+		game = list(games.values())[0]
+
+		# Traverse the mainline down to ply 6 (3... Nb8)
+		node = game
+		for _ in range(6):
+			assert node.variations, 'Expected a move variation at this ply.'
+			node = node.variation(0)
+
+		assert 4 in node.nags
+
