@@ -6,6 +6,7 @@
 	"scripts": {
 		"check": "biome check",
 		"check:fix": "biome check --write",
+		"check:fix:staged": "lint-staged",
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
@@ -20,6 +21,11 @@
 		"test:vitest:watch": "vitest",
 		"prepare": "husky"
 	},
+	"lint-staged": {
+		"*.{ts,tsx,js,jsx,json,css}": [
+			"pnpm run check:fix --no-errors-on-unmatched"
+		]
+	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.6.4",
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
@@ -32,6 +38,7 @@
 		"chess.js": "^1.4.0",
 		"happy-dom": "^21.0.4",
 		"husky": "^9.1.7",
+		"lint-staged": "^17.6.1",
 		"svelte": "^5.57.2",
 		"svelte-check": "^4.7.7",
 		"typescript": "~6.0.3",

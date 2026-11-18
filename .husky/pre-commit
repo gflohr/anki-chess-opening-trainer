@@ -1,2 +1,5 @@
+set -e
+
 node scripts/branch-check.mjs
 pnpm run test:python --testmon && pnpm run test:vitest --changed
+pnpm run check:fix:staged
