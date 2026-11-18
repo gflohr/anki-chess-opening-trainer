@@ -146,7 +146,6 @@ def describe_comment_handling():
 		assert (len(games)) == 1
 
 		game = list(games.values())[0]
-		assert game.variations
 
 		# Traverse the mainline down to ply 2 (1... e5)
 		node = game
@@ -155,3 +154,17 @@ def describe_comment_handling():
 			node = node.variation(0)
 
 		assert node.comment == "Black mirror's White's move.{}Controls the centre."
+
+	def it_should_discard_duplicate_comments(collector: Collector):
+		games = collector.games()
+		assert (len(games)) == 1
+
+		game = list(games.values())[0]
+
+		# Traverse the mainline down to ply 3 (2. Nf3)
+		node = game
+		for _ in range(3):
+			assert node.variations, 'Expected a move variation at this ply.'
+			node = node.variation(0)
+
+		assert node.comment == "Attacks black's pawn."
