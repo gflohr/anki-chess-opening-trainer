@@ -43,5 +43,6 @@ src/web
 *.sln
 *.sw?
 
-# Testmon
+# Other
 .testmondata
+/coverage
