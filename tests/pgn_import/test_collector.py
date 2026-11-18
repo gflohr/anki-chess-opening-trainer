@@ -3,6 +3,7 @@ import chess
 import chess.pgn
 import pytest
 from src.pgn_import.collector import Collector
+from src.pgn_import.visitor import Visitor
 
 
 def test_collector_initialization() -> None:
@@ -18,6 +19,7 @@ def test_collector_loads_simple_pgn() -> None:
 
 	collector = Collector(colour=chess.WHITE)
 
+	print('import simple.pgn')
 	with open(fixture_path, 'r', encoding='utf-8') as f:
 		game_count = 0
 		while True:
@@ -25,9 +27,10 @@ def test_collector_loads_simple_pgn() -> None:
 			if game is None:
 				break
 
-			collector.add_game(game.board().fen())
+			collector.add_game(game.board())
 			game_count += 1
 
+		print(f'game count: {game_count}')
 		assert game_count == 3
 		assert len(collector.games()) == 2
 
@@ -35,7 +38,7 @@ def test_collector_black_deck() -> None:
 	'''Test that Collector properly sets colour headers for a Black repertoire deck.'''
 	collector = Collector(colour=chess.BLACK)
 
-	collector.add_game(chess.STARTING_FEN)
+	collector.add_game(chess.Board())
 	games = collector.games()
 
 	assert len(games) == 1
@@ -49,7 +52,7 @@ def test_collector_custom_starting_position() -> None:
 
 	# Custom position after 1. e4 e5 (Fullmove 2)
 	custom_fen = 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/5PPP/RNBQKBNR w KQkq - 0 2'
-	game_id = collector.add_game(custom_fen)
+	game_id = collector.add_game(chess.Board(custom_fen))
 
 	games = collector.games()
 	assert len(games) == 1
@@ -64,7 +67,6 @@ def test_collector_custom_starting_position() -> None:
 	assert stored_game.headers['FEN'] == custom_fen
 	assert stored_game.board().fullmove_number == 2
 
-@pytest.mark.skip(reason="Refactoring required first.")
 def describe_london_system_variations():
 
 	@pytest.fixture
@@ -73,22 +75,23 @@ def describe_london_system_variations():
 		fixture_path = Path(__file__).parent.parent / 'fixtures' / 'london-variations.pgn'
 		assert fixture_path.exists(), f'Fixture not found at {fixture_path}'
 
-		col = Collector(colour=chess.WHITE)
+		collector = Collector(colour=chess.WHITE)
 
-		with open(fixture_path, 'r', encoding='utf-8') as f:
+		with open(fixture_path, 'r', encoding='utf-8') as study_pgn:
 			game_count = 0
-			while True:
-				game = chess.pgn.read_game(f)
-				if game is None:
-					break
 
-				col.add_game(game.board().fen())
+			visitor = Visitor(collector)
+
+			def get_visitor() -> chess.pgn.BaseVisitor:
+				return visitor
+
+			while not chess.pgn.read_game(study_pgn, Visitor=get_visitor) == None:
 				game_count += 1
 
-			# Assert that two games were created/processed
+			# Assert that two games were processed.
 			assert game_count == 2
 
-		return col
+		return collector
 
 	def it_should_aggregate_into_a_single_game(collector: Collector) -> None:
 		games = collector.games()

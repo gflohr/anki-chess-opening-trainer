@@ -2,13 +2,11 @@
 
 1. e4 e5 *
 
-
 [Event "Closed Game"]
 [Variant "From Position"]
 [FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"]
 
 1. d4 d5 *
-
 
 [Event "Accelerated London System"]
 [Variant "From Position"]

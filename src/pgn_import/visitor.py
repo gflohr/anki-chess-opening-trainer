@@ -52,12 +52,14 @@ class Visitor(BaseVisitor):
 
 	def visit_board(self, board):
 		self._turn = board.turn
-		self._fen_after = board.fen()
 		if self._game_id is None:
 			# There is no need to normalise the fen. We keep the start position
 			# merely as an indicator that we are inside of a game.
-			self._game_id = self._collector.add_game(board.fen())
+			self._game_id = self._collector.add_game(board)
 		else:
+			if self._last_move is None:
+				raise Exception('Internal state corrupted! No move found!')
+			self._fen_after = board.fen()
 			self._game_id = self._collector.add_move(
 				game_id=self._game_id,
 				move=self._last_move,
@@ -83,7 +85,7 @@ class Visitor(BaseVisitor):
 		return None
 
 	def end_variation(self):
-		# Do not notify, when the variation was skipped.
+		# Do not notify, when the variation was skiped.
 		if self._drop_white and self._turn == chess.BLACK:
 			return
 
