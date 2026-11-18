@@ -1,5 +1,3 @@
-include ./VERSION
-
 UV = uv
 DATAMODEL_CODEGEN = $(UV) run datamodel-codegen
 YAPF = $(UV) run yapf
@@ -9,6 +7,8 @@ PYLINT = $(UV) run pylint
 PYTEST = $(UV) run pytest
 PYTHON = $(UV) run python
 PNPM = pnpm
+
+VERSION := $(shell node -p "require('./package.json').version")
 
 default: all
 
@@ -34,7 +34,7 @@ ankiweb: generated vendor build/ankiweb-description.md
 build/ankiweb-description.md: description.md CHANGELOG.md
 	cat description.md CHANGELOG.md >$@
 
-src/version.py: ./VERSION
+src/version.py: package.json
 	@echo "__version__ = '$(VERSION)'" >$@
 
 src/config.py: ./src/config.schema.json
