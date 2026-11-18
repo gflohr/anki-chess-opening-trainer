@@ -106,3 +106,39 @@ def describe_london_system_variations():
 		game = list(games.values())[0]
 		# Add your specific move/node assertions on the shared game here
 		assert game.headers.get('Colour') == 'White'
+
+
+def describe_comment_handling():
+
+	@pytest.fixture
+	def collector() -> Collector:
+		"""Fixture that loads comments.pgn and parses it into a collector."""
+		fixture_path = (
+			Path(__file__).parent.parent / 'fixtures' / 'comments.pgn'
+		)
+		assert fixture_path.exists(), f'Fixture not found at {fixture_path}'
+
+		collector = Collector(colour=chess.WHITE)
+
+		with open(fixture_path, 'r', encoding='utf-8') as study_pgn:
+			visitor = Visitor(collector)
+
+			def get_visitor() -> chess.pgn.BaseVisitor:
+				return visitor
+
+			while chess.pgn.read_game(study_pgn, Visitor=get_visitor) is not None:
+				pass
+
+		return collector
+
+	def it_should_add_move_comments(collector: Collector):
+		games = collector.games()
+		assert(len(games)) == 1
+
+		game = list(games.values())[0]
+		assert game.variations
+
+		node = game.variation(0)
+		node.comment
+
+		assert node.comment == 'Open Game.'

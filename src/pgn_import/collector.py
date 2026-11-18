@@ -25,6 +25,8 @@ class Collector:
 		# All encountered positions, mapping FEN strings to game nodes.
 		self._seen: Dict[str, chess.pgn.GameNode] = {}
 		self._starting_fen = self._normalise_fen(chess.STARTING_FEN)
+		# The current node is either a game or a position after a move.
+		self._current_node = None
 
 	def games(self) -> Dict[str, chess.pgn.Game]:
 		"""Get all collected games.
@@ -60,7 +62,8 @@ class Collector:
 		# If we've seen this position before, map fen to the canonical
 		# normalised key.
 		if fen in self._seen:
-			fen = self._normalise_fen(self._seen[fen].root().board().fen())
+			self._current_node = self._seen[fen]
+			return self._normalise_fen(self._seen[fen].root().board().fen())
 
 		if fen not in self._games:
 			if fen == self._starting_fen:
@@ -79,6 +82,7 @@ class Collector:
 				)
 				self._games[fen].setup(board)
 			self._seen[fen] = self._games[fen]
+			self._current_node = self._games[fen]
 			self._move_numbers[fen] = move_number
 		else:
 			if move_number < self._move_numbers[fen]:
@@ -109,19 +113,28 @@ class Collector:
 		parent = self._seen[fen]
 		new_game_id = self._find_game_id(parent)
 		if parent.has_variation(move):
-			# FIXME! Merge possible variation comments!
+			self._current_node = parent.variation(move)
 			return new_game_id
 
-		# FIXME! Add possible variation comments!
-		child = parent.add_variation(move)
+		self._current_node = parent.add_variation(move)
 
-		self._seen[self._normalise_fen(fen_after)] = child
+		self._seen[self._normalise_fen(fen_after)] = self._current_node
 
 		return new_game_id
 
 	def add_comment(self, comment: str) -> None:
-		"""Add a comment to the last added move."""
-		pass
+		"""Add a comment to the last added move, avoiding duplicates."""
+		if not self._current_node:
+			return
+
+		current = self._current_node.comment
+		if not current:
+			self._current_node.comment = comment
+		else:
+			# Split existing concatenated comments using {} as the separator.
+			comments = current.split('{}')
+			if comment not in comments:
+				self._current_node.comment = self._current_node.comment + '{}' + comment
 
 	def add_nag(self, nag: int) -> None:
 		"""Add a NAG to the last added move."""
