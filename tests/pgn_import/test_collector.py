@@ -8,68 +8,65 @@ from src.pgn_import.collector import Collector
 from src.pgn_import.visitor import Visitor
 
 
-def test_collector_initialization() -> None:
-	"""Test that the Collector initializes with an empty games dictionary."""
-	collector = Collector(colour=chess.WHITE)
+def describe_basic_functionality() -> None:
 
-	assert isinstance(collector.games(), dict)
-	assert len(collector.games()) == 0
+	def it_should_initialise_with_an_empty_games_dictionary() -> None:
+		"""Test that the Collector initializes with an empty games dictionary."""
+		collector = Collector(colour=chess.WHITE)
 
+		assert isinstance(collector.games(), dict)
+		assert len(collector.games()) == 0
 
-def test_collector_loads_simple_pgn() -> None:
-	fixture_path = Path(__file__).parent.parent / 'fixtures' / 'simple.pgn'
-	assert fixture_path.exists(), f'Fixture not found at {fixture_path}'
+	def it_should_load_a_simple_pgn() -> None:
+		fixture_path = Path(__file__).parent.parent / 'fixtures' / 'simple.pgn'
+		assert fixture_path.exists(), f'Fixture not found at {fixture_path}'
 
-	collector = Collector(colour=chess.WHITE)
+		collector = Collector(colour=chess.WHITE)
 
-	print('import simple.pgn')
-	with open(fixture_path, 'r', encoding='utf-8') as f:
-		game_count = 0
-		while True:
-			game = chess.pgn.read_game(f)
-			if game is None:
-				break
+		with open(fixture_path, 'r', encoding='utf-8') as f:
+			game_count = 0
+			while True:
+				game = chess.pgn.read_game(f)
+				if game is None:
+					break
 
-			collector.add_game(game.board())
-			game_count += 1
+				collector.add_game(game.board())
+				game_count += 1
 
-		print(f'game count: {game_count}')
-		assert game_count == 3
-		assert len(collector.games()) == 2
+			assert game_count == 3
+			assert len(collector.games()) == 2
 
+	def it_should_set_the_colour_headers() -> None:
+		"""Test that Collector properly sets colour headers for a Black repertoire deck."""
+		collector = Collector(colour=chess.BLACK)
 
-def test_collector_black_deck() -> None:
-	"""Test that Collector properly sets colour headers for a Black repertoire deck."""
-	collector = Collector(colour=chess.BLACK)
+		collector.add_game(chess.Board())
+		games = collector.games()
 
-	collector.add_game(chess.Board())
-	games = collector.games()
+		assert len(games) == 1
+		collected_game = list(games.values())[0]
+		assert collected_game.headers['Colour'] == 'Black'
 
-	assert len(games) == 1
-	collected_game = list(games.values())[0]
-	assert collected_game.headers['Colour'] == 'Black'
+	def it_should_handle_custom_start_positions() -> None:
+		"""Test that Collector correctly handles custom non-standard starting positions and move numbers."""
+		collector = Collector(colour=chess.WHITE)
 
+		# Custom position after 1. e4 e5 (Fullmove 2)
+		custom_fen = 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/5PPP/RNBQKBNR w KQkq - 0 2'
+		collector.add_game(chess.Board(custom_fen))
 
-def test_collector_custom_starting_position() -> None:
-	"""Test that Collector correctly handles custom non-standard starting positions and move numbers."""
-	collector = Collector(colour=chess.WHITE)
+		games = collector.games()
+		assert len(games) == 1
 
-	# Custom position after 1. e4 e5 (Fullmove 2)
-	custom_fen = 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/5PPP/RNBQKBNR w KQkq - 0 2'
-	collector.add_game(chess.Board(custom_fen))
+		# Verify that the reconstructed key contains the correct minimum move number (2)
+		key = list(games.keys())[0]
+		assert key.endswith(' 0 2')
 
-	games = collector.games()
-	assert len(games) == 1
-
-	# Verify that the reconstructed key contains the correct minimum move number (2)
-	key = list(games.keys())[0]
-	assert key.endswith(' 0 2')
-
-	# Verify that the stored game has the appropriate Setup and FEN headers set
-	stored_game = games[key]
-	assert stored_game.headers['SetUp'] == '1'
-	assert stored_game.headers['FEN'] == custom_fen
-	assert stored_game.board().fullmove_number == 2
+		# Verify that the stored game has the appropriate Setup and FEN headers set
+		stored_game = games[key]
+		assert stored_game.headers['SetUp'] == '1'
+		assert stored_game.headers['FEN'] == custom_fen
+		assert stored_game.board().fullmove_number == 2
 
 
 def describe_london_system_variations():

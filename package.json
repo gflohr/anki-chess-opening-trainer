@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"check": "pnpm run check:python && biome check",
-		"check:python": "uv run ruff check src",
+		"check:python": "uv run ruff check src && make lint",
 		"check:fix": "pnpm run check:python:fix && biome check --write",
 		"check:python:fix": "uv run ruff check --fix src tests && uv run ruff format src tests",
 		"check:fix:staged": "lint-staged",
@@ -21,6 +21,7 @@
 		"test:vitest:cov": "vitest --coverage.enabled --run",
 		"test:python:watch": "uv run ptw -- -s",
 		"test:vitest:watch": "vitest",
+		"release": "make all",
 		"prepare": "husky"
 	},
 	"lint-staged": {

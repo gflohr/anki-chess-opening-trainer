@@ -63,13 +63,10 @@ pylint:
 
 lint: mypy pylint
 
-test: generated vendor
-	$(PYTHON) -m  pytest -s --cov=src --cov-config=.coveragerc --cov-report=term --cov-report=html
-
 sourcedist:
 	$(PYTHON) -m ankiscripts.sourcedist
 
 clean:
 	rm -rf build/ src/version.py src/config.py
 
-.PHONY: all zip ankiweb vendor fix mypy pylint lint test sourcedist clean
+.PHONY: all zip ankiweb vendor mypy pylint lint sourcedist clean
