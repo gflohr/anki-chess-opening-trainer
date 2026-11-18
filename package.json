@@ -17,7 +17,8 @@
 		"test:python:cov": "uv run pytest -s  --cov=src --cov-config=.coveragerc --cov-report=term --cov-report=html",
 		"test:vitest:cov": "vitest --coverage.enabled --run",
 		"test:python:watch": "uv run ptw -- -s",
-		"test:vitest:watch": "vitest"
+		"test:vitest:watch": "vitest",
+		"prepare": "husky"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.6.4",
@@ -30,6 +31,7 @@
 		"@vitest/coverage-v8": "^5.1.0",
 		"chess.js": "^1.4.0",
 		"happy-dom": "^21.0.4",
+		"husky": "^9.1.7",
 		"svelte": "^5.57.2",
 		"svelte-check": "^4.7.7",
 		"typescript": "~6.0.3",

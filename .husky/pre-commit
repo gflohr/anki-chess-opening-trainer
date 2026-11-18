@@ -1,0 +1,2 @@
+node scripts/branch-check.mjs
+pnpm run test:python --testmon && pnpm run test:vitest --changed
