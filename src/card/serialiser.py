@@ -9,6 +9,8 @@ class GameNodeDump(TypedDict):
 	m: str
 	# Child variations from this position
 	v: NotRequired[list['GameNodeDump']]
+	# NAGs.
+	n: NotRequired[list[int]]
 
 
 class GameDump(TypedDict):
@@ -44,6 +46,10 @@ class Serialiser:
 			node_dump: GameNodeDump = {
 				'm': variation.move.uci(),
 			}
+
+			if len(variation.nags):
+				node_dump['n'] = variation.nags
+
 			child_variations = self._serialise_game_node(variation)
 			if child_variations:
 				node_dump['v'] = child_variations

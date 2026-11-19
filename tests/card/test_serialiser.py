@@ -12,8 +12,12 @@ def describe_game_serialising():
 		def game_dump() -> GameDump:
 			game = Game()
 			node = game.add_variation(chess.Move.from_uci('d2d4'))
-			node.add_variation(chess.Move.from_uci('d7d5'))
-
+			node = node.add_variation(chess.Move.from_uci('d7d5'))
+			node = node.add_variation(chess.Move.from_uci('c1f4'))
+			node.starting_comment = 'Should we play the Queen\'s Gambit?'
+			node.comment = 'The London System'
+			node.nags.add(1)
+			node.nags.add(10)
 			serialiser = Serialiser()
 
 			return serialiser.serialise(game)
@@ -38,6 +42,17 @@ def describe_game_serialising():
 
 			assert 'm' in node
 			assert node['m'] == 'd7d5'
+
+		def it_should_have_nags_in_the_third_move(game_dump: GameDump):
+			node = game_dump
+
+			for _ in range(3):
+				assert 'v' in node, 'Expected a move variation at this ply.'
+				node = node['v'][0]
+
+			assert 'm' in node
+			assert node['m'] == 'c1f4'
+			assert 'n' in node
 
 	def describe_custom_game():
 		fen = 'rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR w KQkq - 0 1'
