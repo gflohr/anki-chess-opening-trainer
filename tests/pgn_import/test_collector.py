@@ -190,4 +190,3 @@ def describe_comment_handling():
 			node = node.variation(0)
 
 		assert 4 in node.nags
-

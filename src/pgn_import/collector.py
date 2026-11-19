@@ -152,7 +152,9 @@ class Collector:
 			# Split existing concatenated comments using {} as the separator.
 			comments = current.split('{}')
 			if comment not in comments:
-				self._current_node.starting_comment = self._current_node.starting_comment + '{}' + comment
+				self._current_node.starting_comment = (
+					self._current_node.starting_comment + '{}' + comment
+				)
 
 	def begin_variation(self) -> None:
 		pass
@@ -172,8 +174,7 @@ class Collector:
 		return game_id
 
 	def _colour_as_string(self, colour: Color) -> str:
-		if (colour == chess.BLACK):
+		if colour == chess.BLACK:
 			return 'Black'
 		else:
 			return 'White'
-
