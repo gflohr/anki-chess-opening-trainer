@@ -14,10 +14,7 @@ class Collector:
 	"""Collector and aggregator for PGN chess games for Anki note generation."""
 
 	def __init__(self, colour: Color) -> None:
-		if colour == chess.WHITE:
-			self._colour = 'White'
-		else:
-			self._colour = 'Black'
+		self._colour = colour
 		self._games: Dict[str, chess.pgn.Game] = {}
 		# The minimum (full) move number seen for each normalised FEN. We
 		# assume that a lower move number is more accurate.
@@ -69,13 +66,13 @@ class Collector:
 			if fen == self._starting_fen:
 				self._games[fen] = chess.pgn.Game(
 					{
-						'Colour': self._colour,
+						'Colour': self._colour_as_string(self._colour),
 					}
 				)
 			else:
 				self._games[fen] = chess.pgn.Game(
 					{
-						'Colour': self._colour,
+						'Colour': self._colour_as_string(self._colour),
 						'SetUp': '1',
 						'FEN': initial_fen,
 					}
@@ -173,3 +170,10 @@ class Collector:
 			raise Exception('Game graph corrupt! Root position not found!')
 
 		return game_id
+
+	def _colour_as_string(self, colour: Color) -> str:
+		if (colour == chess.BLACK):
+			return 'Black'
+		else:
+			return 'White'
+
