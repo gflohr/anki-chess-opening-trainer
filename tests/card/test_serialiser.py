@@ -2,7 +2,7 @@ import chess
 import pytest
 from chess.pgn import Game
 
-from src.card.serialiser import GameDump, Serialiser
+from src.card.serialiser import GameDump, CardSerialiser
 
 
 def describe_game_serialising():
@@ -18,7 +18,7 @@ def describe_game_serialising():
 			node.comment = 'The London System'
 			node.nags.add(1)
 			node.nags.add(10)
-			serialiser = Serialiser()
+			serialiser = CardSerialiser()
 
 			return serialiser.serialise(game)
 
@@ -53,6 +53,9 @@ def describe_game_serialising():
 			assert 'm' in node
 			assert node['m'] == 'c1f4'
 			assert 'n' in node
+			assert len(node['n']) == 2
+			assert 1 in node['n']
+			assert 10 in node['n']
 
 	def describe_custom_game():
 		fen = 'rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR w KQkq - 0 1'
@@ -60,7 +63,7 @@ def describe_game_serialising():
 		@pytest.fixture
 		def game_dump() -> GameDump:
 			game = Game({'SetUp': '1', 'FEN': fen})
-			serialiser = Serialiser()
+			serialiser = CardSerialiser()
 			return serialiser.serialise(game)
 
 		def it_should_have_a_start_position(game_dump: GameDump):
