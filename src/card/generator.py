@@ -1,3 +1,5 @@
+from typing import Iterator
+
 from chess import Color
 from chess.pgn import Game, GameNode
 from collections import deque
@@ -9,8 +11,8 @@ class CardGenerator:
 	def __init__(self, game: Game, colour: Color) -> None:
 		self._game = game
 		self._colour = colour
+		self._questions: dict[str, GameNode] = {}
 
-		seen_fens: dict[str, GameNode] = {}
 		queue: deque[GameNode] = deque([self._game])
 
 		while queue:
@@ -19,9 +21,12 @@ class CardGenerator:
 			fen = board.fen()
 			norm_fen = _normalise_fen(fen)
 
-			if board.turn == self._colour and node.variations and norm_fen not in seen_fens:
-				seen_fens[norm_fen] = node
+			if board.turn == self._colour and node.variations and norm_fen not in self._questions:
+				self._questions[norm_fen] = node
 
 			for child in node.variations:
 				queue.append(child)
 
+	def generate(self) -> Iterator[tuple[str, GameNode]]:
+		for fen, node in self._questions.items():
+			yield fen, node
