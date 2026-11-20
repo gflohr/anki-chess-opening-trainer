@@ -18,3 +18,6 @@ def find_media_files(media_path: str, note_ids: list[str]):
 				filenames.append(filename)
 
 	return filenames
+
+def _normalise_fen(fen: str) -> str:
+	return ' '.join(fen.split()[:4])
