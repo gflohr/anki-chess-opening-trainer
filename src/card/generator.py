@@ -5,7 +5,7 @@ import chess
 from chess import Color
 from chess.pgn import Game, GameNode
 
-from utils import _normalise_fen
+from utils import normalise_fen
 
 
 class CardGenerator:
@@ -24,7 +24,7 @@ class CardGenerator:
 		while queue:
 			node, parent = queue.popleft()
 			board = node.board()
-			norm_fen = _normalise_fen(board.fen())
+			norm_fen = normalise_fen(board.fen())
 			self._node_fens[node] = norm_fen
 
 			if parent is not None:
@@ -53,7 +53,7 @@ class CardGenerator:
 
 		while queue:
 			node = queue.popleft()
-			fen = _normalise_fen(node.board().fen())
+			fen = normalise_fen(node.board().fen())
 
 			if fen in self._parent_tree:
 				parents = self._parent_tree[fen]

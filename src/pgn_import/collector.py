@@ -3,6 +3,8 @@ from typing import Dict
 import chess.pgn
 from chess import Board, Color
 
+from utils import normalise_fen
+
 # FIXME! The code raises exception if internal assumptions fail. However, these
 # exception will not be helpful at all when presented to the user. Define
 # some public properties like the game number, the game node, and the move
@@ -21,7 +23,7 @@ class Collector:
 		self._move_numbers: Dict[str, int] = {}
 		# All encountered positions, mapping FEN strings to game nodes.
 		self._seen: Dict[str, chess.pgn.GameNode] = {}
-		self._starting_fen = self._normalise_fen(chess.STARTING_FEN)
+		self._starting_fen = normalise_fen(chess.STARTING_FEN)
 		# The current node is either a game or a position after a move.
 		self._current_node = None
 
@@ -53,14 +55,14 @@ class Collector:
 			The id (normalised FEN) of the game.
 		"""
 		initial_fen = board.fen()
-		fen = self._normalise_fen(initial_fen)
+		fen = normalise_fen(initial_fen)
 		move_number = board.fullmove_number
 
 		# If we've seen this position before, map fen to the canonical
 		# normalised key.
 		if fen in self._seen:
 			self._current_node = self._seen[fen]
-			return self._normalise_fen(self._seen[fen].root().board().fen())
+			return normalise_fen(self._seen[fen].root().board().fen())
 
 		if fen not in self._games:
 			if fen == self._starting_fen:
@@ -103,7 +105,7 @@ class Collector:
 		Returns:
 			The id of the game to continue with.
 		"""
-		fen = self._normalise_fen(fen_before)
+		fen = normalise_fen(fen_before)
 		if fen not in self._seen:
 			raise Exception('Corrupted state, parent position not found!')
 
@@ -115,7 +117,7 @@ class Collector:
 
 		self._current_node = parent.add_variation(move)
 
-		norm_fen = self._normalise_fen(fen_after)
+		norm_fen = normalise_fen(fen_after)
 		if norm_fen not in self._seen:
 			# Do not overwrite older entries.
 			self._seen[norm_fen] = self._current_node
@@ -159,11 +161,8 @@ class Collector:
 					self._current_node.starting_comment + '{}' + comment
 				)
 
-	def _normalise_fen(self, fen: str) -> str:
-		return ' '.join(fen.split()[:4])
-
 	def _find_game_id(self, node: chess.pgn.GameNode) -> str:
-		game_id = self._normalise_fen(node.root().board().fen())
+		game_id = normalise_fen(node.root().board().fen())
 
 		if game_id not in self._games:
 			raise Exception('Game graph corrupt! Root position not found!')

@@ -3,6 +3,8 @@ from typing import NotRequired, TypedDict
 import chess
 from chess.pgn import Game, GameNode
 
+from utils import normalise_fen
+
 
 class GameNodeDump(TypedDict):
 	# The move leading here (UCI)
@@ -29,7 +31,7 @@ class CardSerialiser:
 		dump: GameDump = {}
 
 		fen = game.board().fen()
-		if self._normalise_fen(fen) != self._normalise_fen(chess.STARTING_FEN):
+		if normalise_fen(fen) != normalise_fen(chess.STARTING_FEN):
 			dump['f'] = fen
 
 		variations = self._serialise_game_node(game)
@@ -68,7 +70,3 @@ class CardSerialiser:
 			variations.append(node_dump)
 
 		return variations if variations else None
-
-	# FIXME! This must become a utility function.
-	def _normalise_fen(self, fen: str) -> str:
-		return ' '.join(fen.split()[:4])
