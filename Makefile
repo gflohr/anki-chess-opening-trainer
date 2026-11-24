@@ -69,4 +69,4 @@ sourcedist:
 clean:
 	rm -rf build/ src/version.py src/config.py
 
-.PHONY: all zip ankiweb vendor mypy pylint lint sourcedist clean
+.PHONY: all zip ankiweb vendor mypy pylint lint sourcedist clean dist
