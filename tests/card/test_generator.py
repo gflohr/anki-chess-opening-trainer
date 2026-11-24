@@ -25,9 +25,29 @@ def describe_card_generator():
 		# Q: 1. e4 e5 2. Nf3 Nc6 2. Bc4 Nf6 A: 3. Ng5
 		generator = CardGenerator(game, chess.WHITE)
 
-		for fen, node in generator.cards():
-			moves = []
-			for variation in node.variations:
-				moves.append(variation.move.uci())
+		cards = set([])
+		for fen, game in generator.cards():
+			exporter = chess.pgn.StringExporter(headers=False, variations=True, comments=True)
+			pgn_string = game.accept(exporter)
+			cards.add(pgn_string.replace('\n', ' '))
 
-			print(f'FEN: {fen} | Answers: {moves}')
+	def it_should_have_six_cards():
+		assert len(cards) == 6
+
+	def it_should_have_a_card_for_the_starting_position():
+		assert '1. e4 ( 1. Nf3 ) *' in cards
+
+	def it_should_have_a_card_for_the_kings_knight_opening():
+		assert '1. e4 e5 2. Nf3 *' in cards
+
+	def it_should_have_a_card_for_the_transposition_of_moves_1_and_2():
+		assert '1. Nf3 Nc6 2. e4 *' in cards
+
+	def it_should_have_a_card_for_the_italian_game():
+		assert '1. e4 ( 1. Nf3 Nc6 2. e4 ) 1... e5 2. Nf3 Nc6 3. Bc4 *' in cards
+
+	def it_should_have_a_card_for_the_giuco_piano():
+		assert '1. e4 ( 1. Nf3 Nc6 2. e4 e5 3. Bc4 ) 1... e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 { This is the classical variation. } *' in cards
+
+	def it_should_have_a_card_for_the_fried_liver_attack():
+		assert '1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 $5 *' in cards
