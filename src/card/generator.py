@@ -75,10 +75,10 @@ class CardGenerator:
 				if variation not in nodes or variation.move is None:
 					continue
 
-				child = target.add_variation(variation.move)
-				child.comment = variation.comment
-				child.nags = set(variation.nags)
-				child.starting_comment = variation.starting_comment
+				child = target.add_variation(variation.move,
+				                             comment=variation.comment,
+				                             starting_comment=variation.starting_comment,
+				                             nags=set(variation.nags))
 				_copy_subtree(variation, child)
 
 		_copy_subtree(self._game, game)
