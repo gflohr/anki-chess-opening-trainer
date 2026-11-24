@@ -52,7 +52,7 @@ type RawMove = v.InferOutput<typeof rawMoveSchema>;
  */
 export const rawGraphMoveSchema = v.object({
 	...rawMoveSchema.entries,
-	/** Target node index. Optional: defaults to next sequential node if omitted. */
+	/** Target node index. Omitted for leaves. */
 	n: v.optional(v.pipe(v.number(), v.minValue(1))),
 });
 
