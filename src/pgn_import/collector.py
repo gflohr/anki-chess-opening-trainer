@@ -115,7 +115,10 @@ class Collector:
 
 		self._current_node = parent.add_variation(move)
 
-		self._seen[self._normalise_fen(fen_after)] = self._current_node
+		norm_fen = self._normalise_fen(fen_after)
+		if norm_fen not in self._seen:
+			# Do not overwrite older entries.
+			self._seen[norm_fen] = self._current_node
 
 		return new_game_id
 
