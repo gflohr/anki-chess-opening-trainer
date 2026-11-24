@@ -25,10 +25,9 @@ def describe_card_generator():
 		# Q: 1. e4 e5 2. Nf3 Nc6 2. Bc4 Nf6 A: 3. Ng5
 		generator = CardGenerator(game, chess.WHITE)
 
-		for fen, node in generator.generate():
+		for fen, node in generator.cards():
 			moves = []
-			if node.variations:
-				for variation in node.variations:
-					moves.append(variation.move.uci())
+			for variation in node.variations:
+				moves.append(variation.move.uci())
 
 			print(f'FEN: {fen} | Answers: {moves}')

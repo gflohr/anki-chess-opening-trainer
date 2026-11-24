@@ -27,6 +27,7 @@ class CardGenerator:
 			for child in node.variations:
 				queue.append(child)
 
-	def generate(self) -> Iterator[tuple[str, GameNode]]:
+	def cards(self) -> Iterator[tuple[str, GameNode]]:
 		for fen, node in self._questions.items():
-			yield fen, node
+			if node.variations:
+				yield fen, node
