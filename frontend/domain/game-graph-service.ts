@@ -25,8 +25,14 @@ export class GameGraphService {
 		}
 
 		let node = this.graph[0];
+		const seen = new Set<number>();
+
 		while (node) {
 			if (node[0].next) {
+				if (seen.has(node[0].next)) {
+					throw new Error('Game graph is a cycle!');
+				}
+				seen.add(node[0].next);
 				node = this.graph[node[0].next];
 			} else {
 				if (node.length > 1) {
