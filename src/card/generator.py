@@ -12,29 +12,29 @@ class CardGenerator:
 	def __init__(self, game: Game, colour: Color) -> None:
 		self._game = game
 		self._colour = colour
+		self._node_fens: dict[GameNode, str] = {}
 		self._questions: dict[str, GameNode] = {}
 
-		queue: deque[GameNode] = deque([self._game])
+		queue: deque[tuple[GameNode, GameNode | None]] = deque([(self._game, None)])
 
 		# This lookup table stores all nodes from where a certain position can
 		# be reached.
 		self._parent_tree: dict[str, list[GameNode]] = {}
 
 		while queue:
-			node = queue.popleft()
+			node, parent = queue.popleft()
 			board = node.board()
-			fen = board.fen()
-			norm_fen = _normalise_fen(fen)
+			norm_fen = _normalise_fen(board.fen())
+			self._node_fens[node] = norm_fen
+
+			if parent is not None:
+				self._parent_tree.setdefault(norm_fen, []).append(parent)
 
 			if board.turn == self._colour and node.variations and norm_fen not in self._questions:
 				self._questions[norm_fen] = node
 
 			for child in node.variations:
-				queue.append(child)
-				child_fen = _normalise_fen(child.board().fen())
-				if not child_fen in self._parent_tree:
-					self._parent_tree[child_fen] = []
-				self._parent_tree[child_fen].append(node)
+				queue.append((child, node))
 
 	def cards(self) -> Iterator[tuple[str, Game]]:
 		# First create a lookup table for the parent relationships.
