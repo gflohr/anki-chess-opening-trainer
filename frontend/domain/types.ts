@@ -121,7 +121,7 @@ export interface Game {
 	history: Move[];
 
 	/**
-	 * A PGN representation of the game graphp. This is only used for creating
+	 * A PGN representation of the game graph. This is only used for creating
 	 * links to Lichess.
 	 */
 	pgn?: string;

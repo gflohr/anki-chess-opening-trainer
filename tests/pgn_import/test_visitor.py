@@ -90,10 +90,6 @@ def describe_variation_skipping():
 		result = visitor.begin_variation()
 
 		assert result == SKIP
-		collector.begin_variation.assert_not_called()
-
-		visitor.end_variation()
-		collector.end_variation.assert_not_called()
 
 	def skips_black_variations_when_requested() -> None:
 		collector = MagicMock()
@@ -109,10 +105,6 @@ def describe_variation_skipping():
 		result = visitor.begin_variation()
 
 		assert result == SKIP
-		collector.begin_variation.assert_not_called()
-
-		visitor.end_variation()
-		collector.end_variation.assert_not_called()
 
 	def skips_not_white_variations_by_default() -> None:
 		collector = MagicMock()
@@ -125,10 +117,6 @@ def describe_variation_skipping():
 		result = visitor.begin_variation()
 
 		assert result != SKIP
-		collector.begin_variation.assert_called_once()
-
-		visitor.end_variation()
-		collector.end_variation.assert_called_once()
 
 	def skips_not_black_variations_by_default() -> None:
 		collector = MagicMock()
@@ -143,10 +131,6 @@ def describe_variation_skipping():
 		result = visitor.begin_variation()
 
 		assert result != SKIP
-		collector.begin_variation.assert_called_once()
-
-		visitor.end_variation()
-		collector.end_variation.assert_called_once()
 
 	def skips_no_white_variations_by_default() -> None:
 		collector = MagicMock()
@@ -159,10 +143,6 @@ def describe_variation_skipping():
 		result = visitor.begin_variation()
 
 		assert result != SKIP
-		collector.begin_variation.assert_called_once()
-
-		visitor.end_variation()
-		collector.end_variation.assert_called_once()
 
 	def skips_no_black_variations_by_default() -> None:
 		collector = MagicMock()
@@ -176,10 +156,6 @@ def describe_variation_skipping():
 		result = visitor.begin_variation()
 
 		assert result != SKIP
-		collector.begin_variation.assert_called_once()
-
-		visitor.end_variation()
-		collector.end_variation.assert_called_once()
 
 
 def describe_comments_nags():

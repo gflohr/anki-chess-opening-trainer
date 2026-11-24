@@ -159,12 +159,6 @@ class Collector:
 					self._current_node.starting_comment + '{}' + comment
 				)
 
-	def begin_variation(self) -> None:
-		pass
-
-	def end_variation(self) -> None:
-		pass
-
 	def _normalise_fen(self, fen: str) -> str:
 		return ' '.join(fen.split()[:4])
 

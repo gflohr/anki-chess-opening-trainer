@@ -1,9 +1,9 @@
+from collections import deque
 from typing import Iterator
 
-from chess import Color
 import chess
+from chess import Color
 from chess.pgn import Game, GameNode
-from collections import deque
 
 from utils import _normalise_fen
 
@@ -30,7 +30,11 @@ class CardGenerator:
 			if parent is not None:
 				self._parent_tree.setdefault(norm_fen, []).append(parent)
 
-			if board.turn == self._colour and node.variations and norm_fen not in self._questions:
+			if (
+				board.turn == self._colour
+				and node.variations
+				and norm_fen not in self._questions
+			):
 				self._questions[norm_fen] = node
 
 			for child in node.variations:
@@ -45,7 +49,7 @@ class CardGenerator:
 	def _generate(self, question_node: GameNode) -> Game:
 		# Pass 1: Find all parent nodes of the current one.
 		queue: deque[GameNode] = deque([question_node])
-		nodes: set[GameNode] = { question_node }
+		nodes: set[GameNode] = {question_node}
 
 		while queue:
 			node = queue.popleft()
@@ -62,10 +66,12 @@ class CardGenerator:
 		game = (
 			Game()
 			if root_fen == chess.STARTING_FEN
-			else Game({
-				'SetUp': '1',
-				'FEN': root_fen,
-			})
+			else Game(
+				{
+					'SetUp': '1',
+					'FEN': root_fen,
+				}
+			)
 		)
 
 		# Now recursively copy the original game with all comments and NAGs,
@@ -75,10 +81,12 @@ class CardGenerator:
 				if variation not in nodes or variation.move is None:
 					continue
 
-				child = target.add_variation(variation.move,
-				                             comment=variation.comment,
-				                             starting_comment=variation.starting_comment,
-				                             nags=set(variation.nags))
+				child = target.add_variation(
+					variation.move,
+					comment=variation.comment,
+					starting_comment=variation.starting_comment,
+					nags=set(variation.nags),
+				)
 				_copy_subtree(variation, child)
 
 		_copy_subtree(self._game, game)
@@ -89,10 +97,11 @@ class CardGenerator:
 			node = node.variations[0]
 
 		for variation in question_node.variations:
-			node.add_variation(variation.move,
-			                   comment=variation.comment,
-			                   starting_comment=variation.starting_comment,
-			                   nags=set(variation.nags))
+			node.add_variation(
+				variation.move,
+				comment=variation.comment,
+				starting_comment=variation.starting_comment,
+				nags=set(variation.nags),
+			)
 
 		return game
-

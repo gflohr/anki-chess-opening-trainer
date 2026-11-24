@@ -2,7 +2,7 @@ import chess
 import pytest
 from chess.pgn import Game
 
-from src.card.serialiser import GameDump, CardSerialiser
+from src.card.serialiser import CardSerialiser, GameDump
 
 
 def describe_game_serialising():
@@ -14,7 +14,7 @@ def describe_game_serialising():
 			node = game.add_variation(chess.Move.from_uci('d2d4'))
 			node = node.add_variation(chess.Move.from_uci('d7d5'))
 			node = node.add_variation(chess.Move.from_uci('c1f4'))
-			node.starting_comment = 'Should we play the Queen\'s Gambit?'
+			node.starting_comment = "Should we play the Queen's Gambit?"
 			node.comment = 'The London System'
 			node.nags.add(1)
 			node.nags.add(10)

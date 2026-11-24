@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import chess
-from chess.pgn import Game
 
 from src.card.generator import CardGenerator
 
@@ -27,7 +26,9 @@ def describe_card_generator():
 
 		cards = set([])
 		for fen, game in generator.cards():
-			exporter = chess.pgn.StringExporter(headers=False, variations=True, comments=True)
+			exporter = chess.pgn.StringExporter(
+				headers=False, variations=True, comments=True
+			)
 			pgn_string = game.accept(exporter)
 			cards.add(pgn_string.replace('\n', ' '))
 
@@ -47,7 +48,13 @@ def describe_card_generator():
 		assert '1. e4 ( 1. Nf3 Nc6 2. e4 ) 1... e5 2. Nf3 Nc6 3. Bc4 *' in cards
 
 	def it_should_have_a_card_for_the_giuco_piano():
-		assert '1. e4 ( 1. Nf3 Nc6 2. e4 e5 3. Bc4 ) 1... e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 { This is the classical variation. } *' in cards
+		assert (
+			'1. e4 ( 1. Nf3 Nc6 2. e4 e5 3. Bc4 ) 1... e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 { This is the classical variation. } *'
+			in cards
+		)
 
 	def it_should_have_a_card_for_the_fried_liver_attack():
-		assert '1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 $5 *' in cards
+		assert (
+			'1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 $5 *'
+			in cards
+		)
