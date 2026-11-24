@@ -23,7 +23,7 @@ src/web: dist
 	rm -rf $@
 	$(MAKE) dist
 	cp -r dist $@
-	rm $@/index.html $@/question.svg $@/answer*.svg
+	rm $@/index.html
 
 zip: generated vendor src/web
 	$(PYTHON) -m ankiscripts.build --type package --qt all --exclude user_files/**/*
