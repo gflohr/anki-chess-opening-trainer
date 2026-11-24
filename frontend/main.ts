@@ -53,13 +53,16 @@ try {
 				<h3 style="color: #da3633; margin-top: 0; margin-bottom: 12px; font-size: 1.2rem;">
 					<i class="bi bi-exclamation-triangle-fill"></i> Internal Error - Corrupt Card
 				</h3>
-				<p style="color: #9aa0a6; font-size: 0.9rem; line-height: 1.5; margin: 0 0 16px 0; word-break: break-word;">
-					${message}
-				</p>
+				<p id="error-message" style="color: #9aa0a6; font-size: 0.9rem; line-height: 1.5; margin: 0 0 16px 0; word-break: break-word;"></p>
 				<p style="color: #6b7280; font-size: 0.75rem; margin: 0;">
 					Please check your card template or JSON data payload!
 				</p>
 			</div>
 		</div>
 	`;
+
+	const errorMessageElement = targetElement.querySelector('#error-message');
+	if (errorMessageElement) {
+		errorMessageElement.textContent = message;
+	}
 }
