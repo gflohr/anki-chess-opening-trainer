@@ -62,11 +62,11 @@ schema = {
 							'type': 'string',
 							'description': 'Optional tag for notes in this opening',
 						},
-						'drop-white-varations': {
+						'drop-white-variations': {
 							'type': 'boolean',
 							'description': 'True if only mainlines for white should be imported',
 						},
-						'drop-black-varations': {
+						'drop-black-variations': {
 							'type': 'boolean',
 							'description': 'True if only mainlines for black should be imported',
 						},
