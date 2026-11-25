@@ -25,7 +25,7 @@ def describe_basic_functionality():
 	def visitor_collects_and_returns_errors() -> None:
 		collector = MagicMock()
 		visitor = Visitor(collector)
-		visitor._gameno = 2
+		visitor._game_index = 1
 
 		# Act
 		visitor.handle_error(ValueError('Invalid PGN syntax'))
