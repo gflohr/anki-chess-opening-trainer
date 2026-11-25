@@ -6,11 +6,10 @@ from anki.notes import NoteId
 
 from .utils import find_media_files
 
+
 class DeleteHook:
-
-
 	# pylint: disable=too-few-public-methods
-	def installHook(self): # pylint: disable=invalid-name
+	def installHook(self):  # pylint: disable=invalid-name
 		def on_notes_delete(collection: Collection, int_note_ids: Sequence[NoteId]):
 			mm = collection.media
 			media_path = mm.dir()

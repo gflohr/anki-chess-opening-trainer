@@ -7,33 +7,44 @@
 # to Public License, Version 2, as published by Sam Hocevar. See
 # http://www.wtfpl.net/ for more details.
 
-import os
 import html
-from pathlib import Path
+import os
 import traceback
+from pathlib import Path
 from typing import List, Literal, Union
 
-from aqt import mw, AnkiQt
-from aqt.operations import QueryOp
-# pylint: disable=no-name-in-module
-from aqt.qt import (QComboBox, QCompleter, QDialog, # type: ignore[attr-defined]
-                    QDialogButtonBox, QFileDialog, # type: ignore[attr-defined]
-                    QGridLayout, QLabel, QLineEdit, # type: ignore[attr-defined]
-                    QListWidget, QListWidgetItem, # type: ignore[attr-defined]
-                    QPushButton, Qt, QMessageBox, # type: ignore[attr-defined]
-                    QDesktopServices, QUrl, # type: ignore[attr-defined]
-                    QApplication, # type: ignore[attr-defined]
-) # type: ignore[attr-defined]
-from aqt.utils import show_critical, show_info, show_warning
 from anki.utils import no_bundled_libs
+from aqt import AnkiQt, mw
+from aqt.operations import QueryOp
 
-from .importer import Importer
+# pylint: disable=no-name-in-module
+from aqt.qt import (
+	QApplication,
+	QCheckBox,
+	QComboBox,
+	QCompleter,
+	QDesktopServices,
+	QDialog,  # type: ignore[attr-defined]
+	QDialogButtonBox,
+	QFileDialog,  # type: ignore[attr-defined]
+	QGridLayout,
+	QHBoxLayout,  # type: ignore[attr-defined]
+	QLabel,
+	QLineEdit,  # type: ignore[attr-defined]
+	QListWidget,
+	QListWidgetItem,  # type: ignore[attr-defined]
+	QMessageBox,  # type: ignore[attr-defined]
+	QPushButton,
+	Qt,
+	QUrl,  # type: ignore[attr-defined]
+)  # type: ignore[attr-defined]
+from aqt.utils import show_critical, show_info, show_warning
+
 from .config_reader import ConfigReader
+from .importer import Importer
 
 
 class ImportDialog(QDialog):
-
-
 	# pylint: disable=too-few-public-methods, too-many-instance-attributes, too-many-statements
 	def __init__(self) -> None:
 		if mw is None:
@@ -52,7 +63,6 @@ class ImportDialog(QDialog):
 		self.dirty = {
 			'colour': False,
 			'deck': False,
-
 		}
 		layout.addWidget(QLabel(_('Color')), 0, 0)
 		self.colour_combo = QComboBox()
@@ -106,14 +116,25 @@ class ImportDialog(QDialog):
 			self.tag_edit.setCompleter(completer)
 		layout.addWidget(self.tag_edit, 4, 1)
 
-		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+		# Row 5: Drop variations checkboxes side-by-side
+		layout.addWidget(QLabel(_('Drop variations')), 5, 0)
+
+		drop_layout = QHBoxLayout()
+		self.drop_white_checkbox = QCheckBox(_('for white'))
+		self.drop_black_checkbox = QCheckBox(_('for black'))
+		drop_layout.addWidget(self.drop_white_checkbox)
+		drop_layout.addWidget(self.drop_black_checkbox)
+		drop_layout.addStretch()  # Keeps them neatly aligned to the left
+
+		layout.addLayout(drop_layout, 5, 1)
+
+		btn = (
+			QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+		)
 		self.button_box = QDialogButtonBox(btn)
-		layout.addWidget(self.button_box,
-		                 5,
-		                 0,
-		                 1,
-		                 3,
-		                 alignment=Qt.AlignmentFlag.AlignRight)
+		layout.addWidget(
+			self.button_box, 6, 0, 1, 3, alignment=Qt.AlignmentFlag.AlignRight
+		)
 		self.button_box.accepted.connect(self.accept)
 		self.button_box.rejected.connect(self.reject)
 		self._fill_dialog()
@@ -153,8 +174,16 @@ class ImportDialog(QDialog):
 				for filename in record['files']:
 					self.file_list.addItem(filename)
 				self.tag_edit.setText(record.get('tag', ''))
+				self.drop_white_checkbox.setChecked(
+					record.get('drop-white-variations', False)
+				)
+				self.drop_black_checkbox.setChecked(
+					record.get('drop-black-variations', False)
+				)
 			else:
 				self.tag_edit.clear()
+				self.drop_white_checkbox.setChecked(False)
+				self.drop_black_checkbox.setChecked(False)
 
 		self.updating = False
 
@@ -175,8 +204,16 @@ class ImportDialog(QDialog):
 			for filename in record['files']:
 				self.file_list.addItem(filename)
 			self.tag_edit.setText(record.get('tag', ''))
+			self.drop_white_checkbox.setChecked(
+				record.get('drop-white-variations', False)
+			)
+			self.drop_black_checkbox.setChecked(
+				record.get('drop-black-variations', False)
+			)
 		else:
 			self.tag_edit.clear()
+			self.drop_white_checkbox.setChecked(False)
+			self.drop_black_checkbox.setChecked(False)
 
 		self.updating = False
 
@@ -213,8 +250,16 @@ class ImportDialog(QDialog):
 				for filename in record['files']:
 					self.file_list.addItem(filename)
 				self.tag_edit.setText(record.get('tag', ''))
+				self.drop_white_checkbox.setChecked(
+					record.get('drop-white-variations', False)
+				)
+				self.drop_black_checkbox.setChecked(
+					record.get('drop-black-variations', False)
+				)
 			else:
 				self.tag_edit.clear()
+				self.drop_white_checkbox.setChecked(False)
+				self.drop_black_checkbox.setChecked(False)
 
 		if config['notetype'] is not None:
 			notetype_id = config['notetype']
@@ -233,7 +278,13 @@ class ImportDialog(QDialog):
 				x = counts
 				if isinstance(x, OSError):
 					# pylint: disable=consider-using-f-string
-					show_critical(_('There was an error importing a file: {error}'.format(error=x)))
+					show_critical(
+						_(
+							'There was an error importing a file: {error}'.format(
+								error=x
+							)
+						)
+					)
 				else:
 					self._show_exception(counts)
 				return
@@ -242,16 +293,16 @@ class ImportDialog(QDialog):
 				msg = _('No changes since last import into this deck.')
 			else:
 				msgs = (
-					ngettext('%d note inserted.', '%d notes inserted.',
-							counts[0]) % (counts[0]),
-					ngettext('%d note updated.', '%d notes updated.', counts[1]) %
-					(counts[1]),
-					ngettext('%d note deleted.', '%d notes deleted.', counts[2]) %
-					(counts[2]),
-					ngettext('%d image created.', '%d images created.',
-							counts[3]) % (counts[3]),
-					ngettext('%d image deleted.', '%d images deleted.',
-							counts[4]) % (counts[4]),
+					ngettext('%d note inserted.', '%d notes inserted.', counts[0])
+					% (counts[0]),
+					ngettext('%d note updated.', '%d notes updated.', counts[1])
+					% (counts[1]),
+					ngettext('%d note deleted.', '%d notes deleted.', counts[2])
+					% (counts[2]),
+					ngettext('%d image created.', '%d images created.', counts[3])
+					% (counts[3]),
+					ngettext('%d image deleted.', '%d images deleted.', counts[4])
+					% (counts[4]),
 				)
 				msg = ' '.join(msgs)
 
@@ -268,6 +319,11 @@ class ImportDialog(QDialog):
 				filenames = record['files']
 				notetype_id = self.config['notetype']
 				tag = record.get('tag')
+				drop_white_variations = record.get('drop-white-variations', False)
+				drop_black_variations = record.get('drop-black-variations', False)
+
+				addon_package = mw.addonManager.addonFromModule(__name__)
+				web_path = f'/_addons/{addon_package}/web'
 
 				importer = Importer(
 					collection=mw.col,
@@ -276,10 +332,13 @@ class ImportDialog(QDialog):
 					filenames=filenames,
 					colour=('white' == colour),
 					tag=tag,
+					drop_white_variations=drop_white_variations,
+					drop_black_variations=drop_black_variations,
+					web_path=web_path,
 				)
 
 				return importer.run()
-			except Exception as e: # pylint: disable=broad-except
+			except Exception as e:  # pylint: disable=broad-except
 				return e
 
 		if not self.file_list.count():
@@ -303,7 +362,9 @@ class ImportDialog(QDialog):
 
 		msgs = (
 			_('An error occurred!'),
-			_('Clicking the help button will open a web page explaining how to report a bug.'),
+			_(
+				'Clicking the help button will open a web page explaining how to report a bug.'
+			),
 			_('Please include the following information in your bug report:'),
 			'<hr />',
 			_('Exception type:') + ' ' + html.escape(type(e).__name__),
@@ -334,7 +395,9 @@ class ImportDialog(QDialog):
 
 		help_button = msg_box.addButton(QMessageBox.StandardButton.Help)
 		if help_button is not None:
-			link = _('https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs')
+			link = _(
+				'https://www.guido-flohr.net/practice-chess-openings-with-anki/#report-bugs'
+			)
 			help_button.clicked.connect(lambda: open_link(link))
 			help_button.setAutoDefault(False)
 
@@ -348,14 +411,16 @@ class ImportDialog(QDialog):
 		else:
 			directory = None
 		selection = QFileDialog.getOpenFileNames(
-		    self, _('Open PGN files'), directory,
-		    _('Portable Game Notation files (*.pgn)'))
+			self,
+			_('Open PGN files'),
+			directory,
+			_('Portable Game Notation files (*.pgn)'),
+		)
 		filenames = selection[0]
 
 		if len(filenames):
 			self.file_list.clear()
-			self.file_list.addItems(
-			    [str(Path(filename)) for filename in filenames])
+			self.file_list.addItems([str(Path(filename)) for filename in filenames])
 
 	def _save_config(self) -> bool:
 		colour_index = self.colour_combo.currentIndex()
@@ -386,6 +451,8 @@ class ImportDialog(QDialog):
 				files.append(item.text())
 
 		tag = self.tag_edit.text().strip()
+		drop_white_variations = self.drop_white_checkbox.isChecked()
+		drop_black_variations = self.drop_black_checkbox.isChecked()
 
 		self.config['colour'] = colour
 		self.config['decks'][colour] = deck_id
@@ -393,6 +460,8 @@ class ImportDialog(QDialog):
 		import_record = {
 			'colour': colour,
 			'files': files,
+			'drop-white-variations': drop_white_variations,
+			'drop-black-variations': drop_black_variations,
 		}
 		if tag:
 			import_record['tag'] = tag

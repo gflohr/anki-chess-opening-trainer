@@ -8,15 +8,15 @@
 # http://www.wtfpl.net/ for more details.
 
 from typing import Any, cast
-from jsonschema import ValidationError, validate
 
 from aqt import mw
 from aqt.utils import showCritical
+from jsonschema import ValidationError, validate
 
 from .config import Config
-from .version import __version__
 from .schema import schema
 from .updater import Updater
+from .version import __version__
 
 
 class ConfigReader:
@@ -37,8 +37,7 @@ class ConfigReader:
 			showCritical(_('Your add-on configuration is invalid, restoring defaults.'))
 			raw_config = updater.update_config(None)
 
-		self.config:Config = cast(Config, raw_config)
-
+		self.config: Config = cast(Config, raw_config)
 
 	def get_config(self):
 		return self.config

@@ -8,6 +8,7 @@
 # http://www.wtfpl.net/ for more details.
 
 from typing import List
+
 from chess import Color
 
 from .answer import Answer
@@ -15,17 +16,16 @@ from .page import Page
 
 
 class Question(Page):
-
-
 	def __init__(
-	    self,
-	    moves: str,
-	    turn: Color,
-	    colour: Color,
+		self,
+		moves: str,
+		turn: Color,
+		colour: Color,
+		web_path: str,
 	) -> None:
 		self.moves = moves
 		self.answers: List[Answer] = []
-		Page.__init__(self, colour=colour, turn=turn)
+		Page.__init__(self, colour=colour, turn=turn, web_path=web_path)
 
 	def add_answer(self, answer: Answer) -> None:
 		self.answers.append(answer)

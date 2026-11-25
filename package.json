@@ -1,0 +1,58 @@
+{
+	"name": "anki-chess-opening-trainer",
+	"private": true,
+	"version": "2.0.0",
+	"type": "module",
+	"scripts": {
+		"check": "pnpm run check:python && biome check",
+		"check:python": "uv run ruff check src && make lint",
+		"check:fix": "pnpm run check:python:fix && biome check --write",
+		"check:python:fix": "uv run ruff check --fix src tests && uv run ruff format src tests",
+		"check:fix:staged": "lint-staged",
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check:svelte": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
+		"test": "pnpm run test:python && pnpm run test:vitest",
+		"test:cov": "pnpm run test:python:cov && pnpm run test:vitest:cov",
+		"pretest:python": "make generated",
+		"test:python": "uv run pytest -s",
+		"test:vitest": "vitest --run",
+		"pretest:python:cov": "make generated",
+		"test:python:cov": "uv run pytest -s  --cov=src --cov-config=.coveragerc --cov-report=term --cov-report=html",
+		"test:vitest:cov": "vitest --coverage.enabled --run",
+		"pretest:python:watch": "make generated",
+		"test:python:watch": "uv run ptw -- -s",
+		"test:vitest:watch": "vitest",
+		"release": "make all",
+		"prepare": "husky"
+	},
+	"lint-staged": {
+		"*.{ts,tsx,js,jsx,json,css}": [
+			"pnpm run check:fix --no-errors-on-unmatched"
+		]
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.6.4",
+		"@sveltejs/vite-plugin-svelte": "^7.3.1",
+		"@testing-library/jest-dom": "^7.0.1",
+		"@testing-library/svelte": "^5.4.2",
+		"@testing-library/user-event": "^14.6.8",
+		"@tsconfig/svelte": "^5.0.8",
+		"@types/node": "^24.19.2",
+		"@vitest/coverage-v8": "^5.1.0",
+		"chess.js": "^1.4.0",
+		"happy-dom": "^21.0.4",
+		"husky": "^9.1.7",
+		"lint-staged": "^17.6.1",
+		"svelte": "^5.57.2",
+		"svelte-check": "^4.7.7",
+		"typescript": "~6.0.3",
+		"vite": "^8.3.5",
+		"vitest": "^5.1.0"
+	},
+	"dependencies": {
+		"bootstrap-icons": "^1.13.2",
+		"valibot": "^1.5.0"
+	}
+}

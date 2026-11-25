@@ -13,8 +13,9 @@ import sys
 
 import anki
 from aqt import mw
+
 # pylint: disable=no-name-in-module
-from aqt.qt import QAction # type: ignore[attr-defined]
+from aqt.qt import QAction  # type: ignore[attr-defined]
 from aqt.utils import qconnect
 
 moduledir = os.path.dirname(__file__)
@@ -22,8 +23,9 @@ sys.path.append(moduledir)
 sys.path.append(os.path.join(moduledir, 'vendor'))
 
 # pylint: disable=wrong-import-order, wrong-import-position
-from .dialog import ImportDialog
-from .delete_hook import DeleteHook
+from .delete_hook import DeleteHook  # noqa: E402
+from .dialog import ImportDialog  # noqa: E402
+
 
 def show_import_dialog() -> None:
 	dlg = ImportDialog()
@@ -37,10 +39,14 @@ def init_i18n() -> None:
 		lang = supported[0]
 
 	localedir = os.path.join(os.path.dirname(__file__), 'locale')
-	t = gettext.translation('anki-chess-opening-trainer',
-	                        localedir=localedir,
-	                        languages=[lang])
+	t = gettext.translation(
+		'anki-chess-opening-trainer', localedir=localedir, languages=[lang]
+	)
 	t.install(names=['_', 'ngettext'])
+
+
+def init_web() -> None:
+	mw.addonManager.setWebExports(__name__, r'web/.*(css|js|woff|woff2)')
 
 
 def add_menu_item():
@@ -52,7 +58,8 @@ def add_menu_item():
 		mw.form.menuTools.addAction(action)
 
 
-
+if mw is not None:
+	init_web()
 init_i18n()
 DeleteHook().installHook()
 if 'pytest' not in sys.modules:

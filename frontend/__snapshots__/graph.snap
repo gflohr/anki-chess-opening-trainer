@@ -1,0 +1,138 @@
+{
+  "answerMoves": [
+    {
+      "annotations": {
+        "comments": [],
+        "markers": [],
+      },
+      "id": 11,
+      "san": "Nf6",
+    },
+    {
+      "annotations": {
+        "comments": [],
+        "markers": [],
+      },
+      "id": 12,
+      "san": "g3",
+    },
+  ],
+  "gameAnnotations": {
+    "comments": [],
+    "markers": [],
+  },
+  "history": [],
+  "questionMoves": [
+    [
+      {
+        "annotations": {
+          "comments": [
+            "Queen pawn opening",
+          ],
+          "markers": [],
+        },
+        "id": 1,
+        "next": 1,
+        "san": "d4",
+      },
+      {
+        "annotations": {
+          "comments": [
+            "Zukertort opening",
+          ],
+          "markers": [],
+        },
+        "id": 2,
+        "next": 5,
+        "san": "Nf3",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 3,
+        "next": 2,
+        "san": "Nf6",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 4,
+        "next": 3,
+        "san": "Nf3",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 5,
+        "next": 4,
+        "san": "d5",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 6,
+        "san": "Nc3",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 7,
+        "next": 6,
+        "san": "Nf6",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 8,
+        "next": 7,
+        "san": "c4",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 9,
+        "next": 8,
+        "san": "d4",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 10,
+        "next": 4,
+        "san": "d5",
+      },
+    ],
+  ],
+}

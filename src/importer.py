@@ -13,31 +13,33 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
 
 import chess
 from anki.collection import Collection
-from anki.notes import Note, NoteId, NotetypeId
 from anki.decks import DeckId
+from anki.notes import Note, NoteId, NotetypeId
 
 from .answer import Answer
-from .question import Question
 from .page import Page
-from .visitor import PositionVisitor
+from .question import Question
 from .utils import find_media_files
+from .visitor import PositionVisitor
 
 
 class Importer:
-
-
 	# pylint: disable=too-many-arguments, too-few-public-methods
 	def __init__(
-	    self,
-	    filenames: List[str],
-	    collection: Collection,
-	    colour: chess.Color,
-	    notetype_id: NotetypeId,
-	    deck_id: DeckId,
-	    tag: Optional[str] = None
+		self,
+		filenames: List[str],
+		collection: Collection,
+		colour: chess.Color,
+		notetype_id: NotetypeId,
+		deck_id: DeckId,
+		web_path: str,
+		tag: Optional[str] = None,
+		drop_white_variations: Optional[bool] = False,
+		drop_black_variations: Optional[bool] = False,
 	) -> None:
 		self.collection = collection
 		self.colour = colour
+		self.web_path = web_path
 
 		model_data = self.collection.models.get(notetype_id)
 		if model_data is None:
@@ -49,15 +51,16 @@ class Importer:
 			raise KeyError(_('Selected deck does not exist!'))
 		self.deck = deck_data
 
-		self.visitor = PositionVisitor(colour=colour)
+		self.visitor = PositionVisitor(colour=colour, web_path=self.web_path)
 		self.filenames = filenames
 		self.tags: List[str] = []
 		if tag:
-			if hasattr(self.collection, 'tags') and hasattr(self.collection.tags, 'split'):
+			if hasattr(self.collection, 'tags') and hasattr(
+				self.collection.tags, 'split'
+			):
 				self.tags = self.collection.tags.split(tag)
 			else:
 				self.tags = [t for t in tag.strip().split() if t]
-
 
 	def run(self) -> Tuple[int, int, int, int, int]:
 		for filename in self.filenames:
@@ -90,7 +93,7 @@ class Importer:
 
 		return notes
 
-	def _delete_unused(self,  wanted: Dict[str, Question], got: dict[str, Note]) -> int:
+	def _delete_unused(self, wanted: Dict[str, Question], got: dict[str, Note]) -> int:
 		deletes: List[NoteId] = []
 		for moves in got:
 			if moves not in wanted:
@@ -111,7 +114,9 @@ class Importer:
 	def _update_note(self, note: Note, question: Question) -> bool:
 		rendered_question = question.render(note.id)
 		answer: Answer = cast(Answer, question.render_answers(note.id))
-		fields_changed = not note.fields[0] == rendered_question or not note.fields[1] == answer
+		fields_changed = (
+			not note.fields[0] == rendered_question or not note.fields[1] == answer
+		)
 
 		tags_changed = False
 		for t in self.tags:
@@ -165,7 +170,6 @@ class Importer:
 		num_updates = 0
 		num_inserts = 0
 		for moves, question in wanted.items():
-
 			if moves in got:
 				# There is a note for it but maybe it has changed.
 				note = got[moves]
@@ -196,4 +200,10 @@ class Importer:
 		num_image_deletes = len(image_deletes)
 		num_image_inserts = len(image_inserts)
 
-		return num_inserts, num_updates, num_deletes, num_image_inserts, num_image_deletes
+		return (
+			num_inserts,
+			num_updates,
+			num_deletes,
+			num_image_inserts,
+			num_image_deletes,
+		)

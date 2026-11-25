@@ -1,0 +1,139 @@
+{
+  "answerMoves": [
+    {
+      "annotations": {
+        "comments": [],
+        "markers": [],
+      },
+      "id": 11,
+      "san": "Nf6",
+    },
+    {
+      "annotations": {
+        "comments": [],
+        "markers": [],
+      },
+      "id": 12,
+      "san": "g3",
+    },
+  ],
+  "gameAnnotations": {
+    "comments": [],
+    "markers": [],
+  },
+  "history": [],
+  "pgn": "1. d4 { Queen pawn opening } (1. Nf3 { Zukertort opening } d5 2. d4 Nf6 3. c4 e6) 1... d5 2. Nf3 Nf6 3. c4 e6 4. Nf6 (4. g3) *",
+  "questionMoves": [
+    [
+      {
+        "annotations": {
+          "comments": [
+            "Queen pawn opening",
+          ],
+          "markers": [],
+        },
+        "id": 1,
+        "next": 1,
+        "san": "d4",
+      },
+      {
+        "annotations": {
+          "comments": [
+            "Zukertort opening",
+          ],
+          "markers": [],
+        },
+        "id": 7,
+        "next": 6,
+        "san": "Nf3",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 2,
+        "next": 2,
+        "san": "d5",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 3,
+        "next": 3,
+        "san": "Nf3",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 4,
+        "next": 4,
+        "san": "Nf6",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 5,
+        "next": 5,
+        "san": "c4",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 6,
+        "san": "e6",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 8,
+        "next": 7,
+        "san": "d5",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 9,
+        "next": 8,
+        "san": "d4",
+      },
+    ],
+    [
+      {
+        "annotations": {
+          "comments": [],
+          "markers": [],
+        },
+        "id": 10,
+        "next": 4,
+        "san": "Nf6",
+      },
+    ],
+  ],
+}

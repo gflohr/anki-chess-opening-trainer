@@ -1,5 +1,3 @@
-include ./VERSION
-
 UV = uv
 DATAMODEL_CODEGEN = $(UV) run datamodel-codegen
 YAPF = $(UV) run yapf
@@ -8,6 +6,9 @@ MYPY = $(UV) run mypy
 PYLINT = $(UV) run pylint
 PYTEST = $(UV) run pytest
 PYTHON = $(UV) run python
+PNPM = pnpm
+
+VERSION := $(shell node -p "require('./package.json').version")
 
 default: all
 
@@ -15,16 +16,25 @@ all: zip ankiweb
 
 generated: src/version.py src/config.py src/schema.py src/basic_names.py
 
-zip: generated vendor
+dist:
+	$(PNPM) run build
+
+src/web: dist
+	rm -rf $@
+	$(MAKE) dist
+	cp -r dist $@
+	rm $@/index.html
+
+zip: generated vendor src/web
 	$(PYTHON) -m ankiscripts.build --type package --qt all --exclude user_files/**/*
 
-ankiweb: generated vendor build/ankiweb-description.md
+ankiweb: generated vendor build/ankiweb-description.md src/web
 	$(PYTHON) -m ankiscripts.build --type ankiweb --qt all --exclude user_files/**/*
 
 build/ankiweb-description.md: description.md CHANGELOG.md
 	cat description.md CHANGELOG.md >$@
 
-src/version.py: ./VERSION
+src/version.py: package.json
 	@echo "__version__ = '$(VERSION)'" >$@
 
 src/config.py: ./src/config.schema.json
@@ -43,10 +53,6 @@ src/basic_names.py:
 vendor:
 	$(PYTHON) -m ankiscripts.vendor
 
-fix:
-	$(PYTHON) -m yapf src --recursive --in-place
-	$(PYTHON) -m isort src
-
 mypy:
 	# See https://github.com/python/mypy/issues/8727
 	-$(PYTHON) -m mypy src --exclude=src/vendor --exclude=src/forms \
@@ -57,13 +63,10 @@ pylint:
 
 lint: mypy pylint
 
-test: generated vendor
-	$(PYTHON) -m  pytest --cov=src --cov-config=.coveragerc
-
 sourcedist:
 	$(PYTHON) -m ankiscripts.sourcedist
 
 clean:
 	rm -rf build/ src/version.py src/config.py
 
-.PHONY: all zip ankiweb vendor fix mypy pylint lint test sourcedist clean
+.PHONY: all zip ankiweb vendor mypy pylint lint sourcedist clean dist
