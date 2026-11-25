@@ -129,4 +129,3 @@ def describe_card_generator():
 		def it_should_generate_the_correct_cards():
 			assert '1. Nf3 ( 1. e4 ) *' in cards
 			assert '1. Nf3 Nf6 2. Ng1 *' in cards
-

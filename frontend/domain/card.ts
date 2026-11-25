@@ -203,6 +203,10 @@ export function translateRawCard(input: unknown): Card {
 		history: [],
 	} as Game;
 
+	if (raw.f) {
+		game.initial = raw.f;
+	}
+
 	for (const m of raw.s.m ?? []) {
 		game.questionMoves.push(translateRawGameNode(m));
 	}

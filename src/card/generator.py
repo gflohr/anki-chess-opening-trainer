@@ -99,7 +99,11 @@ class CardGenerator:
 		def _copy_history(source: GameNode, target: GameNode) -> None:
 			nonlocal copied_question
 			for variation in source.variations:
-				if variation not in nodes or variation in descendants or variation.move is None:
+				if (
+					variation not in nodes
+					or variation in descendants
+					or variation.move is None
+				):
 					continue
 
 				child = target.add_variation(
@@ -129,7 +133,9 @@ class CardGenerator:
 
 		target_question = _find_question_node(game) or game
 		for variation in question_node.variations:
-			if variation.move is not None and not target_question.has_variation(variation.move):
+			if variation.move is not None and not target_question.has_variation(
+				variation.move
+			):
 				target_question.add_variation(
 					variation.move,
 					comment=variation.comment,
