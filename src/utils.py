@@ -2,6 +2,8 @@ import os
 import re
 from typing import List
 
+from chess.pgn import Game
+
 
 def find_media_files(media_path: str, note_ids: list[str]):
 	filenames: List[str] = []
@@ -22,3 +24,27 @@ def find_media_files(media_path: str, note_ids: list[str]):
 
 def normalise_fen(fen: str) -> str:
 	return ' '.join(fen.split()[:4])
+
+def make_question(game: Game) -> Game:
+	# First find the last move of the main variation. This must be an answer
+	# move.
+	node = game
+
+	while True:
+		variations = node.variations
+		if not variations or not len(variations):
+			break
+
+		node = variations[0]
+
+	if not node.parent:
+		raise AssertionError('Question without answers encountered')
+
+	node.parent.variations.clear()
+	node.parent.starting_comment = ''
+	node.parent.comment = ''
+	node.parent.nags.clear()
+
+	return game
+
+
