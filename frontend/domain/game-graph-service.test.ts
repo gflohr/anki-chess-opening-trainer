@@ -68,7 +68,7 @@ describe('Game graph service', () => {
 
 		it('should return null for empty game graphs', () => {
 			const service = new GameGraphService([]);
-			expect(service.findLeaf()).toBeNull;
+			expect(service.findLeaf()).toBeNull();
 		});
 
 		it('should throw an exception for game graphs with multiple leaves', () => {
