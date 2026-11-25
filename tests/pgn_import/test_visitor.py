@@ -209,7 +209,7 @@ def describe_comments_nags():
 		comment = 'Open Game'
 		visitor.visit_comment(comment)
 
-		collector.add_variation_comment_called_once_with(comment)
+		collector.add_variation_comment.assert_called_once_with(comment)
 
 	def it_should_add_variation_comments() -> None:
 
@@ -226,4 +226,4 @@ def describe_comments_nags():
 		comment = 'Open Game'
 		visitor.visit_comment(comment)
 
-		collector.add_variation_comment_called_once_with(comment)
+		collector.add_variation_comment.assert_called_once_with(comment)
