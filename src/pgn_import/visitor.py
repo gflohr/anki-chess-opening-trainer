@@ -70,6 +70,9 @@ class Visitor(BaseVisitor):
 				move=self._last_move,
 				fen_before=self._fen_before,
 				fen_after=self._fen_after,
+				game_index=self._game_index,
+				variation_depth=self._variation_depth,
+				move_index=self._move_index,
 			)
 
 	def visit_move(self, board, move):

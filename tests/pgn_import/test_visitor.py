@@ -57,7 +57,8 @@ def describe_basic_functionality():
 		visitor.visit_board(board)
 
 		collector.add_move.assert_called_once_with(
-			move=move, fen_before=initial, fen_after=after_white
+			move=move, fen_before=initial, fen_after=after_white,
+			game_index=-1, variation_depth=0, move_index=0
 		)
 
 		collector.add_move.reset_mock()
@@ -72,6 +73,9 @@ def describe_basic_functionality():
 			move=move,
 			fen_before=after_white,
 			fen_after=after_black,
+			game_index=-1,
+			variation_depth=0,
+			move_index=1,
 		)
 
 

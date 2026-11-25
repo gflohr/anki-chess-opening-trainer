@@ -92,7 +92,8 @@ class Collector:
 		return fen
 
 	def add_move(
-		self, move: chess.Move, fen_before: str, fen_after: str
+		self, move: chess.Move, fen_before: str, fen_after: str,
+		game_index: int, variation_depth: int, move_index: int,
 	) -> str:
 		"""Add a move to the game tree identified by its game id.
 
