@@ -51,8 +51,10 @@ uv sync --all-groups
 ### Run Tests
 
 ```sh
-make test
+pnpm run test
 ```
+
+Inspect the scripts in `package.json` for more fine-grained test runs.
 
 ### Terminate all Other Anki Instances
 
