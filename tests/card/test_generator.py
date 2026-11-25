@@ -124,3 +124,46 @@ def describe_card_generator():
 				'1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 ( 3. d4 ) *'
 				in cards
 			)
+
+	def describe_repetition():
+		fixture_path = Path(__file__).parent.parent / 'fixtures' / 'repetition.pgn'
+		assert fixture_path.exists(), f'Fixture not found at {fixture_path}'
+
+		collector = Collector(chess.WHITE)
+		visitor = Visitor(collector)
+
+		with open(fixture_path, 'r', encoding='utf-8') as f:
+			while True:
+				errors = chess.pgn.read_game(f, Visitor=lambda: visitor)
+				if errors is None:
+					break
+				assert len(errors) == 0
+
+			games = collector.games()
+			assert len(games) == 1
+
+			game = next(iter(games.values()))
+
+			# We expect the following cards to be created:
+			#
+			# Q: Start A: 1. e4, 1. Nf3
+			# Q: 1. e4 e5 A: 2. Nf3
+			# Q: 1. Nf3 Nc6 A: 2. e4
+			# Q: 1. e4 ( 1. Nf3 Nc6 2. e4 e5) e5 2. Nf3 Nc6 A: Bc4, d4
+			generator = CardGenerator(game, chess.WHITE)
+
+			cards = set([])
+			for fen, game in generator.cards():
+				exporter = chess.pgn.StringExporter(
+					headers=False, variations=True, comments=True
+				)
+				pgn_string = game.accept(exporter)
+				cards.add(pgn_string.replace('\n', ' '))
+
+		def it_should_have_two_cards():
+			assert len(cards) == 2
+
+		def it_should_have_all_cards():
+			assert '1. Nf3 ( 1. e4 ) *' in cards
+			assert '1. Nf3 Nf6 2. Ng1 *' in cards
+

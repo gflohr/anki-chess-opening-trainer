@@ -51,6 +51,16 @@ class CardGenerator:
 			yield fen, self._generate(node)
 
 	def _generate(self, question_node: GameNode) -> Game:
+		# Collect nodes strictly after question_node so repeating positions
+		# later in the game cannot be pulled into the pre-question history.
+		descendants: set[GameNode] = set()
+		desc_queue: deque[GameNode] = deque(question_node.variations)
+		while desc_queue:
+			curr = desc_queue.popleft()
+			if curr not in descendants:
+				descendants.add(curr)
+				desc_queue.extend(curr.variations)
+
 		# Pass 1: Find all parent nodes of the current one.
 		queue: deque[GameNode] = deque([question_node])
 		nodes: set[GameNode] = {question_node}
@@ -84,9 +94,12 @@ class CardGenerator:
 
 		# Now recursively copy the original game with all comments and NAGs,
 		# but only if it is contained in nodes.
-		def _copy_subtree(source: GameNode, target: GameNode) -> None:
+		copied_question: GameNode = game
+
+		def _copy_history(source: GameNode, target: GameNode) -> None:
+			nonlocal copied_question
 			for variation in source.variations:
-				if variation not in nodes or variation.move is None:
+				if variation not in nodes or variation in descendants or variation.move is None:
 					continue
 
 				child = target.add_variation(
@@ -95,21 +108,33 @@ class CardGenerator:
 					starting_comment=variation.starting_comment,
 					nags=set(variation.nags),
 				)
-				_copy_subtree(variation, child)
+				if variation is question_node:
+					copied_question = child
+					# Do not copy question_node's own variations here; they are added as answers.
+					continue
+				_copy_history(variation, child)
 
-		_copy_subtree(self._game, game)
+		_copy_history(self._game, game)
 
-		# Now add all variations of question_node as answers.
-		node = game
-		while node.variations:
-			node = node.variations[0]
+		question_fen = self._node_fens[question_node]
 
+		def _find_question_node(curr: GameNode) -> GameNode | None:
+			if normalise_fen(curr.board().fen()) == question_fen:
+				return curr
+			for child in curr.variations:
+				found = _find_question_node(child)
+				if found is not None:
+					return found
+			return None
+
+		target_question = _find_question_node(game) or game
 		for variation in question_node.variations:
-			node.add_variation(
-				variation.move,
-				comment=variation.comment,
-				starting_comment=variation.starting_comment,
-				nags=set(variation.nags),
-			)
+			if variation.move is not None and not target_question.has_variation(variation.move):
+				target_question.add_variation(
+					variation.move,
+					comment=variation.comment,
+					starting_comment=variation.starting_comment,
+					nags=set(variation.nags),
+				)
 
 		return game
