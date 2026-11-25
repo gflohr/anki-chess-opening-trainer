@@ -26,6 +26,11 @@ class Collector:
 		self._starting_fen = normalise_fen(chess.STARTING_FEN)
 		# The current node is either a game or a position after a move.
 		self._current_node = None
+		# Nodes are visited in the order they appear in the PGN file. This
+		# does not match the order that we want to have. This dictionary
+		# keeps track of the variation_depth, game_number and overall move
+		# number for each node.
+		self._node_ranks: dict[chess.pgn.GameNode, tuple[int, int, int]] = {}
 
 	def games(self) -> Dict[str, chess.pgn.Game]:
 		"""Get all collected games.
@@ -111,11 +116,19 @@ class Collector:
 
 		parent = self._seen[fen]
 		new_game_id = self._find_game_id(parent)
+		rank = (variation_depth, game_index, move_index)
 		if parent.has_variation(move):
+			child = parent.variation(move)
+			if rank < self._node_ranks[child]:
+				self._node_ranks[child] = rank
+				parent.variations.sort(key=lambda n: self._node_ranks[n])
 			self._current_node = parent.variation(move)
 			return new_game_id
 
-		self._current_node = parent.add_variation(move)
+		child = parent.add_variation(move)
+		self._node_ranks[child] = rank
+		parent.variations.sort(key=lambda n: self._node_ranks[n])
+		self._current_node = child
 
 		norm_fen = normalise_fen(fen_after)
 		if norm_fen not in self._seen:

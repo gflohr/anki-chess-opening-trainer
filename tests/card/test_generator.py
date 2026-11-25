@@ -120,8 +120,7 @@ def describe_card_generator():
 			assert '1. Nf3 Nc6 2. e4 *' in cards
 
 		def it_should_collect_all_answers_on_the_leaf_coard():
-			# FIXME! The answers should be in reverse order!
 			assert (
-				'1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. d4 ( 3. Bc4 ) *'
+				'1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 ( 3. d4 ) *'
 				in cards
 			)
