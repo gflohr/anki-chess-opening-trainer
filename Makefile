@@ -28,7 +28,7 @@ src/web: dist
 zip: generated vendor src/web
 	$(PYTHON) -m ankiscripts.build --type package --qt all --exclude user_files/**/*
 
-ankiweb: generated vendor build/ankiweb-description.md
+ankiweb: generated vendor build/ankiweb-description.md src/web
 	$(PYTHON) -m ankiscripts.build --type ankiweb --qt all --exclude user_files/**/*
 
 build/ankiweb-description.md: description.md CHANGELOG.md
