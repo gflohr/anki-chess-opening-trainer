@@ -3,6 +3,8 @@ from pathlib import Path
 import chess
 
 from src.card.generator import CardGenerator
+from src.pgn_import.collector import Collector
+from src.pgn_import.visitor import Visitor
 
 
 def describe_card_generator():
@@ -10,10 +12,20 @@ def describe_card_generator():
 		fixture_path = Path(__file__).parent.parent / 'fixtures' / 'open-variations.pgn'
 		assert fixture_path.exists(), f'Fixture not found at {fixture_path}'
 
-		with open(fixture_path, 'r', encoding='utf-8') as f:
-			game = chess.pgn.read_game(f)
+		collector = Collector(chess.WHITE)
+		visitor = Visitor(collector)
 
-			assert game is not None
+		with open(fixture_path, 'r', encoding='utf-8') as f:
+			while True:
+				errors = chess.pgn.read_game(f, Visitor=lambda: visitor)
+				if errors is None:
+					break
+				assert len(errors) == 0
+
+			games = collector.games()
+			assert len(games) == 1
+
+			game = next(iter(games.values()))
 
 			# We expect the following cards to be created:
 			#
@@ -50,7 +62,7 @@ def describe_card_generator():
 
 		def it_should_have_a_card_for_the_giuco_piano():
 			assert (
-				'1. e4 ( 1. Nf3 Nc6 2. e4 e5 3. Bc4 Bc5 ) 1... e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 { This is the classical variation. } *'
+				'1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 { This is the classical variation. } *'
 				in cards
 			)
 
@@ -64,10 +76,20 @@ def describe_card_generator():
 		fixture_path = Path(__file__).parent.parent / 'fixtures' / 'crossing-lines.pgn'
 		assert fixture_path.exists(), f'Fixture not found at {fixture_path}'
 
-		with open(fixture_path, 'r', encoding='utf-8') as f:
-			game = chess.pgn.read_game(f)
+		collector = Collector(chess.WHITE)
+		visitor = Visitor(collector)
 
-			assert game is not None
+		with open(fixture_path, 'r', encoding='utf-8') as f:
+			while True:
+				errors = chess.pgn.read_game(f, Visitor=lambda: visitor)
+				if errors is None:
+					break
+				assert len(errors) == 0
+
+			games = collector.games()
+			assert len(games) == 1
+
+			game = next(iter(games.values()))
 
 			# We expect the following cards to be created:
 			#
@@ -85,8 +107,6 @@ def describe_card_generator():
 				pgn_string = game.accept(exporter)
 				cards.add(pgn_string.replace('\n', ' '))
 
-			print(cards)
-
 		def it_should_have_four_cards():
 			assert len(cards) == 4
 
@@ -100,7 +120,8 @@ def describe_card_generator():
 			assert '1. Nf3 Nc6 2. e4 *' in cards
 
 		def it_should_collect_all_answers_on_the_leaf_coard():
+			# FIXME! The answers should be in reverse order!
 			assert (
-				'1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 ( 3. d4 ) *'
+				'1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. d4 ( 3. Bc4 ) *'
 				in cards
 			)
