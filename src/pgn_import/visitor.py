@@ -61,7 +61,6 @@ class Visitor(BaseVisitor):
 				raise Exception('Internal state corrupted! No move found!')
 			self._fen_after = board.fen()
 			self._game_id = self._collector.add_move(
-				game_id=self._game_id,
 				move=self._last_move,
 				fen_before=self._fen_before,
 				fen_after=self._fen_after,
