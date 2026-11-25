@@ -61,7 +61,7 @@
 		<div class="theme-toggle-wrapper">
 			<i class="bi bi-sun-fill"></i>
 			<label class="theme-switch">
-				<input type="checkbox" bind:checked={isLight} />
+				<input type="checkbox" aria-label="Toggle theme" bind:checked={isLight} />
 				<span class="slider"></span>
 			</label>
 			<i class="bi bi-moon-stars-fill"></i>
