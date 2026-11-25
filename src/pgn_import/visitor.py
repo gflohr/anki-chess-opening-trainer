@@ -38,7 +38,6 @@ class Visitor(BaseVisitor):
 		self._turn: Color = None
 		# This is also an indicator that there is an active game.
 		self._game_id: str = None
-		self._gameno = 0
 		self._errors: List[str] = []
 		self._fen_before: str = None
 		# This is also an indicator that we are not at the beginning of a
@@ -46,7 +45,13 @@ class Visitor(BaseVisitor):
 		self._last_move: chess.Move = None
 		self._fen_after: str = None
 
+		self._game_index = -1
+		self._variation_depth = 0
+		self._move_index = -1
+
 	def begin_game(self):
+		self._game_index = self._game_index + 1
+		self._variation_depth = 0
 		self._game_id = None
 		self._last_move = None
 
@@ -60,6 +65,7 @@ class Visitor(BaseVisitor):
 			if self._last_move is None:
 				raise Exception('Internal state corrupted! No move found!')
 			self._fen_after = board.fen()
+			self._move_index = self._move_index + 1
 			self._game_id = self._collector.add_move(
 				move=self._last_move,
 				fen_before=self._fen_before,
@@ -73,6 +79,8 @@ class Visitor(BaseVisitor):
 		# visit_board(), so that the FEN is already created.
 
 	def begin_variation(self):
+		self._variation_depth = self._variation_depth + 1
+
 		self._last_move = None
 		if self._drop_white and self._turn == chess.BLACK:
 			return SKIP
@@ -81,6 +89,9 @@ class Visitor(BaseVisitor):
 			return SKIP
 
 		return None
+
+	def end_variation(self):
+		self._variation_depth = self._variation_depth - 1
 
 	def visit_comment(self, comment: str):
 		if self._last_move is None:
@@ -92,7 +103,7 @@ class Visitor(BaseVisitor):
 		self._collector.add_nag(nag)
 
 	def handle_error(self, error: Exception):
-		self._errors.append({'gameno': self._gameno, 'error': str(error)})
+		self._errors.append({'gameno': self._game_index + 1, 'error': str(error)})
 
 	def result(self) -> List[PGNError]:
 		return self._errors
