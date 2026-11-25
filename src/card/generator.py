@@ -9,7 +9,8 @@ from utils import normalise_fen
 
 
 # The card generator does not convert arbitrary games into cards but only
-# games that were created by our PGN collector.
+# games that were created by our PGN collector. This rules out a lot of
+# edge cases.
 class CardGenerator:
 	def __init__(self, game: Game, colour: Color) -> None:
 		self._game = game
