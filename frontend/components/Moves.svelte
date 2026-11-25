@@ -201,7 +201,7 @@
 
 	export function goToEnd() {
 		const row = rows[rows.length - 1];
-		const cell = row.white ? row.white : row.black;
+		const cell = row.black ? row.black : row.white;
 
 		selectedBoardId = cell!.id;
 		canGoForward = false;
