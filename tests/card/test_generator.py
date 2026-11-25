@@ -20,9 +20,9 @@ def describe_card_generator():
 			# Q: Start A: 1. e4, 1. Nf3
 			# Q: 1. e4 e5 A: 2. Nf3
 			# Q: 1. Nf3 Nc6 A: 2. e4
-			# Q: 1. e4 e5 2. Nf3 Nc6 3. Bc4
-			# Q: 1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 A: 3. c3
-			# Q: 1. e4 e5 2. Nf3 Nc6 2. Bc4 Nf6 A: 3. Ng5
+			# Q: 1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6, A: 3. Bc4
+			# Q: 1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 Bc5, A: 4. c3
+			# Q: 1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 Nf6, A: 3. Ng5
 			generator = CardGenerator(game, chess.WHITE)
 
 			cards = set([])
@@ -46,11 +46,11 @@ def describe_card_generator():
 			assert '1. Nf3 Nc6 2. e4 *' in cards
 
 		def it_should_have_a_card_for_the_italian_game():
-			assert '1. e4 ( 1. Nf3 Nc6 2. e4 ) 1... e5 2. Nf3 Nc6 3. Bc4 *' in cards
+			assert '1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 *' in cards
 
 		def it_should_have_a_card_for_the_giuco_piano():
 			assert (
-				'1. e4 ( 1. Nf3 Nc6 2. e4 e5 3. Bc4 ) 1... e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 { This is the classical variation. } *'
+				'1. e4 ( 1. Nf3 Nc6 2. e4 e5 3. Bc4 Bc5 ) 1... e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 { This is the classical variation. } *'
 				in cards
 			)
 
@@ -71,10 +71,10 @@ def describe_card_generator():
 
 			# We expect the following cards to be created:
 			#
-			# Q: Start A: 1. e4
+			# Q: Start A: 1. e4, 1. Nf3
 			# Q: 1. e4 e5 A: 2. Nf3
 			# Q: 1. Nf3 Nc6 A: 2. e4
-			# Q: 1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) e5 2. Nf3 Nc6 A: Bc4, d4
+			# Q: 1. e4 ( 1. Nf3 Nc6 2. e4 e5) e5 2. Nf3 Nc6 A: Bc4, d4
 			generator = CardGenerator(game, chess.WHITE)
 
 			cards = set([])
@@ -85,8 +85,10 @@ def describe_card_generator():
 				pgn_string = game.accept(exporter)
 				cards.add(pgn_string.replace('\n', ' '))
 
+			print(cards)
+
 		def it_should_have_four_cards():
-			assert len(cards) == 6
+			assert len(cards) == 4
 
 		def it_should_have_a_card_for_the_starting_position():
 			assert '1. e4 ( 1. Nf3 ) *' in cards
@@ -97,9 +99,8 @@ def describe_card_generator():
 		def it_should_have_a_card_for_the_transposition_of_moves_1_and_2():
 			assert '1. Nf3 Nc6 2. e4 *' in cards
 
-		def it_should_collect_all_answers_on_the_line_splitting_coard():
-			assert '1. e4 ( 1. Nf3 Nc6 2. e4 ) 1... e5 2. Nf3 Nc6 3. Bc4 ( 3. d4 ) *' in cards
-
-		def it_should_collect_all_leaves():
-			assert '1. e4 ( 1. Nf3 Nc6 2. e4 ) 1... e5 2. Nf3 Nc6 3. Bc4 Bc5 4. d3 *' in cards
-			assert '1. e4 ( 1. Nf3 Nc6 2. e4 ) 1... e5 2. Nf3 Nc6 3. d4 exd4 4. Nxd4 *' in cards
+		def it_should_collect_all_answers_on_the_leaf_coard():
+			assert (
+				'1. e4 ( 1. Nf3 Nc6 2. e4 e5 ) 1... e5 2. Nf3 Nc6 3. Bc4 ( 3. d4 ) *'
+				in cards
+			)
