@@ -41,7 +41,7 @@
 		if (card.isQuestion) return null;
 
 		if (card.session?.game?.pgn) {
-			return `https://lichess.org/analysis/pgn/${card.session.game.pgn}`;
+			return `https://lichess.org/analysis/pgn/${encodeURIComponent(card.session.game.pgn)}`;
 		} else {
 			return null;
 		}
